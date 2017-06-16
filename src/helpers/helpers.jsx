@@ -11,3 +11,6 @@ export const hasTrailingSlash = (str) => {
 export const removeTrailingSlash = (str) => {
   return hasTrailingSlash(str) ? str.slice(0, -1) : str;
 };
+export const addSlash=(url)=>{
+  return hasTrailingSlash(url) ? url : url+"/";
+}
