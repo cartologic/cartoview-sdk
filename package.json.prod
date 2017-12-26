@@ -2,13 +2,9 @@
     "name": "cartoview-sdk",
     "version": "0.9.0",
     "description": "cartoview sdk is a NPM package which contains serives and hepers for cartoview apps development",
-    "main": "lib/index.js",
+    "main": "index.js",
     "scripts": {
-        "compile": "babel -d lib/ src/ --source-maps inline && touch lib/index.js",
-        "prepublish": "npm run compile && npm run copypackage",
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "copypackage": "cp -rf package.json.prod lib/package.json",
-        "dist": "cd lib && npm publish"
+        "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
         "type": "git",
