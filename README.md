@@ -1,2 +1,2 @@
 # cartoview-sdk
-Cartoview sdk is a npm package which contains services and helpers for apps development
+## Cartoview SDK is a NPM Package Which Contains services and helpers for apps development
