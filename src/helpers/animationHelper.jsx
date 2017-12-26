@@ -3,7 +3,7 @@ import Observable from 'ol/observable'
 import Stroke from 'ol/style/stroke'
 import Style from 'ol/style/style'
 import easing from 'ol/easing'
-export default class Animation {
+export default class AnimationHelper {
     flash( feature, map ) {
         let start = new Date().getTime()
         let listenerKey

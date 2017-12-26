@@ -19,7 +19,7 @@ import Heatmap from 'ol/layer/heatmap'
 import Image from 'ol/layer/image'
 import ImageWMS from 'ol/source/imagewms'
 import Layer from 'ol/layer/layer'
-import LayerIdService from 'Source/services/LayerIdService'
+import LayerIdService from './LayerIdService'
 import OSM from 'ol/source/osm'
 import { default as SourceImage } from 'ol/source/image'
 import { default as SourceVector } from 'ol/source/vector'
@@ -32,7 +32,7 @@ import View from 'ol/view'
 import WMTS from 'ol/source/wmts'
 import XYZ from 'ol/source/xyz'
 import {default as olProj} from 'ol/proj'
-import util from 'Source/services/sdkUtils'
+import util from './sdkUtils'
 
 let sources = {
     'OSM': OSM,
