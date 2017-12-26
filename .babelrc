@@ -1,8 +1,15 @@
 {
-  "presets": [
-    ["env", {"loose": true}],
+    "presets": [
+    [ "env", { "loose": true } ],
     "stage-1",
     "react"
   ],
-  "plugins": ["transform-object-rest-spread","syntax-dynamic-import"]
+    "plugins": [ "transform-object-rest-spread", "syntax-dynamic-import",
+      "transform-react-constant-elements", "transform-react-inline-elements",
+      [ "transform-class-properties", { "spec": true } ],
+      ["transform-es2015-classes", {
+      "loose": true
+    }],
+      "syntax-class-properties" ]
+
 }

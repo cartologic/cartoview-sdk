@@ -1,5 +1,5 @@
 import UrlAssembler from 'url-assembler'
-class URLS {
+export default class URLS {
     encodeURL( url ) {
         return encodeURIComponent( url ).replace( /%20/g, '+' )
     }
@@ -14,4 +14,3 @@ class URLS {
         return proxiedURL
     }
 }
-export default new URLS()
