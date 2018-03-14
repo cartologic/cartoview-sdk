@@ -1,6 +1,7 @@
 import Attribution from 'ol/attribution'
-import Base from 'ol/layer/base';
+import Base from 'ol/layer/base'
 import BingMaps from 'ol/source/bingmaps'
+import CartoDB from 'ol/source/cartodb'
 import Cluster from 'ol/source/cluster'
 import GeoJSON from 'ol/format/geojson'
 import Group from 'ol/layer/group'
@@ -17,45 +18,77 @@ import Heatmap from 'ol/layer/heatmap'
  * See the License for the specific language governing permissions and limitations under the License.
  */
 import Image from 'ol/layer/image'
+import ImageArcGISRest from 'ol/source/imagearcgisrest'
+import ImageCanvas from 'ol/source/imagecanvas'
+import ImageMapGuide from 'ol/source/imagemapguide'
+import ImageStatic from 'ol/source/imagestatic'
+import ImageVector from 'ol/source/imagevector'
 import ImageWMS from 'ol/source/imagewms'
 import Layer from 'ol/layer/layer'
 import LayerIdService from './LayerIdService'
 import OSM from 'ol/source/osm'
+import Raster from 'ol/source/raster'
+import Source from 'ol/source/source'
 import { default as SourceImage } from 'ol/source/image'
+import { default as SourceTile } from 'ol/source/tile'
 import { default as SourceVector } from 'ol/source/vector'
+import { default as SourceVectorTile } from 'ol/source/vectortile'
+import Stamen from 'ol/source/stamen'
 import Tile from 'ol/layer/tile'
 import TileArcGISRest from 'ol/source/tilearcgisrest'
+import TileDebug from 'ol/source/tiledebug'
+import TileImage from 'ol/source/tileimage'
+import TileJSON from 'ol/source/tilejson'
+import TileUTFGrid from 'ol/source/tileutfgrid'
 import TileWMS from 'ol/source/tilewms'
 import Vector from 'ol/layer/vector'
 import VectorTile from 'ol/layer/vectortile'
 import View from 'ol/view'
 import WMTS from 'ol/source/wmts'
 import XYZ from 'ol/source/xyz'
-import {default as olProj} from 'ol/proj'
+import Zoomify from 'ol/source/zoomify'
+import { default as olProj } from 'ol/proj'
 import util from './sdkUtils'
 
 let sources = {
-    'OSM': OSM,
-    'TileArcGISRest': TileArcGISRest,
-    'TileWMS': TileWMS,
-    'XYZ': XYZ,
-    'ImageWMS': ImageWMS,
-    'Cluster': Cluster,
     'BingMaps': BingMaps,
-    'Vector': SourceVector,
+    'CartoDB': CartoDB,
+    'Cluster': Cluster,
     'Image': SourceImage,
-    'WMTS': WMTS
+    'ImageArcGISRest': ImageArcGISRest,
+    'ImageCanvas': ImageCanvas,
+    'ImageMapGuide': ImageMapGuide,
+    'ImageStatic': ImageStatic,
+    'ImageVector': ImageVector,
+    'ImageWMS': ImageWMS,
+    'Stamen': Stamen,
+    'Raster': Raster,
+    'Source': Source,
+    'Tile': SourceTile,
+    'TileArcGISRest': TileArcGISRest,
+    'TileDebug': TileDebug,
+    'TileImage': TileImage,
+    'TileJSON': TileJSON,
+    'TileUTFGrid': TileUTFGrid,
+    'TileWMS': TileWMS,
+    'Zoomify': Zoomify,
+    'SourceVectorTile': SourceVectorTile,
+    'WMTS': WMTS,
+    'OSM': OSM,
+    'XYZ': XYZ,
+    'Vector': SourceVector,
+
 }
-let layersMaping={
-    'Tile':Tile,
-    'Group':Group,
-    'Base':Base,
-    'Heatmap':Heatmap,
-    'Image':Image,
-    'Layer':Layer,
-    'Vector':Vector,
-    'VectorTile':VectorTile
-    
+let layersMaping = {
+    'Tile': Tile,
+    'Group': Group,
+    'Base': Base,
+    'Heatmap': Heatmap,
+    'Image': Image,
+    'Layer': Layer,
+    'Vector': Vector,
+    'VectorTile': VectorTile
+
 }
 class MapConfigService {
     generateSourceFromConfig(map, config, opt_proxy, opt_wfsUrl,
@@ -85,9 +118,9 @@ class MapConfigService {
                 var idx = Math.floor(Math.random() * (max - min + 1)) +
                     min;
                 var x, y, z;
-                z = tileCoord[0];
-                x = tileCoord[1];
-                y = tileCoord[2] + (1 << z);
+                z = tileCoord[0]
+                x = tileCoord[1]
+                y = tileCoord[2] + (1 << z)
                 return urls[idx] + z + '/' + x + '/' + y + '.' +
                     props.format;
             };

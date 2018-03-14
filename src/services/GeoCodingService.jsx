@@ -1,4 +1,4 @@
-import UrlAssembler from 'url-assembler'
+import URLS from '../urls/urls'
 const nominatimURL = " http://nominatim.openstreetmap.org/search?"
 class OSMGeoCoding {
     constructor() {
@@ -11,25 +11,26 @@ class OSMGeoCoding {
             'accept-language': 'en-US'
         }
         this.url = null
+        this.urls = new URLS({})
     }
-    getPatamters = ( query ) => {
+    getPatamters = (query) => {
         this.OSMSettings.q = query
         return this.OSMSettings
     }
-    getURL = ( query ) => {
-        const paramters = this.getPatamters( query )
-        return UrlAssembler( nominatimURL ).query( paramters ).toString()
+    getURL = (query) => {
+        const paramters = this.getPatamters(query)
+        return this.urls.getParamterizedURL(nominatimURL, paramters)
     }
     doGet = () => {
-        return fetch( this.url, {
+        return fetch(this.url, {
             method: 'GET'
-        } ).then( ( response ) => {
+        }).then((response) => {
             return response.json()
-        } )
+        })
     }
-    search = ( query, callBack ) => {
-        this.url = this.getURL( query )
-        this.doGet().then( result => callBack( result ) )
+    search = (query, callBack) => {
+        this.url = this.getURL(query)
+        this.doGet().then(result => callBack(result))
     }
 }
 export default new OSMGeoCoding()

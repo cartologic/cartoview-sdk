@@ -3,8 +3,8 @@ import Observable from 'ol/observable'
 import Stroke from 'ol/style/stroke'
 import Style from 'ol/style/style'
 import easing from 'ol/easing'
-export default class AnimationHelper {
-    flash( feature, map ) {
+class AnimationHelper {
+    flash = ( feature, map ) => {
         let start = new Date().getTime()
         let listenerKey
         const duration = 5000
@@ -40,7 +40,7 @@ export default class AnimationHelper {
         }
         listenerKey = map.on( 'postcompose', animate )
     }
-    flyTo( location, view, zoom, done ) {
+    flyTo = ( location, view, zoom, done ) => {
         let duration = 3000
         let parts = 2
         let called = false
@@ -68,3 +68,4 @@ export default class AnimationHelper {
         }, callback )
     }
 }
+export default new AnimationHelper()

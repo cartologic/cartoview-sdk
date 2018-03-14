@@ -44,7 +44,7 @@ const styles = {
     } )
 }
 export const styleFunction = ( feature ) => {
-    const style = feature ? styles[ feature.getGeometry().getType() ] :
+    const style = feature ? styles[ feature.getGeometry( ).getType( ) ] :
         null
     return style
 }

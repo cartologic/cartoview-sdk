@@ -4,12 +4,10 @@
     "stage-1",
     "react"
   ],
-    "plugins": [ "transform-object-rest-spread", "syntax-dynamic-import",
-      "transform-react-constant-elements", "transform-react-inline-elements",
+    "plugins": [ "transform-object-rest-spread",
+      "transform-react-constant-elements",
       [ "transform-class-properties", { "spec": true } ],
-      ["transform-es2015-classes", {
-      "loose": true
-    }],
-      "syntax-class-properties" ]
-
+      [ "transform-es2015-classes", {
+            "loose": true
+      } ] ]
 }

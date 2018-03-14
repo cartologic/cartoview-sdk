@@ -1,17 +1,17 @@
 import Group from 'ol/layer/group'
 import ImageWMS from 'ol/source/imagewms'
 import TileWMS from 'ol/source/tilewms'
-export default class LayersHelper {
-    isWMSLayer( layer ) {
+class LayersHelper {
+    isWMSLayer = ( layer ) => {
         return layer.getSource() instanceof TileWMS || layer.getSource() instanceof ImageWMS
     }
-    layerName( typeName ) {
+    layerName = ( typeName ) => {
         return typeName.split( ":" ).pop()
     }
-    layerNameSpace( typeName ) {
+    layerNameSpace = ( typeName ) => {
         return typeName.split( ":" )[ 0 ]
     }
-    getLayers( mapLayers ) {
+    getLayers = ( mapLayers ) => {
         let children = []
         mapLayers.forEach( ( layer ) => {
             if ( layer instanceof Group ) {
@@ -23,7 +23,7 @@ export default class LayersHelper {
         } )
         return children
     }
-    getWMSLayer( name, layers ) {
+    getWMSLayer = ( name, layers ) => {
         let wmsLayer = null
         layers.forEach( ( layer ) => {
             if ( layer instanceof Group ) {
@@ -39,3 +39,4 @@ export default class LayersHelper {
         return wmsLayer
     }
 }
+export default new LayersHelper()

@@ -1,9 +1,6 @@
-import { getCRSFToken } from '../helpers/helpers.jsx'
-const reponseMapping = {
-    'json': ( response ) => response.json(),
-    'xml': ( response ) => response.text()
-}
-export const doGet = ( url, extraHeaders = {}, resultType = 'json' ) => {
+import { getCRSFToken } from '../helpers/helpers'
+
+export const doGet = ( url, extraHeaders = {} ) => {
     return fetch( url, {
         method: 'GET',
         credentials: 'include',
@@ -11,9 +8,14 @@ export const doGet = ( url, extraHeaders = {}, resultType = 'json' ) => {
             "X-CSRFToken": getCRSFToken(),
             ...extraHeaders
         }
-    } ).then( reponseMapping[ resultType ] )
+    } ).then( ( response ) => {
+        return response.json()
+    } )
 }
-export const doPost = ( url, data, extraHeaders = {}, resultType = 'json' ) => {
+export const capitalizeFirstLetter = ( string ) => {
+    return string.charAt( 0 ).toUpperCase() + string.slice( 1 );
+}
+export const doPost = ( url, data, extraHeaders = {}, type = 'json' ) => {
     return fetch( url, {
         method: 'POST',
         credentials: 'include',
@@ -22,5 +24,11 @@ export const doPost = ( url, data, extraHeaders = {}, resultType = 'json' ) => {
             ...extraHeaders
         } ),
         body: data
-    } ).then( reponseMapping[ resultType ] )
+    } ).then( ( response ) => {
+        if ( type === 'json' ) {
+            return response.json()
+        } else if ( type === 'xml' ) {
+            return response.text()
+        }
+    } )
 }
