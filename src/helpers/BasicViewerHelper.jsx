@@ -7,14 +7,37 @@ import OverviewMap from 'ol/control/overviewmap'
 import Projection from 'ol/proj/projection'
 import Tile from 'ol/layer/tile'
 import View from 'ol/view'
+import { doPost } from '../utils/utils'
 import extent from 'ol/extent'
 import interaction from 'ol/interaction'
 import proj from 'ol/proj'
-
 class BasicViewerHelper {
     getCenterOfExtent = (ext) => {
         const center = extent.getCenter(ext)
         return center
+    }
+    setThumbnail = (map, ThumnailURL) => {
+        map.once('postcompose', (event) => {
+            var canvas = event.context.canvas
+            canvas.toBlob((blob) => {
+                var reader = new FileReader()
+                reader.readAsDataURL(blob)
+                reader.onloadend = () => {
+                    const postData = JSON.stringify({
+                        image: reader.result,
+                        preview: "react"
+                    })
+                    try {
+                        doPost(ThumnailURL, postData)
+                    } catch (err) {
+                        console.error(err.message)
+                    }
+                }
+
+            })
+
+        })
+        map.renderSync()
     }
     getMap = () => {
         let map = new Map({
