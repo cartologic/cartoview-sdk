@@ -10,7 +10,7 @@ import View from 'ol/view'
 import { doPost } from '../utils/utils'
 import extent from 'ol/extent'
 import interaction from 'ol/interaction'
-import pica from 'pica'
+import pica from 'pica/dist/pica'
 import proj from 'ol/proj'
 
 class BasicViewerHelper {
