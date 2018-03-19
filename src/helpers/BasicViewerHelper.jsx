@@ -10,16 +10,22 @@ import View from 'ol/view'
 import { doPost } from '../utils/utils'
 import extent from 'ol/extent'
 import interaction from 'ol/interaction'
+import pica from 'pica'
 import proj from 'ol/proj'
+
 class BasicViewerHelper {
     getCenterOfExtent = (ext) => {
         const center = extent.getCenter(ext)
         return center
     }
-    setThumbnail = (map, ThumnailURL) => {
-        map.once('postcompose', (event) => {
-            var canvas = event.context.canvas
-            canvas.toBlob((blob) => {
+    resizeSendThumbnail = (originalCanvas, thumnailURL) => {
+        const picaResizer = pica()
+        let resizedCanvas = document.createElement('canvas')
+        resizedCanvas.width = 280
+        resizedCanvas.height = 210
+        picaResizer.resize(originalCanvas, resizedCanvas)
+            .then(result => picaResizer.toBlob(result, 'image/jpeg', 0.90))
+            .then(blob => {
                 var reader = new FileReader()
                 reader.readAsDataURL(blob)
                 reader.onloadend = () => {
@@ -28,14 +34,17 @@ class BasicViewerHelper {
                         preview: "react"
                     })
                     try {
-                        doPost(ThumnailURL, postData)
+                        doPost(thumnailURL, postData, {}, 'xml').then(result => console.log(result))
                     } catch (err) {
                         console.error(err.message)
                     }
                 }
-
             })
-
+    }
+    setThumbnail = (map, thumnailURL) => {
+        map.once('postcompose', (event) => {
+            var canvas = event.context.canvas
+            this.resizeSendThumbnail(canvas, thumnailURL)
         })
         map.renderSync()
     }
