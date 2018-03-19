@@ -11,7 +11,7 @@ class OSMGeoCoding {
             'accept-language': 'en-US'
         }
         this.url = null
-        this.urls = new URLS({})
+        this.urls = new URLS(null)
     }
     getPatamters = (query) => {
         this.OSMSettings.q = query

@@ -1,6 +1,6 @@
 {
     "name": "cartoview-sdk",
-    "version": "1.0.6",
+    "version": "1.0.9",
     "description": "cartoview sdk is a NPM package which contains serives and hepers for cartoview apps development",
     "main": "lib/index.js",
     "scripts": {
@@ -45,6 +45,8 @@
     "dependencies": {
         "ol": "^4.6.4",
         "pica": "^4.0.2",
-        "proj4": "^2.4.4"
+        "proj4": "^2.4.4",
+        "tcomb-form": "^0.9.19",
+        "validator": "^9.4.1"
     }
 }

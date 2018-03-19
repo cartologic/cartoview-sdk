@@ -1,6 +1,6 @@
 class URLS {
-    constructor(urls) {
-        this.urls = urls
+    constructor(proxyURL) {
+        this.proxy = proxyURL
     }
     encodeURL = (url) => {
         return encodeURIComponent(url).replace(/%20/g, '+')
@@ -18,32 +18,11 @@ class URLS {
         })
         return newURL + newQuery.join('&')
     }
-    getMapApiURL = (username, userMaps = false, limit, offset, query = {}) => {
-        let params = {
-            'limit': limit,
-            'offset': offset,
-            ...query
-        }
-        if (userMaps) {
-            params['owner__username'] = username
-        }
-        const url = this.getParamterizedURL(this.urls.MapsAPI, params)
-        return url
-    }
-    getMapApiSearchURL = (username, userMaps = false, text) => {
-        let params = { 'title__contains': text }
-        if (userMaps) {
-            params['owner__username'] = username
-        }
-
-        const url = this.getParamterizedURL(this.urls.MapsAPI, params)
-        return url
-    }
     getProxiedURL = (url) => {
-        const proxy = this.urls.proxy
+        const proxy = this.proxy
         let proxiedURL = url
         if (proxy) {
-            proxiedURL = this.urls.proxy + this.encodeURL(url)
+            proxiedURL = this.proxy + this.encodeURL(url)
         }
         return proxiedURL
     }

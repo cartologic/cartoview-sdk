@@ -77,13 +77,17 @@ class BasicViewerHelper {
         }
 
     }
-    reprojectLocation = (pointArray, map) => {
+    reprojectLocation = (pointArray, map, from = 'EPSG:4326') => {
         /**
          * Reproject x,y .
          * @constructor
          * @param {array} point - [longitude,latitude].
          */
-        return proj.transform(pointArray, 'EPSG:4326', map.getView().getProjection())
+        const mapProjection = map.getView().getProjection()
+        if (from instanceof Projection) {
+            from = from.getCode()
+        }
+        return proj.transform(pointArray, from, mapProjection)
     }
     reprojectExtent = (extent, map, from = 'EPSG:4326') => {
         /**

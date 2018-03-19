@@ -6,7 +6,7 @@ export const wmsGetFeatureInfoFormats = {
     'application/vnd.ogc.gml': new WMSGetFeatureInfo()
 }
 class FeatureHelper {
-    getFormat=(format)=>{
+    getFormat = (format) => {
         return wmsGetFeatureInfoFormats[format]
     }
     getFeatureInfoUrl = (layer, coordinate, view, infoFormat) => {
@@ -18,8 +18,9 @@ class FeatureHelper {
             })
         return `${url}&FEATURE_COUNT=10`
     }
-    getFeatureByURL = (urlsClass, url) => {
-        return fetch(urlsClass.getProxiedURL(url)).then((response) =>
+    getFeatureByURL = (urlsClass = null, url) => {
+        const proxiedURL = urlsClass ? urlsClass.getProxiedURL(url) : url
+        return fetch(proxiedURL).then((response) =>
             response.json())
     }
     transformFeatures = (layer, features, map, crs) => {
@@ -39,11 +40,11 @@ class FeatureHelper {
             } else {
                 fetch("https://epsg.io/?format=json&q=" + crs).then(
                     response => response.json()).then(
-                    projres => {
-                        proj4.defs('EPSG:' + crs, projres.results[
-                            0].proj4)
-                        resolve(crs)
-                    })
+                        projres => {
+                            proj4.defs('EPSG:' + crs, projres.results[
+                                0].proj4)
+                            resolve(crs)
+                        })
             }
         })
         return promise
@@ -56,7 +57,7 @@ class FeatureHelper {
                 var promise = new Promise((resolve, reject) => {
                     const features = wmsGetFeatureInfoFormats[
                         'application/json'].readFeatures(
-                        result)
+                            result)
                     if (features.length > 0) {
                         const crs = result.features.length > 0 ?
                             result.crs.properties.name.split(":").pop() : null
@@ -75,6 +76,6 @@ class FeatureHelper {
                 return promise
             })
     }
-    
+
 }
 export default new FeatureHelper()
