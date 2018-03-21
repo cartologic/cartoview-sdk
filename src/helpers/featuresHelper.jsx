@@ -12,14 +12,21 @@ class FeatureHelper {
     getFormat = (format) => {
         return wmsGetFeatureInfoFormats[format]
     }
-    getFeatureInfoUrl = (layer, coordinate, view, infoFormat) => {
+    getFeatureInfoUrl = (layer, coordinate, view, infoFormat, token = null) => {
         const resolution = view.getResolution(),
             projection = view.getProjection()
         const url = layer.getSource().getGetFeatureInfoUrl(coordinate,
             resolution, projection, {
                 'INFO_FORMAT': infoFormat
             })
-        return `${url}&FEATURE_COUNT=10`
+        let query = {
+            "FEATURE_COUNT": 10
+        }
+        if (token) {
+            query.access_token = token
+        }
+        const paramterizedURL = new URLS(null).getParamterizedURL(url, query)
+        return paramterizedURL
     }
     getFeatureByURL = (proxyURL = null, url) => {
         const proxiedURL = new URLS(proxyURL).getProxiedURL(url)
@@ -35,12 +42,12 @@ class FeatureHelper {
         })
         return transformedFeatures
     }
-    featureIdentify = (map, coordinate, proxyURL = null) => {
+    featureIdentify = (map, coordinate, proxyURL = null, token) => {
         const view = map.getView()
         let identifyPromises = LayersHelper.getLayers(map.getLayers().getArray())
             .map(
                 (layer) => this.readFeaturesThenTransform(
-                    proxyURL, layer, coordinate, view, map))
+                    proxyURL, layer, coordinate, view, map, token))
         let identifyAllPromise = new Promise((resolve, reject) => {
             Promise.all(identifyPromises).then(result => {
                 const featureIdentifyResult = result.reduce((array1,
@@ -66,9 +73,9 @@ class FeatureHelper {
         })
         return promise
     }
-    readFeaturesThenTransform = (proxyURL = null, layer, coordinate, view, map) => {
+    readFeaturesThenTransform = (proxyURL = null, layer, coordinate, view, map, token) => {
         const url = this.getFeatureInfoUrl(layer, coordinate, view,
-            'application/json')
+            'application/json', token)
         return this.getFeatureByURL(proxyURL, url).then(
             (result) => {
                 var promise = new Promise((resolve, reject) => {
