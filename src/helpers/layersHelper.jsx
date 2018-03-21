@@ -3,9 +3,13 @@ import GeoJSON from 'ol/format/geojson'
 import Group from 'ol/layer/group'
 import ImageWMS from 'ol/source/imagewms'
 import TileWMS from 'ol/source/tilewms'
+import URLS from '../urls/urls'
 import Vector from 'ol/source/vector'
 import { default as VectorLayer } from 'ol/layer/vector'
 class LayersHelper {
+    constructor(proxyURL = null) {
+        this.urlHelpers = new URLS(proxyURL)
+    }
     isWMSLayer = (layer) => {
         return layer.getSource() instanceof TileWMS || layer.getSource() instanceof ImageWMS
     }
@@ -14,6 +18,21 @@ class LayersHelper {
     }
     layerNameSpace = (typeName) => {
         return typeName.split(":")[0]
+    }
+    getLegendURL = (layer) => {
+        let wmsURL = null
+        try {
+            wmsURL = layer.getSource().getUrls()[0]
+        } catch (err) {
+            wmsURL = layer.getSource().getUrl()
+        }
+        const url = this.urlHelpers.getParamterizedURL(wmsURL, {
+            'REQUEST': 'GetLegendGraphic',
+            'VERSION': '1.0.0',
+            'FORMAT': 'image/png',
+            "LAYER": layer.getProperties().name
+        })
+        return url
     }
     addSelectionLayer = (map, featureCollection, styleFunction) => {
         let source = new Vector({ features: featureCollection })

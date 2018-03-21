@@ -1,13 +1,16 @@
+import { doGet, doPost } from '../utils/utils'
+
 import DragRotateAndZoom from 'ol/interaction/dragrotateandzoom'
 import FileSaver from 'file-saver'
 import FullScreen from 'ol/control/fullscreen'
 import Map from 'ol/map'
+import MapConfigService from '../services/MapConfigService'
+import MapConfigTransformService from '../services/MapConfigTransformService'
 import OSM from 'ol/source/osm'
 import OverviewMap from 'ol/control/overviewmap'
 import Projection from 'ol/proj/projection'
 import Tile from 'ol/layer/tile'
 import View from 'ol/view'
-import { doPost } from '../utils/utils'
 import extent from 'ol/extent'
 import interaction from 'ol/interaction'
 import pica from 'pica/dist/pica'
@@ -17,6 +20,13 @@ class BasicViewerHelper {
     getCenterOfExtent = (ext) => {
         const center = extent.getCenter(ext)
         return center
+    }
+    mapInit = (mapJsonUrl, map, proxyURL, callback = () => { }) => {
+        doGet(mapJsonUrl).then((config) => {
+            MapConfigService.load(MapConfigTransformService.transform(
+                config), map, proxyURL)
+            callback()
+        })
     }
     resizeSendThumbnail = (originalCanvas, thumnailURL) => {
         const picaResizer = pica()
