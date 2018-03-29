@@ -38,7 +38,7 @@ class FeatureHelper {
             feature.getGeometry().transform('EPSG:' + crs, map.getView()
                 .getProjection())
             let attributesAlias = {}
-            attributes.map(metaAttr => attributesAlias[metaAttr.attribute] = metaAttr.attribute_labelattribute_label)
+            attributes.map(metaAttr => attributesAlias[metaAttr.attribute] = metaAttr.attribute_label)
             feature.set("_layerTitle", layer.get('title'))
             feature.set("_layerName", layer.get('name'))
             feature.set("_attributesAlias", attributesAlias)
@@ -56,10 +56,17 @@ class FeatureHelper {
                 (layer) => {
                     let attributes = []
                     if (metaAtrributesURL) {
-                        this.getAtrributes(metaAtrributesURL).then(metaAttributes => attributes = metaAttributes.objects)
+                        return this.getAtrributes(metaAtrributesURL + "?layer__typename=" + layer.get("name")).then(metaAttributes => {
+                            attributes = metaAttributes.objects
+                            return this.readFeaturesThenTransform(
+                                proxyURL, layer, coordinate, view, map, token, attributes)
+                        })
                     }
-                    this.readFeaturesThenTransform(
-                        proxyURL, layer, coordinate, view, map, token, attributes)
+                    else {
+                        return this.readFeaturesThenTransform(
+                            proxyURL, layer, coordinate, view, map, token, attributes)
+                    }
+
                 })
         let identifyAllPromise = new Promise((resolve, reject) => {
             Promise.all(identifyPromises).then(result => {
