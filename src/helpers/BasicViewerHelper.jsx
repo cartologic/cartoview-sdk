@@ -7,10 +7,11 @@ import Map from 'ol/map'
 import MapConfigService from '../services/MapConfigService'
 import MapConfigTransformService from '../services/MapConfigTransformService'
 import OSM from 'ol/source/osm'
-import OverviewMap from 'ol/control/overviewmap'
 import Projection from 'ol/proj/projection'
+import ScaleLine from 'ol/control/scaleline'
 import Tile from 'ol/layer/tile'
 import View from 'ol/view'
+import ZoomSlider from 'ol/control/zoomslider'
 import extent from 'ol/extent'
 import interaction from 'ol/interaction'
 import pica from 'pica/dist/pica'
@@ -69,12 +70,15 @@ class BasicViewerHelper {
                     source: new OSM()
                 })
             ],
+            loadTilesWhileInteracting: true,
             view: new View({
                 center: proj.fromLonLat([0, 0]),
-                zoom: 6
+                minZoom: 5,
+                maxZoom: 19,
             })
         })
-        map.addControl(new OverviewMap())
+        map.addControl(new ScaleLine())
+        map.addControl(new ZoomSlider())
         map.addControl(new FullScreen({ source: "root" }))
         return map
     }
