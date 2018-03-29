@@ -32,22 +32,35 @@ class FeatureHelper {
         const proxiedURL = new URLS(proxyURL).getProxiedURL(url)
         return doGet(proxiedURL)
     }
-    transformFeatures = (layer, features, map, crs) => {
+    transformFeatures = (layer, features, map, crs, attributes) => {
         let transformedFeatures = []
         features.forEach((feature) => {
             feature.getGeometry().transform('EPSG:' + crs, map.getView()
                 .getProjection())
+            let attributesAlias = {}
+            attributes.map(metaAttr => attributesAlias[metaAttr.attribute] = metaAttr.attribute_labelattribute_label)
             feature.set("_layerTitle", layer.get('title'))
+            feature.set("_layerName", layer.get('name'))
+            feature.set("_attributesAlias", attributesAlias)
             transformedFeatures.push(feature)
         })
         return transformedFeatures
     }
-    featureIdentify = (map, coordinate, proxyURL = null, token) => {
+    getAtrributes = (metaAtrributesURL) => {
+        return doGet(metaAtrributesURL)
+    }
+    featureIdentify = (map, coordinate, proxyURL = null, token, metaAtrributesURL = null) => {
         const view = map.getView()
         let identifyPromises = LayersHelper.getLayers(map.getLayers().getArray())
             .map(
-                (layer) => this.readFeaturesThenTransform(
-                    proxyURL, layer, coordinate, view, map, token))
+                (layer) => {
+                    let attributes = []
+                    if (metaAtrributesURL) {
+                        this.getAtrributes(metaAtrributesURL).then(metaAttributes => attributes = metaAttributes.objects)
+                    }
+                    this.readFeaturesThenTransform(
+                        proxyURL, layer, coordinate, view, map, token, attributes)
+                })
         let identifyAllPromise = new Promise((resolve, reject) => {
             Promise.all(identifyPromises).then(result => {
                 const featureIdentifyResult = result.reduce((array1,
@@ -73,7 +86,7 @@ class FeatureHelper {
         })
         return promise
     }
-    readFeaturesThenTransform = (proxyURL = null, layer, coordinate, view, map, token) => {
+    readFeaturesThenTransform = (proxyURL = null, layer, coordinate, view, map, token, attributes) => {
         const url = this.getFeatureInfoUrl(layer, coordinate, view,
             'application/json', token)
         return this.getFeatureByURL(proxyURL, url).then(
@@ -88,7 +101,7 @@ class FeatureHelper {
                         this.getCRS(crs).then((newCRS) => {
                             const transformedFeatures = this.transformFeatures(
                                 layer, features,
-                                map, newCRS)
+                                map, newCRS, attributes)
                             resolve(transformedFeatures)
                         }, (error) => {
                             reject(error)
