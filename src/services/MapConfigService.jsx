@@ -103,7 +103,7 @@ class MapConfigService {
             }
             props.attributions = attributions;
         }
-        props.wrapX = false;
+        props.wrapX = true;
         if (config.type === 'Cluster') {
             props.source = this.generateSourceFromConfig(map, config.source,
                 opt_proxy, opt_wfsUrl, opt_wfsTypeName);
