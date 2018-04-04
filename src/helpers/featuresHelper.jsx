@@ -1,9 +1,11 @@
+import { doExternalGet, doGet } from '../utils/utils'
+
 import GeoJSON from 'ol/format/geojson'
 import LayersHelper from './LayersHelper'
 import URLS from '../urls/urls'
 import WMSGetFeatureInfo from 'ol/format/wmsgetfeatureinfo'
-import { doGet } from '../utils/utils'
 import proj4 from 'proj4'
+
 export const wmsGetFeatureInfoFormats = {
     'application/json': new GeoJSON(),
     'application/vnd.ogc.gml': new WMSGetFeatureInfo()
@@ -83,7 +85,7 @@ class FeatureHelper {
             if (proj4.defs('EPSG:' + crs)) {
                 resolve(crs)
             } else {
-                doGet(`https://epsg.io/?format=json&q=${crs}`).then(
+                doExternalGet(`https://epsg.io/?format=json&q=${crs}`).then(
                     projres => {
                         proj4.defs('EPSG:' + crs, projres.results[
                             0].proj4)

@@ -1,7 +1,9 @@
 import URLS from '../urls/urls'
-const nominatimURL = " http://nominatim.openstreetmap.org/search?"
+import { doExternalGet } from '../utils/utils'
+
 class OSMGeoCoding {
     constructor() {
+        this.nominatimURL = window.location.protocol + "//nominatim.openstreetmap.org/search?"
         this.OSMSettings = {
             q: '',
             format: 'json',
@@ -19,18 +21,11 @@ class OSMGeoCoding {
     }
     getURL = (query) => {
         const paramters = this.getPatamters(query)
-        return this.urls.getParamterizedURL(nominatimURL, paramters)
-    }
-    doGet = () => {
-        return fetch(this.url, {
-            method: 'GET'
-        }).then((response) => {
-            return response.json()
-        })
+        return this.urls.getParamterizedURL(this.nominatimURL, paramters)
     }
     search = (query, callBack) => {
         this.url = this.getURL(query)
-        this.doGet().then(result => callBack(result))
+        doExternalGet(this.url).then(result => callBack(result))
     }
 }
 export default new OSMGeoCoding()

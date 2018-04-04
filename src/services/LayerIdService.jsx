@@ -12,12 +12,12 @@
 
 class LayerIdService {
     constructor() {
-      this._counter = 0;
+        this._counter = 0
     }
     generateId() {
-      this._counter++;
-      return 'sdk-layer-' + this._counter;
+        this._counter++
+        return 'sdk-layer-' + this._counter
     }
-  }
-  
-  export default new LayerIdService();
+}
+
+export default new LayerIdService()

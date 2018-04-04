@@ -24,6 +24,29 @@ export const doGet = (url, extraHeaders = {}, type = 'json') => {
         }
     })
 }
+export const doExternalGet = (url, extraHeaders = {}, type = 'json') => {
+    return fetch(url, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            ...extraHeaders
+        }
+    }).then((response) => {
+        try {
+            if (type === 'json') {
+                return response.json()
+            } else if (type === 'xml') {
+                return response.text()
+            }
+        } catch (err) {
+            console.error(url, err.message)
+            if (!response.ok) {
+                console.error(url, response.status)
+            }
+            return response.text().then(errMsg => { throw errMsg })
+        }
+    })
+}
 export const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1)
 }

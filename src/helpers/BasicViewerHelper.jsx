@@ -59,11 +59,26 @@ class BasicViewerHelper {
         })
         map.renderSync()
     }
-    getMap = () => {
+    getControls = (config) => {
+        let controls = []
+        if (config.dragRotateAndZoom) {
+            controls.push(new DragRotateAndZoom())
+        }
+        if (config.scaleLine) {
+            controls.push(new ScaleLine())
+        }
+        if (config.zoomSlider) {
+            controls.push(new ZoomSlider())
+        }
+        if (config.fullScreen) {
+            controls.push(new FullScreen({ source: "root" }))
+        }
+        return controls
+    }
+    getMap = (config = { dragRotateAndZoom: true, scaleLine: true, zoomSlider: true, fullScreen: true }) => {
+        let controls = this.getControls(config)
         let map = new Map({
-            interactions: interaction.defaults().extend([
-                new DragRotateAndZoom()
-            ]),
+            interactions: interaction.defaults().extend(controls),
             layers: [
                 new Tile({
                     title: 'OpenStreetMap',
@@ -77,9 +92,6 @@ class BasicViewerHelper {
                 maxZoom: 19,
             })
         })
-        map.addControl(new ScaleLine())
-        map.addControl(new ZoomSlider())
-        map.addControl(new FullScreen({ source: "root" }))
         return map
     }
     zoomToLocation = (pointArray, map, changeZoom = true) => {
