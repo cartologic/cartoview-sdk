@@ -1,4 +1,4 @@
-import LayerHelper from '../helpers/LayersHelper'
+import LayerHelper from '../helpers/layersHelper'
 import URLS from '../urls/urls'
 import WFS from 'ol/format/wfs'
 import { doGet } from '../utils/utils'
@@ -8,13 +8,13 @@ export default class WFSService {
         this.wfsURL = wfsURL
         this.urlsHelper = new URLS(proxyURL)
     }
-    getFeatures = (typeNames, projectionCode = null, startIndex, pagination = null, sortBy = null, cqlFilter = null) => {
+    buildGetFeatureURL(typeNames, projectionCode = null, startIndex = null, pagination = null, sortBy = null, cqlFilter = null, format = "json") {
         let query = {
             service: 'wfs',
             version: '2.0.0',
             request: 'GetFeature',
             typeNames,
-            outputFormat: 'json',
+            outputFormat: format,
 
         }
         if (projectionCode) {
@@ -34,10 +34,15 @@ export default class WFSService {
         }
         const requestUrl = this.urlsHelper.getParamterizedURL(this.wfsURL, query)
         const proxiedURL = this.urlsHelper.getProxiedURL(requestUrl)
-        return doGet(proxiedURL)
+        return proxiedURL
 
     }
-    wfsTransaction = (feature, layerName, targetNameSpace, crs, type = "insert") => {
+    getFeatures(typeNames, projectionCode = null, startIndex = null, pagination = null, sortBy = null, cqlFilter = null, format = "json") {
+        const url = this.buildGetFeatureURL(typeNames, projectionCode, startIndex, pagination, sortBy, cqlFilter, format)
+        return doGet(url)
+
+    }
+    wfsTransaction(feature, layerName, targetNameSpace, crs, type = "insert") {
         let formatWFS = new WFS
         var formatGMLOptions = {
             featureNS: targetNameSpace,
@@ -62,7 +67,7 @@ export default class WFSService {
         var stringXML = serializer.serializeToString(node)
         return stringXML
     }
-    readResponse = (response) => {
+    readResponse(response) {
         let formatWFS = new WFS
         return formatWFS.readTransactionResponse(response)
     }

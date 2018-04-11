@@ -10,22 +10,47 @@ class LayersHelper {
     constructor(proxyURL = null) {
         this.urlHelpers = new URLS(proxyURL)
     }
-    isWMSLayer = (layer) => {
+    isWMSLayer(layer) {
         return layer.getSource() instanceof TileWMS || layer.getSource() instanceof ImageWMS
     }
-    layerName = (typeName) => {
+    layerName(typeName) {
         return typeName.split(":").pop()
     }
-    layerNameSpace = (typeName) => {
+    layerNameSpace(typeName) {
         return typeName.split(":")[0]
     }
-    getLegendURL = (layer) => {
-        let wmsURL = null
+    getLayerURL(layer, accessToken = null) {
+        var wmsURL = null
         try {
             wmsURL = layer.getSource().getUrls()[0]
         } catch (err) {
             wmsURL = layer.getSource().getUrl()
         }
+
+        return `${wmsURL}${accessToken ? `?access_token=${accessToken}` : ""}`
+    }
+    getLocalLayers(map) {
+        let layers = []
+        map.getLayers().getArray().map(layer => {
+            if (!(layer instanceof Group)) {
+                layers.push(layer)
+            }
+        })
+        return layers.slice(0).reverse()
+    }
+    getLegends(layers, accessToken) {
+        let legends = []
+        layers.map(layer => {
+            const layerTitle = layer.getProperties().title
+            legends.push({
+                layer: layerTitle,
+                url: this.getLegendURL(layer, accessToken)
+            })
+        })
+        return legends
+    }
+    getLegendURL(layer, accessToken) {
+        let wmsURL = this.getLayerURL(layer, accessToken)
         const url = this.urlHelpers.getParamterizedURL(wmsURL, {
             'REQUEST': 'GetLegendGraphic',
             'VERSION': '1.0.0',
@@ -34,7 +59,7 @@ class LayersHelper {
         })
         return url
     }
-    addSelectionLayer = (map, featureCollection, styleFunction) => {
+    addSelectionLayer(map, featureCollection, styleFunction) {
         let source = new Vector({ features: featureCollection })
         new VectorLayer({
             source: source,
@@ -51,7 +76,7 @@ class LayersHelper {
             AnimationHelper.flash(e.feature, map)
         })
     }
-    getLayers = (mapLayers) => {
+    getLayers(mapLayers) {
         let children = []
         mapLayers.forEach((layer) => {
             if (layer instanceof Group) {
@@ -63,7 +88,7 @@ class LayersHelper {
         })
         return children
     }
-    getWMSLayer = (name, layers) => {
+    getWMSLayer(name, layers) {
         let wmsLayer = null
         layers.forEach((layer) => {
             if (layer instanceof Group) {

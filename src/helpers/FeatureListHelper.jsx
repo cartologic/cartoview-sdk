@@ -1,4 +1,4 @@
-import LayerHelper from './LayersHelper'
+import LayerHelper from './layersHelper'
 import { doGet } from '../utils/utils'
 import filter from 'ol/format/filter'
 import isURL from 'validator/lib/isURL'

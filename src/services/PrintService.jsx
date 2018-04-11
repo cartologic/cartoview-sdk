@@ -1,13 +1,10 @@
 const DOTS_PER_INCH = 96
 const INCHES_PER_METER = 39.37
 
-import { doGet, doPost } from '../utils/utils'
+import { doGet, doPost, downloadFile } from '../utils/utils'
 
-import FileSaver from 'file-saver'
-import Group from 'ol/layer/group'
-import LayersHelper from '../helpers/LayersHelper'
+import LayersHelper from '../helpers/layersHelper'
 import URLS from '../urls/urls'
-import { getCRSFToken } from '../helpers/helpers'
 
 export default class Print {
     constructor(map, geoserverURL, accessToken, proxyURL = null) {
@@ -36,19 +33,10 @@ export default class Print {
         this.geoserverScales = scales
         return scales
     }
-    downloadPDF(url) {
-        fetch(url, {
-            method: 'GET',
-            credentials: 'include',
-            headers: new Headers({
-                "X-CSRFToken": getCRSFToken(),
-            }),
-        }).then(response => response.blob()).then(data => FileSaver.saveAs(data, 'print.pdf'))
-    }
-    createPDF(title, comment) {
+    createPDF(title, comment, layout) {
         const targetURL = this.urls.getProxiedURL(this.pdfInfo.createURL)
-        doPost(targetURL, this.printPayload(title, comment), { 'content-type': 'application/json' }).then(result => {
-            this.downloadPDF(this.urls.getProxiedURL(result.getURL))
+        doPost(targetURL, this.printPayload(title, comment, layout), { 'content-type': 'application/json' }).then(result => {
+            downloadFile(this.urls.getProxiedURL(result.getURL), "print.pdf")
         })
     }
     getClosestScale(scale) {
@@ -58,45 +46,19 @@ export default class Print {
         return 0.35
 
     }
-    getScale() {
+    getMapScales() {
         const mapResolution = this.map.getView().getResolution()
         const mapProjection = this.map.getView().getProjection()
         const pointResolution = mapProjection.getMetersPerUnit() * mapResolution
-        const scale = Math.round(pointResolution * DOTS_PER_INCH * INCHES_PER_METER)
-        return scale
-    }
-    getMapLayers() {
-        let layers = []
-        this.map.getLayers().getArray().map(layer => {
-            if (!(layer instanceof Group)) {
-                layers.push(layer)
-            }
+        let scales = {}
+        this.pdfInfo.dpis.map(dpi => {
+            const dpiNumber = Number(dpi.value)
+            scales[dpi.name] = Math.round(pointResolution * dpiNumber * INCHES_PER_METER)
         })
-        return layers.slice(0).reverse()
+        return scales
     }
     getLayerParams(layer) {
         return layer.getSource().getParams()
-    }
-    getLayerURL(layer) {
-        var wmsURL = null
-        try {
-            wmsURL = layer.getSource().getUrls()[0];
-        } catch (err) {
-            wmsURL = layer.getSource().getUrl();
-        }
-
-        return `${wmsURL}${accessToken ? `?access_token=${accessToken}` : ""}`
-    }
-    createLegends(layers) {
-        let legends = []
-        layers.map(layer => {
-            const layerTitle = layer.getProperties().title
-            legends.push({
-                layer: layerTitle,
-                url: LayersHelper.getLegendURL(layer)
-            })
-        })
-        return legends
     }
     getLegendItem(legend) {
         let template = `{  
@@ -116,17 +78,16 @@ export default class Print {
         let printLegends = legends.map(legend => this.getLegendItem(legend))
         return printLegends.join(",")
     }
-    printPayload(title, comment, layout = "A4") {
-        let layers = this.getMapLayers()
-        let legends = this.createLegends(layers)
+    printPayload(title, comment, layout = "A4", dpi = DOTS_PER_INCH) {
+        let layers = LayersHelper.getLocalLayers(this.map)
+        let legends = LayersHelper.getLegends(layers, this.accessToken)
         layers = layers.map(lyr => '"' + lyr.getProperties().name + '"')
-        let scale = this.getScale()
-        scale = this.getClosestScale(scale)
-        const newLocal = this.map;
+        const mapScale = this.getMapScales()[dpi]
+        const printScale = this.getClosestScale(mapScale)
         let payload = `
         {  
             "units":"m",
-            "srs":"${newLocal.getView().getProjection().getCode()}",
+            "srs":"${this.map.getView().getProjection().getCode()}",
             "layout":"${layout}",
             "dpi":${DOTS_PER_INCH},
             "outputFormat":"pdf",
@@ -198,7 +159,7 @@ export default class Print {
             "pages":[  
                {  
                   "center":[${this.map.getView().getCenter().join(',')}],
-                  "scale":${scale},
+                  "scale":${printScale},
                   "rotation":${this.map.getView().getRotation()}
                }
             ],

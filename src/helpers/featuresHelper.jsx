@@ -1,7 +1,7 @@
 import { doExternalGet, doGet } from '../utils/utils'
 
 import GeoJSON from 'ol/format/geojson'
-import LayersHelper from './LayersHelper'
+import LayersHelper from './layersHelper'
 import URLS from '../urls/urls'
 import WMSGetFeatureInfo from 'ol/format/wmsgetfeatureinfo'
 import proj4 from 'proj4'
@@ -11,10 +11,10 @@ export const wmsGetFeatureInfoFormats = {
     'application/vnd.ogc.gml': new WMSGetFeatureInfo()
 }
 class FeatureHelper {
-    getFormat = (format) => {
+    getFormat(format) {
         return wmsGetFeatureInfoFormats[format]
     }
-    getFeatureInfoUrl = (layer, coordinate, view, infoFormat, token = null) => {
+    getFeatureInfoUrl(layer, coordinate, view, infoFormat, token = null) {
         const resolution = view.getResolution(),
             projection = view.getProjection()
         const url = layer.getSource().getGetFeatureInfoUrl(coordinate,
@@ -30,11 +30,11 @@ class FeatureHelper {
         const paramterizedURL = new URLS(null).getParamterizedURL(url, query)
         return paramterizedURL
     }
-    getFeatureByURL = (proxyURL = null, url) => {
+    getFeatureByURL(proxyURL = null, url) {
         const proxiedURL = new URLS(proxyURL).getProxiedURL(url)
         return doGet(proxiedURL)
     }
-    transformFeatures = (layer, features, map, crs, attributes) => {
+    transformFeatures(layer, features, map, crs, attributes) {
         let transformedFeatures = []
         features.forEach((feature) => {
             feature.getGeometry().transform('EPSG:' + crs, map.getView()
@@ -48,10 +48,10 @@ class FeatureHelper {
         })
         return transformedFeatures
     }
-    getAtrributes = (metaAtrributesURL) => {
+    getAtrributes(metaAtrributesURL) {
         return doGet(metaAtrributesURL)
     }
-    featureIdentify = (map, coordinate, proxyURL = null, token, metaAtrributesURL = null) => {
+    featureIdentify(map, coordinate, proxyURL = null, token, metaAtrributesURL = null) {
         const view = map.getView()
         let identifyPromises = LayersHelper.getLayers(map.getLayers().getArray())
             .map(
@@ -80,7 +80,7 @@ class FeatureHelper {
         return identifyAllPromise
 
     }
-    getCRS = (crs) => {
+    getCRS(crs) {
         let promise = new Promise((resolve, reject) => {
             if (proj4.defs('EPSG:' + crs)) {
                 resolve(crs)
@@ -95,7 +95,7 @@ class FeatureHelper {
         })
         return promise
     }
-    readFeaturesThenTransform = (proxyURL = null, layer, coordinate, view, map, token, attributes) => {
+    readFeaturesThenTransform(proxyURL = null, layer, coordinate, view, map, token, attributes) {
         const url = this.getFeatureInfoUrl(layer, coordinate, view,
             'application/json', token)
         return this.getFeatureByURL(proxyURL, url).then(

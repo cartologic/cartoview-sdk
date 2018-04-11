@@ -1,3 +1,4 @@
+import FileSaver from 'file-saver'
 import { getCRSFToken } from '../helpers/helpers'
 
 export const doGet = (url, extraHeaders = {}, type = 'json') => {
@@ -53,6 +54,7 @@ export const capitalizeFirstLetter = (string) => {
 export const doPost = (url, data, extraHeaders = {}, type = 'json') => {
     return fetch(url, {
         method: 'POST',
+        mode: 'cors',
         credentials: 'include',
         headers: new Headers({
             "X-CSRFToken": getCRSFToken(),
@@ -75,4 +77,13 @@ export const doPost = (url, data, extraHeaders = {}, type = 'json') => {
         }
 
     })
+}
+export const downloadFile = (url, fileName) => {
+    fetch(url, {
+        method: 'GET',
+        credentials: 'include',
+        headers: new Headers({
+            "X-CSRFToken": getCRSFToken(),
+        }),
+    }).then(response => response.blob()).then(data => FileSaver.saveAs(data, fileName))
 }

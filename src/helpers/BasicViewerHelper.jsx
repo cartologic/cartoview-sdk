@@ -18,18 +18,18 @@ import pica from 'pica/dist/pica'
 import proj from 'ol/proj'
 
 class BasicViewerHelper {
-    getCenterOfExtent = (ext) => {
+    getCenterOfExtent(ext) {
         const center = extent.getCenter(ext)
         return center
     }
-    mapInit = (mapJsonUrl, map, proxyURL, callback = () => { }) => {
+    mapInit(mapJsonUrl, map, proxyURL, callback = () => { }) {
         doGet(mapJsonUrl).then((config) => {
             MapConfigService.load(MapConfigTransformService.transform(
                 config), map, proxyURL)
             callback()
         })
     }
-    resizeSendThumbnail = (originalCanvas, thumnailURL) => {
+    resizeSendThumbnail(originalCanvas, thumnailURL) {
         const picaResizer = pica()
         let resizedCanvas = document.createElement('canvas')
         resizedCanvas.width = 280
@@ -52,14 +52,14 @@ class BasicViewerHelper {
                 }
             })
     }
-    setThumbnail = (map, thumnailURL) => {
+    setThumbnail(map, thumnailURL) {
         map.once('postcompose', (event) => {
             var canvas = event.context.canvas
             this.resizeSendThumbnail(canvas, thumnailURL)
         })
         map.renderSync()
     }
-    getControls = (config) => {
+    getControls(config) {
         let controls = []
         if (config.scaleLine) {
             controls.push(new ScaleLine())
@@ -72,14 +72,14 @@ class BasicViewerHelper {
         }
         return controls
     }
-    getInteractions = (config) => {
+    getInteractions(config) {
         let interactions = []
         if (config.dragRotateAndZoom) {
             interactions.push(new DragRotateAndZoom())
         }
         return interactions
     }
-    getMap = (config = { dragRotateAndZoom: true, scaleLine: true, zoomSlider: true, fullScreen: true }) => {
+    getMap(config = { dragRotateAndZoom: true, scaleLine: true, zoomSlider: true, fullScreen: true }) {
         let controls = this.getControls(config)
         let interactions = this.getInteractions(config)
         let map = new Map({
@@ -100,7 +100,7 @@ class BasicViewerHelper {
         controls.map(ctrl => map.addControl(ctrl))
         return map
     }
-    zoomToLocation = (pointArray, map, changeZoom = true) => {
+    zoomToLocation(pointArray, map, changeZoom = true) {
         const zoom = map.getView().getMaxZoom()
         const lonLat = this.reprojectLocation(pointArray, map)
         map.getView().setCenter(lonLat)
@@ -109,7 +109,7 @@ class BasicViewerHelper {
         }
 
     }
-    reprojectLocation = (pointArray, map, from = 'EPSG:4326') => {
+    reprojectLocation(pointArray, map, from = 'EPSG:4326') {
         /**
          * Reproject x,y .
          * @constructor
@@ -121,7 +121,7 @@ class BasicViewerHelper {
         }
         return proj.transform(pointArray, from, mapProjection)
     }
-    reprojectExtent = (extent, map, from = 'EPSG:4326') => {
+    reprojectExtent(extent, map, from = 'EPSG:4326') {
         /**
          * Reproject extent .
          * @constructor
@@ -135,10 +135,10 @@ class BasicViewerHelper {
         const transformedExtent = from === mapProjection.getCode() ? extent : proj.transformExtent(extent, from, mapProjection)
         return transformedExtent
     }
-    fitExtent = (extent, map, duration = undefined) => {
+    fitExtent(extent, map, duration = undefined) {
         map.getView().fit(extent, map.getSize(), { duration })
     }
-    exportMap = (map) => {
+    exportMap(map) {
         map.once('postcompose', (event) => {
             let canvas = event.context.canvas
             if (navigator.msSaveBlob) {
