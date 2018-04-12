@@ -36,7 +36,8 @@ export default class Print {
     createPDF(title, comment, layout) {
         const targetURL = this.urls.getProxiedURL(this.pdfInfo.createURL)
         doPost(targetURL, this.printPayload(title, comment, layout), { 'content-type': 'application/json' }).then(result => {
-            downloadFile(this.urls.getProxiedURL(result.getURL), "print.pdf")
+            const pdfURL = this.urls.getProxiedURL(result.getURL)
+            downloadFile(pdfURL, "print.pdf")
         })
     }
     getClosestScale(scale) {

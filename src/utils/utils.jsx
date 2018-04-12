@@ -82,8 +82,12 @@ export const downloadFile = (url, fileName) => {
     fetch(url, {
         method: 'GET',
         credentials: 'include',
+        cache: 'no-cache',
+        mode: 'cors',
         headers: new Headers({
             "X-CSRFToken": getCRSFToken(),
         }),
-    }).then(response => response.blob()).then(data => FileSaver.saveAs(data, fileName))
+    }).then(response => response.blob().then(data => {
+        FileSaver.saveAs(data, fileName)
+    }))
 }
