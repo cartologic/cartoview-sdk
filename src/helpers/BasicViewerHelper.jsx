@@ -94,6 +94,7 @@ class BasicViewerHelper {
             view: new View({
                 center: proj.fromLonLat([0, 0]),
                 minZoom: 5,
+                zoom: 1,
                 maxZoom: 19,
             })
         })

@@ -15,6 +15,7 @@ export default class Print {
         this.pdfInfo = null
         this.geoserverScales = null
         this.proxyURL = proxyURL
+        this.geoserverPdfURL = `${this.geoserverURL}pdf/`
         this.accessToken = accessToken
         this.urls = new URLS(this.proxyURL)
         this.getPrintInfo().then(result => this.getGeoserverScales())
@@ -34,10 +35,13 @@ export default class Print {
         return scales
     }
     createPDF(title, comment, layout) {
-        const targetURL = this.urls.getProxiedURL(this.pdfInfo.createURL)
-        doPost(targetURL, this.printPayload(title, comment, layout), { 'content-type': 'application/json' }).then(result => {
-            const pdfURL = this.urls.getProxiedURL(result.getURL)
-            downloadFile(pdfURL, "print.pdf")
+        const targetURL = this.geoserverPdfURL + "create.json"
+        const proxiedURL = this.urls.getProxiedURL(targetURL)
+        doPost(proxiedURL, this.printPayload(title, comment, layout), { 'content-type': 'application/json' }).then(result => {
+            let pdfURL = result.getURL
+            const pfdFileID = pdfURL.split('/').pop()
+            const downloadURL = this.urls.getProxiedURL(this.geoserverPdfURL + pfdFileID)
+            downloadFile(downloadURL, "print.pdf")
         })
     }
     getClosestScale(scale) {
