@@ -22,10 +22,10 @@ class BasicViewerHelper {
         const center = extent.getCenter(ext)
         return center
     }
-    mapInit(mapJsonUrl, map, proxyURL, callback = () => { }) {
+    mapInit(mapJsonUrl, map, proxyURL, access_token, callback = () => { }) {
         doGet(mapJsonUrl).then((config) => {
             MapConfigService.load(MapConfigTransformService.transform(
-                config), map, proxyURL)
+                config), map, proxyURL, access_token)
             callback()
         })
     }

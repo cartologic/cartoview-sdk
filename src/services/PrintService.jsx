@@ -20,6 +20,16 @@ export default class Print {
         this.urls = new URLS(this.proxyURL)
         this.getPrintInfo().then(result => this.getGeoserverScales())
     }
+    getGeoserverDPIS() {
+        let dpisPromise = new Promise((resolve, reject) => {
+            if (!this.pdfInfo) {
+                this.getPrintInfo().then(pdfInfo => resolve(pdfInfo.dpis))
+            } else {
+                resolve(this.pdfInfo.dpis)
+            }
+        })
+        return dpisPromise
+    }
     getPrintInfo() {
         let infoPromise = new Promise((resolve, reject) => {
             doGet(this.infoURL).then(result => {
@@ -34,10 +44,10 @@ export default class Print {
         this.geoserverScales = scales
         return scales
     }
-    createPDF(title, comment, layout) {
+    createPDF(title, comment, layout, dpi) {
         const targetURL = this.geoserverPdfURL + "create.json"
         const proxiedURL = this.urls.getProxiedURL(targetURL)
-        doPost(proxiedURL, this.printPayload(title, comment, layout), { 'content-type': 'application/json' }).then(result => {
+        doPost(proxiedURL, this.printPayload(title, comment, layout, dpi), { 'content-type': 'application/json' }).then(result => {
             let pdfURL = result.getURL
             const pfdFileID = pdfURL.split('/').pop()
             const downloadURL = this.urls.getProxiedURL(this.geoserverPdfURL + pfdFileID)
@@ -94,7 +104,7 @@ export default class Print {
             "units":"m",
             "srs":"${this.map.getView().getProjection().getCode()}",
             "layout":"${layout}",
-            "dpi":${DOTS_PER_INCH},
+            "dpi":${dpi},
             "outputFormat":"pdf",
             "comment":"${comment}",
             "mapTitle":"${title}",

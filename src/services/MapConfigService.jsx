@@ -41,6 +41,7 @@ import TileImage from 'ol/source/tileimage'
 import TileJSON from 'ol/source/tilejson'
 import TileUTFGrid from 'ol/source/tileutfgrid'
 import TileWMS from 'ol/source/tilewms'
+import URLS from '../urls/urls'
 import Vector from 'ol/layer/vector'
 import VectorTile from 'ol/layer/vectortile'
 import View from 'ol/view'
@@ -91,7 +92,7 @@ let layersMaping = {
 
 }
 class MapConfigService {
-    generateSourceFromConfig(map, config, opt_proxy, opt_wfsUrl,
+    generateSourceFromConfig(map, config, opt_proxy, access_token, opt_wfsUrl,
         opt_wfsTypeName) {
         var props = config.properties || {};
         if (props.attributions) {
@@ -106,7 +107,7 @@ class MapConfigService {
         props.wrapX = true;
         if (config.type === 'Cluster') {
             props.source = this.generateSourceFromConfig(map, config.source,
-                opt_proxy, opt_wfsUrl, opt_wfsTypeName);
+                opt_proxy, access_token, opt_wfsUrl, opt_wfsTypeName);
         }
         if (config.type === 'TMS') {
             config.type = 'XYZ';
@@ -134,21 +135,23 @@ class MapConfigService {
             return source;
         }
         var sourceObj = new sources[config.type](props);
-        if (opt_proxy && config.type === 'TileWMS') {
+        if ((opt_proxy || access_token) && config.type === 'TileWMS') {
             sourceObj.once('tileloaderror', function () {
                 sourceObj.setTileLoadFunction((function () {
                     var tileLoadFn = sourceObj.getTileLoadFunction();
                     return function (tile, src) {
-                        tileLoadFn(tile, util.getProxiedUrl(
-                            src, opt_proxy
-                        ));
+                        let query = access_token ? { "access_token": access_token } : {}
+                        let urlHelper = new URLS(opt_proxy)
+                        let targetURL = urlHelper.getParamterizedURL(src, query)
+                        targetURL = urlHelper.getProxiedURL(targetURL)
+                        tileLoadFn(tile, targetURL);
                     };
                 })());
             });
         }
         return sourceObj;
     }
-    generateLayerFromConfig(config, map, opt_proxy) {
+    generateLayerFromConfig(config, map, opt_proxy, access_token) {
         var type = config.type;
         var layerConfig = config.properties || {};
         layerConfig.id = LayerIdService.generateId();
@@ -156,14 +159,14 @@ class MapConfigService {
             layerConfig.layers = [];
             for (var i = 0, ii = config.children.length; i < ii; ++i) {
                 layerConfig.layers.push(this.generateLayerFromConfig(
-                    config.children[i], map, opt_proxy));
+                    config.children[i], map, opt_proxy, access_token));
             }
         }
         var layer = new layersMaping[type](layerConfig);
         var sourceConfig = config.source;
         if (sourceConfig) {
             var source = this.generateSourceFromConfig(map, sourceConfig,
-                opt_proxy, layerConfig.url, layerConfig.name);
+                opt_proxy, access_token, layerConfig.url, layerConfig.name);
             layer.setSource(source);
         }
         return layer;
@@ -274,7 +277,7 @@ class MapConfigService {
         }
         return config;
     }
-    load(mapConfig, map, opt_proxy) {
+    load(mapConfig, map, opt_proxy, access_token) {
         var viewConfig = mapConfig.view;
         var layerConfig = mapConfig.layers;
         var remove = [];
@@ -289,7 +292,7 @@ class MapConfigService {
         }
         for (i = 0, ii = layerConfig.length; i < ii; ++i) {
             var layer = this.generateLayerFromConfig(layerConfig[i],
-                map, opt_proxy);
+                map, opt_proxy, access_token);
             map.addLayer(layer);
         }
         var view = map.getView(),
