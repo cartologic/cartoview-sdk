@@ -12,6 +12,7 @@ import ScaleLine from 'ol/control/scaleline'
 import Tile from 'ol/layer/tile'
 import View from 'ol/view'
 import ZoomSlider from 'ol/control/zoomslider'
+import control from 'ol/control'
 import extent from 'ol/extent'
 import interaction from 'ol/interaction'
 import pica from 'pica/dist/pica'
@@ -24,8 +25,7 @@ class BasicViewerHelper {
     }
     mapInit(mapJsonUrl, map, proxyURL, access_token, callback = () => { }) {
         doGet(mapJsonUrl).then((config) => {
-            MapConfigService.load(MapConfigTransformService.transform(
-                config), map, proxyURL, access_token)
+            MapConfigService.load(MapConfigTransformService.transform(config), map, proxyURL, access_token)
             callback()
         })
     }
@@ -79,11 +79,23 @@ class BasicViewerHelper {
         }
         return interactions
     }
-    getMap(config = { dragRotateAndZoom: true, scaleLine: true, zoomSlider: true, fullScreen: true }) {
+    getMap(config = {
+        dragRotateAndZoom: true, scaleLine: true, zoomSlider: true, fullScreen: true, zoom: {
+            minZoom: 5,
+            zoom: 1,
+            maxZoom: 19,
+        }
+    }) {
+        let zoomConfig = config && config.zoom ? config.zoom : {
+            minZoom: 5,
+            zoom: 1,
+            maxZoom: 19,
+        }
         let controls = this.getControls(config)
         let interactions = this.getInteractions(config)
         let map = new Map({
             interactions: interaction.defaults().extend(interactions),
+            controls: control.defaults().extend(controls),
             layers: [
                 new Tile({
                     title: 'OpenStreetMap',
@@ -93,12 +105,9 @@ class BasicViewerHelper {
             loadTilesWhileInteracting: true,
             view: new View({
                 center: proj.fromLonLat([0, 0]),
-                minZoom: 5,
-                zoom: 1,
-                maxZoom: 19,
+                ...zoomConfig
             })
         })
-        controls.map(ctrl => map.addControl(ctrl))
         return map
     }
     zoomToLocation(pointArray, map, changeZoom = true) {

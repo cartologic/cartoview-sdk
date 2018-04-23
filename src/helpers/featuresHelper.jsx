@@ -1,7 +1,7 @@
 import { doExternalGet, doGet } from '../utils/utils'
 
 import GeoJSON from 'ol/format/geojson'
-import LayersHelper from './layersHelper'
+import LayersHelper from './LayersHelper'
 import URLS from '../urls/urls'
 import WMSGetFeatureInfo from 'ol/format/wmsgetfeatureinfo'
 import proj4 from 'proj4'

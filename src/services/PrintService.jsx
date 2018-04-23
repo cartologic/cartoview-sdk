@@ -3,7 +3,7 @@ const INCHES_PER_METER = 39.37
 
 import { doGet, doPost, downloadFile } from '../utils/utils'
 
-import LayersHelper from '../helpers/layersHelper'
+import LayersHelper from '../helpers/LayersHelper'
 import URLS from '../urls/urls'
 
 export default class Print {
@@ -32,7 +32,8 @@ export default class Print {
     }
     getPrintInfo() {
         let infoPromise = new Promise((resolve, reject) => {
-            doGet(this.infoURL).then(result => {
+            const targetURL = this.urls.getProxiedURL(this.infoURL)
+            doGet(targetURL).then(result => {
                 this.pdfInfo = result
                 resolve(this.pdfInfo)
             })

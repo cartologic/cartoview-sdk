@@ -3,7 +3,7 @@ class URLS {
         this.proxy = proxyURL
     }
     encodeURL = (url) => {
-        return encodeURIComponent(url).replace(/%20/g, '+')
+        return encodeURIComponent(url)
     }
     getParamterizedURL = (url, query) => {
         let newURL = url

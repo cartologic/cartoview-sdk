@@ -1,4 +1,4 @@
-import LayerHelper from '../helpers/layersHelper'
+import LayerHelper from '../helpers/LayersHelper'
 import URLS from '../urls/urls'
 import WFS from 'ol/format/wfs'
 import { doGet } from '../utils/utils'
