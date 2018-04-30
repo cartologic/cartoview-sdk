@@ -8,6 +8,18 @@ export default class WFSService {
         this.wfsURL = wfsURL
         this.urlsHelper = new URLS(proxyURL)
     }
+    describeFeatureType(typeName) {
+        let query = {
+            service: "wfs",
+            version: "1.1.0",
+            request: "DescribeFeatureType",
+            typeName,
+            outputFormat: "application/json"
+        }
+        let targetURL = this.urlsHelper.getParamterizedURL(this.wfsURL, query)
+        targetURL = this.urlsHelper.getProxiedURL(targetURL)
+        return doGet(targetURL)
+    }
     buildGetFeatureURL(typeNames, projectionCode = null, startIndex = null, pagination = null, sortBy = null, cqlFilter = null, format = "json") {
         let query = {
             service: 'wfs',

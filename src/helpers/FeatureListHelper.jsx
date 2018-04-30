@@ -1,16 +1,17 @@
 import LayerHelper from './LayersHelper'
 import { doGet } from '../utils/utils'
+import { error } from 'util';
 import filter from 'ol/format/filter'
 import isURL from 'validator/lib/isURL'
 
 class FeatureListHelper {
-    getAttachmentTags = (config) => {
+    getAttachmentTags(config) {
         const configTags = config.attachmentTags
         const tags = (configTags && configTags.length > 0) ? configTags : [
             `feature_list_${LayerHelper.layerName(config.layer)}`]
         return tags
     }
-    getSelectOptions = (arr, label = null, value = null) => {
+    getSelectOptions(arr, label = null, value = null) {
         let options = []
         if (arr && arr.length > 0) {
             options = arr.map(item => {
@@ -23,16 +24,16 @@ class FeatureListHelper {
         return options
 
     }
-    loadAttachments = (attachmentURL) => {
+    loadAttachments(attachmentURL) {
         return doGet(attachmentURL)
     }
-    checkImageSrc = (src, good, bad) => {
+    checkImageSrc(src, good, bad) {
         let img = new Image()
         img.onload = good
         img.onerror = bad
         img.src = src
     }
-    searchById = (id) => {
+    searchById(id) {
         const { attachments } = this.state
         let result = []
         if (attachments) {
@@ -44,7 +45,7 @@ class FeatureListHelper {
         }
         return result
     }
-    getFilterByName = (attrs, attrName) => {
+    getFilterByName(attrs, attrName) {
         let attributeType = null
         if (attrs) {
             attrs.forEach(attr => {
@@ -55,21 +56,49 @@ class FeatureListHelper {
         }
         return attributeType
     }
-    getFilter = (config, filterType, value) => {
+    getFilter(filterAttribute, filterType, value, op = "=") {
         /* 
         this function should return the proper filter based on 
         filter type
         working with strings & numbers
         test Needed 😈
         */
-        let olFilter = filter.like(config.filters, '%' + value + '%',
-            undefined, undefined, undefined, false)
-        if (filterType !== 'string') {
-            olFilter = filter.equalTo(config.filters, value)
+        let olFilter = null
+        if (filterType !== "string") {
+            switch (op) {
+                case 'LIKE':
+                    olFilter = filter.like(filterAttribute, '%' + value + '%',
+                        undefined, undefined, undefined, false)
+                    break
+                case '=':
+                    olFilter = filter.equalTo(filterAttribute, value)
+                    break
+                case '<':
+                    olFilter = filter.lessThan(filterAttribute, value)
+                    break
+                case '<=':
+                    olFilter = filter.lessThanOrEqualTo(filterAttribute, value)
+                    break
+                case '>':
+                    olFilter = filter.greaterThan(filterAttribute, value)
+                    break
+                case '>=':
+                    olFilter = filter.greaterThanOrEqualTo(filterAttribute, value)
+                    break
+                case '<>':
+                    olFilter = filter.notEqualTo(filterAttribute, value)
+                    break
+                default:
+                    throw (error("Invalid Filter"))
+
+            }
+        }else{
+            olFilter = filter.like(filterAttribute, '%' + value + '%',
+                        undefined, undefined, undefined, false)
         }
         return olFilter
     }
-    checkURL = (value) => {
+    checkURL(value) {
         /* validator validate strings only */
         if (typeof (value) === "string") {
             return isURL(value)

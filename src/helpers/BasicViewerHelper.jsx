@@ -110,6 +110,32 @@ class BasicViewerHelper {
         })
         return map
     }
+    getPrintMap() {
+        let map = new Map({
+            interactions: interaction.defaults({
+                doubleClickZoom: false,
+                mouseWheelZoom: false,
+                shiftDragZoom: false,
+                pinchZoom: false
+            }),
+            controls: [],
+            layers: [
+                new Tile({
+                    title: 'OpenStreetMap',
+                    source: new OSM()
+                })
+            ],
+            loadTilesWhileInteracting: true,
+            view: new View({
+                center: proj.fromLonLat([0, 0]),
+                minZoom: 5,
+                zoom: 1,
+                maxZoom: 19,
+            })
+        })
+        map.addControl(new ScaleLine())
+        return map
+    }
     zoomToLocation(pointArray, map, changeZoom = true) {
         const zoom = map.getView().getMaxZoom()
         const lonLat = this.reprojectLocation(pointArray, map)

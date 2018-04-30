@@ -13,6 +13,7 @@ export default class Print {
         this.geoserverWMSURL = `${geoserverURL}wms${accessToken ? `?access_token=${accessToken}` : ""}`
         this.infoURL = `${geoserverURL}pdf/info.json`
         this.pdfInfo = null
+        this.dpi = DOTS_PER_INCH
         this.geoserverScales = null
         this.proxyURL = proxyURL
         this.geoserverPdfURL = `${this.geoserverURL}pdf/`
@@ -45,15 +46,28 @@ export default class Print {
         this.geoserverScales = scales
         return scales
     }
-    createPDF(title, comment, layout, dpi) {
-        const targetURL = this.geoserverPdfURL + "create.json"
+    createPDF(title, comment, layout, dpi, scale) {
+        let targetURL = this.geoserverPdfURL + "create.json"
+        targetURL = this.urls.getParamterizedURL(targetURL, { "access_token": this.accessToken })
         const proxiedURL = this.urls.getProxiedURL(targetURL)
-        doPost(proxiedURL, this.printPayload(title, comment, layout, dpi), { 'content-type': 'application/json' }).then(result => {
+        doPost(proxiedURL, this.printPayload(title, comment, layout, scale, dpi), { 'content-type': 'application/json' }).then(result => {
             let pdfURL = result.getURL
             const pfdFileID = pdfURL.split('/').pop()
-            const downloadURL = this.urls.getProxiedURL(this.geoserverPdfURL + pfdFileID)
+            let downloadURL = this.urls.getParamterizedURL(this.geoserverPdfURL + pfdFileID, { "access_token": this.accessToken })
+            downloadURL = this.urls.getProxiedURL(this.geoserverPdfURL + pfdFileID)
             downloadFile(downloadURL, "print.pdf")
         })
+    }
+    getScaleIndex(target) {
+        let index = -1
+        for (let i = 0; i < this.pdfInfo.scales; i++) {
+            const scale = this.pdfInfo.scales
+            if (target === Number(scale.value)) {
+                index = i
+                break
+            }
+        }
+        return index
     }
     getClosestScale(scale) {
         if (this.geoserverScales) {
@@ -62,16 +76,24 @@ export default class Print {
         return 0.35
 
     }
-    getMapScales() {
-        const mapResolution = this.map.getView().getResolution()
+    getScaleFromResolution(resolution = null, dpi = DOTS_PER_INCH) {
+        const mapResolution = !resolution ? this.map.getView().getResolution() : resolution
         const mapProjection = this.map.getView().getProjection()
         const pointResolution = mapProjection.getMetersPerUnit() * mapResolution
+        return Math.round(pointResolution * dpi * INCHES_PER_METER)
+    }
+    getMapScales() {
         let scales = {}
         this.pdfInfo.dpis.map(dpi => {
             const dpiNumber = Number(dpi.value)
-            scales[dpi.name] = Math.round(pointResolution * dpiNumber * INCHES_PER_METER)
+            scales[dpi.name] = this.getScaleFromResolution(null, dpiNumber)
         })
         return scales
+    }
+    getResolutionFromScale(scale, dpi) {
+        const mapProjection = this.map.getView().getProjection()
+        let resolution = scale / (dpi * INCHES_PER_METER * mapProjection.getMetersPerUnit())
+        return resolution
     }
     getLayerParams(layer) {
         return layer.getSource().getParams()
@@ -94,12 +116,10 @@ export default class Print {
         let printLegends = legends.map(legend => this.getLegendItem(legend))
         return printLegends.join(",")
     }
-    printPayload(title, comment, layout = "A4", dpi = DOTS_PER_INCH) {
+    printPayload(title, comment, layout = "A4", scale, dpi = DOTS_PER_INCH) {
         let layers = LayersHelper.getLocalLayers(this.map)
         let legends = LayersHelper.getLegends(layers, this.accessToken)
         layers = layers.map(lyr => '"' + lyr.getProperties().name + '"')
-        const mapScale = this.getMapScales()[dpi]
-        const printScale = this.getClosestScale(mapScale)
         let payload = `
         {  
             "units":"m",
@@ -175,7 +195,7 @@ export default class Print {
             "pages":[  
                {  
                   "center":[${this.map.getView().getCenter().join(',')}],
-                  "scale":${printScale},
+                  "scale":${scale},
                   "rotation":${this.map.getView().getRotation()}
                }
             ],

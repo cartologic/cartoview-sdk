@@ -10,17 +10,17 @@ export const doGet = (url, extraHeaders = {}, type = 'json') => {
             ...extraHeaders
         }
     }).then((response) => {
-        try {
-            if (type === 'json') {
-                return response.json()
-            } else if (type === 'xml') {
-                return response.text()
+        if (response.ok) {
+            try {
+                if (type === 'json') {
+                    return response.json()
+                } else if (type === 'xml') {
+                    return response.text()
+                }
+            } catch (err) {
+                return response.text().then(errMsg => { throw errMsg })
             }
-        } catch (err) {
-            console.error(url, err.message)
-            if (!response.ok) {
-                console.error(url, response.status)
-            }
+        }else{
             return response.text().then(errMsg => { throw errMsg })
         }
     })
