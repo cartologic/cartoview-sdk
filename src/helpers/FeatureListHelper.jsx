@@ -1,7 +1,5 @@
 import LayerHelper from './LayersHelper'
 import { doGet } from '../utils/utils'
-import { error } from 'util';
-import filter from 'ol/format/filter'
 import isURL from 'validator/lib/isURL'
 
 class FeatureListHelper {
@@ -55,48 +53,6 @@ class FeatureListHelper {
             })
         }
         return attributeType
-    }
-    getFilter(filterAttribute, filterType, value, op = "=") {
-        /* 
-        this function should return the proper filter based on 
-        filter type
-        working with strings & numbers
-        test Needed 😈
-        */
-        let olFilter = null
-        if (filterType !== "string") {
-            switch (op) {
-                case 'LIKE':
-                    olFilter = filter.like(filterAttribute, '%' + value + '%',
-                        undefined, undefined, undefined, false)
-                    break
-                case '=':
-                    olFilter = filter.equalTo(filterAttribute, value)
-                    break
-                case '<':
-                    olFilter = filter.lessThan(filterAttribute, value)
-                    break
-                case '<=':
-                    olFilter = filter.lessThanOrEqualTo(filterAttribute, value)
-                    break
-                case '>':
-                    olFilter = filter.greaterThan(filterAttribute, value)
-                    break
-                case '>=':
-                    olFilter = filter.greaterThanOrEqualTo(filterAttribute, value)
-                    break
-                case '<>':
-                    olFilter = filter.notEqualTo(filterAttribute, value)
-                    break
-                default:
-                    throw (error("Invalid Filter"))
-
-            }
-        }else{
-            olFilter = filter.like(filterAttribute, '%' + value + '%',
-                        undefined, undefined, undefined, false)
-        }
-        return olFilter
     }
     checkURL(value) {
         /* validator validate strings only */
