@@ -15,15 +15,15 @@ class OSMGeoCoding {
         this.url = null
         this.urls = new URLS(null)
     }
-    getPatamters = (query) => {
+    getPatamters(query) {
         this.OSMSettings.q = query
         return this.OSMSettings
     }
-    getURL = (query) => {
+    getURL(query) {
         const paramters = this.getPatamters(query)
         return this.urls.getParamterizedURL(this.nominatimURL, paramters)
     }
-    search = (query, callBack) => {
+    search(query, callBack) {
         this.url = this.getURL(query)
         doExternalGet(this.url).then(result => callBack(result))
     }

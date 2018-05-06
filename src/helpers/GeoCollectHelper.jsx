@@ -16,24 +16,24 @@ class GeoCollectHelper {
     constructor() {
         this.styleHelper = new StyleHelper()
     }
-    getGeomerty = (coordinates, geometryType) => {
+    getGeomerty(coordinates, geometryType) {
         let point = new FeatureTypeMapping[geometryType](geometryType === "Point" ? coordinates : [coordinates, coordinates], 'XY')
         return point
     }
-    getPointFeature = (position, geometryName = "the_geom", geometryType = "Point") => {
+    getPointFeature(position, geometryName = "the_geom", geometryType = "Point") {
         let feature = new Feature({})
         feature.setGeometryName(geometryName)
         feature.setGeometry(this.getGeomerty(position, geometryType))
         return feature
     }
-    getModifyInteraction = (feature) => {
+    getModifyInteraction(feature) {
         let modifyInteraction = new Modify({
             features: new Collection([feature]),
             pixelTolerance: 32
         })
         return modifyInteraction
     }
-    getVectorLayer = (feature) => {
+    getVectorLayer(feature) {
         let vectorLayer = new Vector({
             source: new VectorSource({
                 features: [feature]
@@ -42,7 +42,7 @@ class GeoCollectHelper {
         })
         return vectorLayer
     }
-    buildForm = (attributes) => {
+    buildForm(attributes) {
         let schema = {},
             fields = {},
             value = {}

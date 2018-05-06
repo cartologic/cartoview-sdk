@@ -49,12 +49,12 @@ class StyleHelper {
     constructor(iconImage = "https://openlayers.org/en/v4.6.5/examples/data/icon.png") {
         this.icon = iconImage
     }
-    styleFunction = (feature) => {
+    styleFunction(feature) {
         const style = feature ? styles[feature.getGeometry().getType()] :
             null
         return style
     }
-    getMarker = () => {
+    getMarker() {
         const marker = new Style({
             image: new Icon({
                 anchor: [
