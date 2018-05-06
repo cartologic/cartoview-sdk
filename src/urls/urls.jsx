@@ -2,23 +2,26 @@ class URLS {
     constructor(proxyURL) {
         this.proxy = proxyURL
     }
-    encodeURL = (url) => {
+    encodeURL(url) {
         return encodeURIComponent(url)
     }
-    getParamterizedURL = (url, query) => {
+    getParamterizedURL(url, query) {
         let newURL = url
-        if (Object.keys(query).length > 0 && newURL.indexOf('?') === -1) {
-            newURL += '?'
-        } else {
-            newURL += '&'
+        if (query && query != {}) {
+            if (Object.keys(query).length > 0 && newURL.indexOf('?') === -1) {
+                newURL += '?'
+            } else {
+                newURL += '&'
+            }
+            let newQuery = []
+            Object.keys(query).map((key) => {
+                newQuery.push(`${key}=${query[key]}`)
+            })
+            newURL += newQuery.join('&')
         }
-        let newQuery = []
-        Object.keys(query).map((key, index) => {
-            newQuery.push(`${key}=${query[key]}`)
-        })
-        return newURL + newQuery.join('&')
+        return newURL
     }
-    getProxiedURL = (url) => {
+    getProxiedURL(url) {
         const proxy = this.proxy
         let proxiedURL = url
         if (proxy) {
