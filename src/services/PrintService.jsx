@@ -119,7 +119,11 @@ export default class Print {
     printPayload(title, comment, layout = "A4", scale, dpi = DOTS_PER_INCH) {
         let layers = LayersHelper.getLocalLayers(this.map)
         let legends = LayersHelper.getLegends(layers, this.accessToken)
-        layers = layers.map(lyr => '"' + lyr.getProperties().name + '"')
+        layers = layers.map(lyr => {
+            if (lyr.getVisible()) {
+                return '"' + lyr.getProperties().name + '"'
+            }
+        })
         let payload = `
         {  
             "units":"m",
