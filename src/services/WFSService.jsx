@@ -1,6 +1,7 @@
 import GML3 from 'ol/format/gml3'
 import LayerHelper from '../helpers/LayersHelper'
 import LayersHelper from '../helpers/LayersHelper'
+import Map from 'ol/map'
 import URLS from '../urls/urls'
 import WFS from 'ol/format/wfs'
 import { doGet } from '../utils/utils'
@@ -37,22 +38,36 @@ export default class WFSService {
         }
         return attributeType
     }
-    writeWFSGetFeature(map, typename, filterObj, maxFeatures = 100) {
+    writeWFSGetFeature(map, typename, filterObj, maxFeatures = 25, startIndex = 0) {
         let wfsPromise = new Promise((resolve, reject) => {
             this.describeFeatureType(typename).then(featureType => {
                 const nameSpaceURL = featureType.targetNamespace
-                const attrType = this.getAttributeType(featureType.featureTypes[0].properties, filterObj.attribute)
-                var request = new WFS({
-                    gmlFormat: new GML3()
-                }).writeGetFeature({
-                    srsName: map.getView().getProjection().getCode(),
+                let srsName = null
+                if (map instanceof Map) {
+                    srsName = map.getView().getProjection().getCode()
+                } else {
+                    srsName = map
+                }
+                let props = {
+                    srsName,
                     featureNS: nameSpaceURL,
                     featurePrefix: LayersHelper.layerNameSpace(typename),
                     outputFormat: 'application/json',
                     featureTypes: [LayersHelper.layerName(typename)],
-                    filter: this.getFilter(filterObj.attribute, attrType, filterObj.value, filterObj.operator),
-                    maxFeatures
-                })
+                    maxFeatures,
+                    startIndex
+                }
+                if (filterObj) {
+                    const attrType = this.getAttributeType(featureType.featureTypes[0].properties, filterObj.attribute)
+                    const filter = this.getFilter(filterObj.attribute, attrType, filterObj.value, filterObj.operator)
+                    props = {
+                        ...props,
+                        filter
+                    }
+                }
+                let request = new WFS({
+                    gmlFormat: new GML3()
+                }).writeGetFeature(props)
                 resolve(request)
             }).catch(err => {
                 reject(err)
@@ -70,51 +85,55 @@ export default class WFSService {
         let olFilter = null
         if (filterType !== "string") {
             switch (op) {
-                case '<':
-                    olFilter = filter.lessThan(filterAttribute, value)
-                    break
-                case '<=':
-                    olFilter = filter.lessThanOrEqualTo(filterAttribute, value)
-                    break
-                case '>':
-                    olFilter = filter.greaterThan(filterAttribute, value)
-                    break
-                case '>=':
-                    olFilter = filter.greaterThanOrEqualTo(filterAttribute, value)
-                    break
-                case '<>':
-                    olFilter = filter.notEqualTo(filterAttribute, value)
-                    break
-                default:
-                    throw Error("Invalid Filter")
+            case '=':
+                olFilter = filter.equalTo(filterAttribute, value)
+                break
+            case '<':
+                olFilter = filter.lessThan(filterAttribute, value)
+                break
+            case '<=':
+                olFilter = filter.lessThanOrEqualTo(filterAttribute, value)
+                break
+            case '>':
+                olFilter = filter.greaterThan(filterAttribute, value)
+                break
+            case '>=':
+                olFilter = filter.greaterThanOrEqualTo(filterAttribute, value)
+                break
+            case '<>':
+                olFilter = filter.notEqualTo(filterAttribute, value)
+                break
+            default:
+                throw Error("Invalid Filter")
 
             }
         } else {
             switch (op) {
-                case 'LIKE':
-                    olFilter = filter.like(filterAttribute, '%' + value + '%',
+            case 'LIKE':
+                olFilter = filter.like(filterAttribute, '%' + value + '%',
                         undefined, undefined, undefined, false)
-                    break
-                case '=':
-                    olFilter = filter.equalTo(filterAttribute, value)
-                    break
-                case '<>':
-                    olFilter = filter.notEqualTo(filterAttribute, value)
-                    break
-                default:
-                    throw Error("Invalid Filter")
+                break
+            case '=':
+                olFilter = filter.equalTo(filterAttribute, value)
+                break
+            case '<>':
+                olFilter = filter.notEqualTo(filterAttribute, value)
+                break
+            default:
+                throw Error("Invalid Filter")
 
             }
         }
         return olFilter
     }
-    buildGetFeatureURL(typeNames, projectionCode = null, startIndex = null, pagination = null, sortBy = null, cqlFilter = null, format = "json") {
+    buildGetFeatureURL(typeNames, projectionCode = null, startIndex = null, pagination = null, sortBy = null, cqlFilter = null, format = "json", token) {
         let query = {
             service: 'wfs',
             version: '2.0.0',
             request: 'GetFeature',
             typeNames,
             outputFormat: format,
+            access_token: token
 
         }
         if (projectionCode) {
@@ -142,30 +161,36 @@ export default class WFSService {
         return doGet(url)
 
     }
-    wfsTransaction(feature, layerName, targetNameSpace, crs, type = "insert") {
-        let formatWFS = new WFS
-        var formatGMLOptions = {
-            featureNS: targetNameSpace,
-            featurePrefix: LayerHelper.layerNameSpace(layerName),
-            featureType: LayerHelper.layerName(layerName),
-            gmlOptions: {
-                srsName: `${crs}`
-            },
-        }
-        let node = null
-        if (type === "insert") {
-            node = formatWFS.writeTransaction([feature], null, null, formatGMLOptions)
-        } else if (type == "delete") {
-            node = formatWFS.writeTransaction(null, null, [feature], formatGMLOptions)
-        } else if (type === "update") {
-            node = formatWFS.writeTransaction(null, [feature], null, formatGMLOptions)
+    wfsTransaction(feature, layerName, crs, type = "insert") {
+        let writeTransactionPromise = new Promise((resolve, reject) => {
+            this.describeFeatureType(layerName).then(featureType => {
+                const nameSpaceURL = featureType.targetNamespace
+                let formatWFS = new WFS
+                var formatGMLOptions = {
+                    featureNS: nameSpaceURL,
+                    featurePrefix: LayerHelper.layerNameSpace(layerName),
+                    featureType: LayerHelper.layerName(layerName),
+                    gmlOptions: {
+                        srsName: `${crs}`
+                    },
+                }
+                let node = null
+                if (type === "insert") {
+                    node = formatWFS.writeTransaction([feature], null, null, formatGMLOptions)
+                } else if (type == "delete") {
+                    node = formatWFS.writeTransaction(null, null, [feature], formatGMLOptions)
+                } else if (type === "update") {
+                    node = formatWFS.writeTransaction(null, [feature], null, formatGMLOptions)
 
-        } else {
-            throw Error("Invalid Type")
-        }
-        var serializer = new XMLSerializer()
-        var stringXML = serializer.serializeToString(node)
-        return stringXML
+                } else {
+                    reject("Invalid Type")
+                }
+                var serializer = new XMLSerializer()
+                var stringXML = serializer.serializeToString(node)
+                resolve(stringXML)
+            })
+        })
+        return writeTransactionPromise
     }
     readResponse(response) {
         let formatWFS = new WFS
