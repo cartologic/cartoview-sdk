@@ -119,11 +119,13 @@ export default class Print {
     printPayload(title, comment, layout = "A4", scale, dpi = DOTS_PER_INCH) {
         let layers = LayersHelper.getLocalLayers(this.map)
         let legends = LayersHelper.getLegends(layers, this.accessToken)
-        layers = layers.map(lyr => {
+        let layerTemplate = []
+        layers.forEach(lyr => {
             if (lyr.getVisible()) {
-                return '"' + lyr.getProperties().name + '"'
+                //TODO: use this layerTemplate.push(`"${lyr.getProperties().name}"`)
+                layerTemplate.push('"' + lyr.getProperties().name + '"')
             }
-        })
+        }, this)
         let payload = `
         {  
             "units":"m",
@@ -185,7 +187,7 @@ export default class Print {
                   "opacity":1,
                   "singleTile":false,
                   "type":"WMS",
-                  "layers":[${layers.join(',')}],
+                  "layers":[${layerTemplate.join(',')}],
                   "format":"image/png",
                   "styles":[  
                      ""
