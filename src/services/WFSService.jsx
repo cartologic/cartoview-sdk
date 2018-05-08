@@ -38,32 +38,74 @@ export default class WFSService {
         }
         return attributeType
     }
-    writeWFSGetFeature(map, typename, filterObj, maxFeatures = 25, startIndex = 0) {
+    getWriteFeatureCRS(map) {
+        let srsName = null
+        if (map instanceof Map) {
+            srsName = map.getView().getProjection().getCode()
+        } else {
+            srsName = map
+        }
+        return srsName
+    }
+    buildOlFilters(attributes, filters) {
+        let olFilters = []
+        if (filters) {
+            for (let i = 0; i < filters.length; i++) {
+                const filterObj = filters[i]
+                if (filterObj) {
+                    const attrType = this.getAttributeType(attributes, filterObj.attribute)
+                    const filter = this.getFilter(filterObj.attribute, attrType, filterObj.value, filterObj.operator)
+                    olFilters.push(filter)
+                }
+            }
+        }
+        return olFilters
+    }
+    combineFilters(filters, combinationType = 'any') {
+        if (filters && !(filters instanceof Array)) {
+            throw Error("filters must be array")
+        }
+        let finalFilter = null
+        if (filters.length > 1) {
+            switch (combinationType.toLowerCase()) {
+            case 'any':
+                finalFilter = filter.or(...filters)
+                break
+            case 'all':
+                finalFilter = filter.and(...filters)
+                break
+            default:
+                throw Error("Invalid Combination Type")
+            }
+        } else if (filters.length === 1) {
+            finalFilter = filters[0]
+        }
+        return finalFilter
+    }
+    writeWFSGetFeature(map, typename, wfsOptions = { filters: [], outputFormat: 'application/json', maxFeatures: 25, startIndex: 0, combinationType: 'any', pagination: true }) {
+        const { filters, maxFeatures, startIndex, combinationType, pagination, outputFormat } = wfsOptions
         let wfsPromise = new Promise((resolve, reject) => {
             this.describeFeatureType(typename).then(featureType => {
                 const nameSpaceURL = featureType.targetNamespace
-                let srsName = null
-                if (map instanceof Map) {
-                    srsName = map.getView().getProjection().getCode()
-                } else {
-                    srsName = map
-                }
+                const srsName = this.getWriteFeatureCRS(map)
+                const olFilters = this.buildOlFilters(featureType.featureTypes[0].properties, filters)
+                const finalFilter = this.combineFilters(olFilters, combinationType)
                 let props = {
                     srsName,
                     featureNS: nameSpaceURL,
                     featurePrefix: LayersHelper.layerNameSpace(typename),
-                    outputFormat: 'application/json',
+                    outputFormat: outputFormat,
                     featureTypes: [LayersHelper.layerName(typename)],
-                    maxFeatures,
-                    startIndex
                 }
-                if (filterObj) {
-                    const attrType = this.getAttributeType(featureType.featureTypes[0].properties, filterObj.attribute)
-                    const filter = this.getFilter(filterObj.attribute, attrType, filterObj.value, filterObj.operator)
+                if (pagination) {
                     props = {
                         ...props,
-                        filter
+                        maxFeatures,
+                        startIndex
                     }
+                }
+                if (finalFilter) {
+                    props.filter = finalFilter
                 }
                 let request = new WFS({
                     gmlFormat: new GML3()
