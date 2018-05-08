@@ -34,16 +34,18 @@ class FeatureHelper {
         const proxiedURL = new URLS(proxyURL).getProxiedURL(url)
         return doGet(proxiedURL)
     }
-    transformFeatures(layer, features, map, crs, attributes) {
+    transformFeatures(layer, features, map, crs, attributes = []) {
         let transformedFeatures = []
         features.forEach((feature) => {
             feature.getGeometry().transform('EPSG:' + crs, map.getView()
                 .getProjection())
-            let attributesAlias = {}
-            attributes.map(metaAttr => attributesAlias[metaAttr.attribute] = metaAttr.attribute_label)
+            if (attributes && attributes.length > 0) {
+                let attributesAlias = {}
+                attributes.map(metaAttr => attributesAlias[metaAttr.attribute] = metaAttr.attribute_label)
+                feature.set("_attributesAlias", attributesAlias)
+            }
             feature.set("_layerTitle", layer.get('title'))
             feature.set("_layerName", layer.get('name'))
-            feature.set("_attributesAlias", attributesAlias)
             transformedFeatures.push(feature)
         })
         return transformedFeatures
@@ -61,6 +63,10 @@ class FeatureHelper {
                         return this.getAtrributes(metaAtrributesURL + "?layer__typename=" + layer.get("name")).then(metaAttributes => {
                             attributes = metaAttributes.objects
                             return this.readFeaturesThenTransform(
+                                proxyURL, layer, coordinate, view, map, token, attributes)
+                        }).catch(err => {
+                            console.error(err)
+                            this.readFeaturesThenTransform(
                                 proxyURL, layer, coordinate, view, map, token, attributes)
                         })
                     }
@@ -90,7 +96,7 @@ class FeatureHelper {
                         proj4.defs('EPSG:' + crs, projres.results[
                             0].proj4)
                         resolve(crs)
-                    })
+                    }).catch(err => { reject(err) })
             }
         })
         return promise
