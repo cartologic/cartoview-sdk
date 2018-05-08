@@ -59,17 +59,30 @@ class FeatureHelper {
             .map(
                 (layer) => {
                     let attributes = []
-                    if (metaAtrributesURL) {
-                        return this.getAtrributes(metaAtrributesURL + "?layer__typename=" + layer.get("name")).then(metaAttributes => {
-                            attributes = metaAttributes.objects
-                            return this.readFeaturesThenTransform(
-                                proxyURL, layer, coordinate, view, map, token, attributes)
-                        })
-                    }
-                    else {
-                        return this.readFeaturesThenTransform(
-                            proxyURL, layer, coordinate, view, map, token, attributes)
-                    }
+                    const layerName = layer.get("name")
+                    let identifyPromiseHandler = new Promise((resolve, reject) => {
+                        if (metaAtrributesURL) {
+                            this.getAtrributes(metaAtrributesURL + "?layer__typename=" + layerName).then(metaAttributes => {
+                                attributes = metaAttributes.objects
+                                this.readFeaturesThenTransform(proxyURL, layer, coordinate, view, map, token, attributes).then(result => {
+                                    resolve(result)
+                                }).catch(err => {
+                                    console.error(`Layer ${layerName} => Feature Identify Error:`, err)
+                                    resolve([])
+                                })
+                            })
+                        }
+                        else {
+                            this.readFeaturesThenTransform(proxyURL, layer, coordinate, view, map, token, attributes).then(result => {
+                                resolve(result)
+                            }).catch(err => {
+                                console.error(`Layer ${layerName} => Feature Identify Error:`, err)
+                                resolve([])
+                            })
+                        }
+                    })
+                    return identifyPromiseHandler
+
 
                 })
         let identifyAllPromise = new Promise((resolve, reject) => {

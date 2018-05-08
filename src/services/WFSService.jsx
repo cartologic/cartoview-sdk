@@ -208,7 +208,7 @@ export default class WFSService {
             this.describeFeatureType(layerName).then(featureType => {
                 const nameSpaceURL = featureType.targetNamespace
                 let formatWFS = new WFS
-                var formatGMLOptions = {
+                let formatGMLOptions = {
                     featureNS: nameSpaceURL,
                     featurePrefix: LayerHelper.layerNameSpace(layerName),
                     featureType: LayerHelper.layerName(layerName),
