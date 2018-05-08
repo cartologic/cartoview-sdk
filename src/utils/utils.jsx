@@ -20,7 +20,7 @@ export const doGet = (url, extraHeaders = {}, type = 'json') => {
             } catch (err) {
                 return response.text().then(errMsg => { throw errMsg })
             }
-        }else{
+        } else {
             return response.text().then(errMsg => { throw errMsg })
         }
     })
@@ -33,19 +33,21 @@ export const doExternalGet = (url, extraHeaders = {}, type = 'json') => {
             ...extraHeaders
         }
     }).then((response) => {
+        let result = null
         try {
             if (type === 'json') {
-                return response.json()
+                result = response.json().catch(err => { throw err })
             } else if (type === 'xml') {
-                return response.text()
+                result = response.text().catch(err => { throw err })
             }
         } catch (err) {
             console.error(url, err.message)
             if (!response.ok) {
                 console.error(url, response.status)
             }
-            return response.text().then(errMsg => { throw errMsg })
+            response.text().then(errMsg => { throw errMsg })
         }
+        return result
     })
 }
 export const capitalizeFirstLetter = (string) => {
@@ -62,25 +64,32 @@ export const doPost = (url, data, extraHeaders = {}, type = 'json') => {
         }),
         body: data
     }).then((response) => {
+        let result = null
         try {
             if (type === 'json') {
-                return response.json()
+                result = response.json().catch(err => { throw err })
             } else if (type === 'xml') {
-                return response.text()
+                result = response.text().catch(err => { throw err })
             }
         } catch (err) {
             console.error(url, err.message)
             if (!response.ok) {
                 console.error(url, response.status)
             }
-            return response.text().then(errMsg => { throw errMsg })
+            response.text().then(errMsg => { throw errMsg })
         }
+        return result
 
     })
 }
-export const downloadFile = (url, fileName) => {
+export const downloadFile = (url, fileName, data = null) => {
+    let mainProps = { method: 'GET' }
+    if (data) {
+        mainProps.method = 'POST'
+        mainProps.body = data
+    }
     fetch(url, {
-        method: 'GET',
+        ...mainProps,
         credentials: 'include',
         cache: 'no-cache',
         mode: 'cors',
