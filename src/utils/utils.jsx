@@ -10,18 +10,10 @@ export const doGet = (url, extraHeaders = {}, type = 'json') => {
             ...extraHeaders
         }
     }).then((response) => {
-        if (response.ok) {
-            try {
-                if (type === 'json') {
-                    return response.json()
-                } else if (type === 'xml') {
-                    return response.text()
-                }
-            } catch (err) {
-                return response.text().then(errMsg => { throw errMsg })
-            }
-        } else {
-            return response.text().then(errMsg => { throw errMsg })
+        if (type === 'json') {
+            return response.json()
+        } else if (type === 'xml') {
+            return response.text()
         }
     })
 }
@@ -33,21 +25,11 @@ export const doExternalGet = (url, extraHeaders = {}, type = 'json') => {
             ...extraHeaders
         }
     }).then((response) => {
-        let result = null
-        try {
-            if (type === 'json') {
-                result = response.json().catch(err => { throw err })
-            } else if (type === 'xml') {
-                result = response.text().catch(err => { throw err })
-            }
-        } catch (err) {
-            console.error(url, err.message)
-            if (!response.ok) {
-                console.error(url, response.status)
-            }
-            response.text().then(errMsg => { throw errMsg })
+        if (type === 'json') {
+            return response.json()
+        } else if (type === 'xml') {
+            return response.text().catch(err => { throw err })
         }
-        return result
     })
 }
 export const capitalizeFirstLetter = (string) => {
@@ -64,22 +46,11 @@ export const doPost = (url, data, extraHeaders = {}, type = 'json') => {
         }),
         body: data
     }).then((response) => {
-        let result = null
-        try {
-            if (type === 'json') {
-                result = response.json().catch(err => { throw err })
-            } else if (type === 'xml') {
-                result = response.text().catch(err => { throw err })
-            }
-        } catch (err) {
-            console.error(url, err.message)
-            if (!response.ok) {
-                console.error(url, response.status)
-            }
-            response.text().then(errMsg => { throw errMsg })
+        if (type === 'json') {
+            return response.json().catch(err => { throw err })
+        } else if (type === 'xml') {
+            return response.text().catch(err => { throw err })
         }
-        return result
-
     })
 }
 export const downloadFile = (url, fileName, data = null) => {

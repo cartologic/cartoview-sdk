@@ -64,10 +64,6 @@ class FeatureHelper {
                             attributes = metaAttributes.objects
                             return this.readFeaturesThenTransform(
                                 proxyURL, layer, coordinate, view, map, token, attributes)
-                        }).catch(err => {
-                            console.error(err)
-                            this.readFeaturesThenTransform(
-                                proxyURL, layer, coordinate, view, map, token, attributes)
                         })
                     }
                     else {
