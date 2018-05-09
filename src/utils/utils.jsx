@@ -1,6 +1,6 @@
 import FileSaver from 'file-saver'
+import copy from 'clipboard-copy'
 import { getCRSFToken } from '../helpers/helpers'
-
 export const doGet = (url, extraHeaders = {}, type = 'json') => {
     return fetch(url, {
         method: 'GET',
@@ -70,4 +70,7 @@ export const downloadFile = (url, fileName, data = null) => {
     }).then(response => response.blob().then(data => {
         FileSaver.saveAs(data, fileName)
     }))
+}
+export const copyToClipboard = (text = '') => {
+    return copy(text)
 }
