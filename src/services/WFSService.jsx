@@ -6,7 +6,21 @@ import URLS from '../urls/urls'
 import WFS from 'ol/format/wfs'
 import { doGet } from '../utils/utils'
 import filter from 'ol/format/filter'
-
+const INITIAL_TYPE_MAPPING = {
+    string: "text",
+    double: "number",
+    int: "number",
+    long: "number",
+    boolean: "checkbox",
+    "date-time": "datetime",
+    date: "date",
+}
+const TYPE_FILTERS_MAPPING = {
+    "text": ["Like", "=", "!="],
+    "number": ["=", "<=", "<", "!=", ">", ">="],
+    "datetime": ["=", "!=", "During"],
+    "date": ["=", "!=", "During"],
+}
 export const getFilterObj = (attribute = null, operator = "=", value = "") => {
     return { attribute: "", operator: "=", value: value }
 }
@@ -38,6 +52,10 @@ export default class WFSService {
         }
         return attributeType
     }
+    getAttributeLocalType(attributes = [], attributeName) {
+        let localType = this.getAttributeType(attributes, attributeName)
+        return INITIAL_TYPE_MAPPING[localType]
+    }
     getWriteFeatureCRS(map) {
         let srsName = null
         if (map instanceof Map) {
@@ -54,7 +72,7 @@ export default class WFSService {
                 const filterObj = filters[i]
                 if (filterObj) {
                     const attrType = this.getAttributeType(attributes, filterObj.attribute)
-                    const filter = this.getFilter(filterObj.attribute, attrType, filterObj.value, filterObj.operator)
+                    const filter = this.getFilter(attrType, filterObj)
                     olFilters.push(filter)
                 }
             }
@@ -117,49 +135,66 @@ export default class WFSService {
         })
         return wfsPromise
     }
-    getFilter(filterAttribute, filterType, value, op = "=") {
+    getFilter(filterType, filterObj = { value: "", operator: "=", attribute: null, start: null, end: null }) {
+        const { attribute, value, start, end, operator } = filterObj
         /* 
         this function should return the proper filter based on 
         filter type
         working with strings & numbers
         test Needed 😈
         */
+        const localType = INITIAL_TYPE_MAPPING[filterType]
         let olFilter = null
-        if (filterType !== "string") {
-            switch (op) {
+        if (localType === "number") {
+            switch (operator) {
             case '=':
-                olFilter = filter.equalTo(filterAttribute, value)
+                olFilter = filter.equalTo(attribute, value)
                 break
             case '<':
-                olFilter = filter.lessThan(filterAttribute, value)
+                olFilter = filter.lessThan(attribute, value)
                 break
             case '<=':
-                olFilter = filter.lessThanOrEqualTo(filterAttribute, value)
+                olFilter = filter.lessThanOrEqualTo(attribute, value)
                 break
             case '>':
-                olFilter = filter.greaterThan(filterAttribute, value)
+                olFilter = filter.greaterThan(attribute, value)
                 break
             case '>=':
-                olFilter = filter.greaterThanOrEqualTo(filterAttribute, value)
+                olFilter = filter.greaterThanOrEqualTo(attribute, value)
                 break
             case '<>':
-                olFilter = filter.notEqualTo(filterAttribute, value)
+                olFilter = filter.notEqualTo(attribute, value)
                 break
             default:
                 throw Error("Invalid Filter")
 
             }
-        } else {
-            switch (op) {
+        } else if (localType === "text") {
+            switch (operator) {
             case 'LIKE':
-                olFilter = filter.like(filterAttribute, '%' + value + '%',
+                olFilter = filter.like(attribute, '%' + value + '%',
                         undefined, undefined, undefined, false)
                 break
             case '=':
-                olFilter = filter.equalTo(filterAttribute, value)
+                olFilter = filter.equalTo(attribute, value)
                 break
             case '<>':
-                olFilter = filter.notEqualTo(filterAttribute, value)
+                olFilter = filter.notEqualTo(attribute, value)
+                break
+            default:
+                throw Error("Invalid Filter")
+
+            }
+        } else if (localType === "date" || localType === "datetime") {
+            switch (operator) {
+            case 'DURING':
+                olFilter = filter.between(attribute, start, end)
+                break
+            case '=':
+                olFilter = filter.equalTo(attribute, value)
+                break
+            case '<>':
+                olFilter = filter.notEqualTo(attribute, value)
                 break
             default:
                 throw Error("Invalid Filter")
