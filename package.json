@@ -1,6 +1,6 @@
 {
     "name": "cartoview-sdk",
-    "version": "1.2.6",
+    "version": "1.2.7",
     "description": "cartoview sdk is a NPM package which contains serives and hepers for cartoview apps development",
     "main": "lib/index.js",
     "scripts": {
