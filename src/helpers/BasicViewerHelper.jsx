@@ -87,8 +87,8 @@ class BasicViewerHelper {
         }
     }) {
         let zoomConfig = config && config.zoom ? config.zoom : {
-            minZoom: 5,
-            zoom: 1,
+            minZoom: 2,
+            zoom: 2,
             maxZoom: 19,
         }
         let controls = this.getControls(config)
@@ -128,8 +128,8 @@ class BasicViewerHelper {
             loadTilesWhileInteracting: true,
             view: new View({
                 center: proj.fromLonLat([0, 0]),
-                minZoom: 5,
-                zoom: 1,
+                minZoom: 2,
+                zoom: 2,
                 maxZoom: 19,
             })
         })
