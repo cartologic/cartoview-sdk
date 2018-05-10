@@ -79,15 +79,19 @@ class BasicViewerHelper {
         }
         return interactions
     }
-    getMap(config = {
-        dragRotateAndZoom: true, scaleLine: true, zoomSlider: true, fullScreen: true, zoom: {
-            minZoom: 5,
-            zoom: 1,
-            maxZoom: 19,
+    getMapDefaultConfig() {
+        let config = {
+            dragRotateAndZoom: true, scaleLine: true, zoomSlider: true, fullScreen: true, zoom: {
+                minZoom: 1,
+                zoom: 2,
+                maxZoom: 19,
+            }
         }
-    }) {
+        return config
+    }
+    getMap(config = this.getMapDefaultConfig()) {
         let zoomConfig = config && config.zoom ? config.zoom : {
-            minZoom: 2,
+            minZoom: 1,
             zoom: 2,
             maxZoom: 19,
         }

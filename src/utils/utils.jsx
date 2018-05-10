@@ -28,7 +28,7 @@ export const doExternalGet = (url, extraHeaders = {}, type = 'json') => {
         if (type === 'json') {
             return response.json()
         } else if (type === 'xml') {
-            return response.text().catch(err => { throw err })
+            return response.text()
         }
     })
 }
@@ -47,9 +47,9 @@ export const doPost = (url, data, extraHeaders = {}, type = 'json') => {
         body: data
     }).then((response) => {
         if (type === 'json') {
-            return response.json().catch(err => { throw err })
+            return response.json()
         } else if (type === 'xml') {
-            return response.text().catch(err => { throw err })
+            return response.text()
         }
     })
 }

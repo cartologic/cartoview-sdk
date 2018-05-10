@@ -10,6 +10,7 @@ const INITIAL_TYPE_MAPPING = {
     string: "text",
     double: "number",
     int: "number",
+    number: "number",
     long: "number",
     boolean: "checkbox",
     "date-time": "datetime",
@@ -86,14 +87,14 @@ export default class WFSService {
         let finalFilter = null
         if (filters.length > 1) {
             switch (combinationType.toLowerCase()) {
-            case 'any':
-                finalFilter = filter.or(...filters)
-                break
-            case 'all':
-                finalFilter = filter.and(...filters)
-                break
-            default:
-                throw Error("Invalid Combination Type")
+                case 'any':
+                    finalFilter = filter.or(...filters)
+                    break
+                case 'all':
+                    finalFilter = filter.and(...filters)
+                    break
+                default:
+                    throw Error("Invalid Combination Type")
             }
         } else if (filters.length === 1) {
             finalFilter = filters[0]
@@ -147,57 +148,57 @@ export default class WFSService {
         let olFilter = null
         if (localType === "number") {
             switch (operator) {
-            case '=':
-                olFilter = filter.equalTo(attribute, value)
-                break
-            case '<':
-                olFilter = filter.lessThan(attribute, value)
-                break
-            case '<=':
-                olFilter = filter.lessThanOrEqualTo(attribute, value)
-                break
-            case '>':
-                olFilter = filter.greaterThan(attribute, value)
-                break
-            case '>=':
-                olFilter = filter.greaterThanOrEqualTo(attribute, value)
-                break
-            case '<>':
-                olFilter = filter.notEqualTo(attribute, value)
-                break
-            default:
-                throw Error("Invalid Filter")
+                case '=':
+                    olFilter = filter.equalTo(attribute, value)
+                    break
+                case '<':
+                    olFilter = filter.lessThan(attribute, value)
+                    break
+                case '<=':
+                    olFilter = filter.lessThanOrEqualTo(attribute, value)
+                    break
+                case '>':
+                    olFilter = filter.greaterThan(attribute, value)
+                    break
+                case '>=':
+                    olFilter = filter.greaterThanOrEqualTo(attribute, value)
+                    break
+                case '<>':
+                    olFilter = filter.notEqualTo(attribute, value)
+                    break
+                default:
+                    throw Error("Invalid Filter")
 
             }
         } else if (localType === "text") {
             switch (operator) {
-            case 'LIKE':
-                olFilter = filter.like(attribute, '%' + value + '%',
+                case 'LIKE':
+                    olFilter = filter.like(attribute, '%' + value + '%',
                         undefined, undefined, undefined, false)
-                break
-            case '=':
-                olFilter = filter.equalTo(attribute, value)
-                break
-            case '<>':
-                olFilter = filter.notEqualTo(attribute, value)
-                break
-            default:
-                throw Error("Invalid Filter")
+                    break
+                case '=':
+                    olFilter = filter.equalTo(attribute, value)
+                    break
+                case '<>':
+                    olFilter = filter.notEqualTo(attribute, value)
+                    break
+                default:
+                    throw Error("Invalid Filter")
 
             }
         } else if (localType === "date" || localType === "datetime") {
             switch (operator) {
-            case 'DURING':
-                olFilter = filter.between(attribute, start, end)
-                break
-            case '=':
-                olFilter = filter.equalTo(attribute, value)
-                break
-            case '<>':
-                olFilter = filter.notEqualTo(attribute, value)
-                break
-            default:
-                throw Error("Invalid Filter")
+                case 'DURING':
+                    olFilter = filter.between(attribute, start, end)
+                    break
+                case '=':
+                    olFilter = filter.equalTo(attribute, value)
+                    break
+                case '<>':
+                    olFilter = filter.notEqualTo(attribute, value)
+                    break
+                default:
+                    throw Error("Invalid Filter")
 
             }
         }
