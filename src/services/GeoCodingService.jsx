@@ -3,7 +3,7 @@ import { doExternalGet } from '../utils/utils'
 
 class OSMGeoCoding {
     constructor() {
-        this.nominatimURL = window.location.protocol + "//nominatim.openstreetmap.org/search?"
+        this.nominatimURL = "https://nominatim.openstreetmap.org/search?"
         this.OSMSettings = {
             q: '',
             format: 'json',
