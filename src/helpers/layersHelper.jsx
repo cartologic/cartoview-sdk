@@ -7,9 +7,6 @@ import URLS from '../urls/urls'
 import Vector from 'ol/source/vector'
 import { default as VectorLayer } from 'ol/layer/vector'
 class LayersHelper {
-    constructor(proxyURL = null) {
-        this.urlHelpers = new URLS(proxyURL)
-    }
     isWMSLayer(layer) {
         return layer.getSource() instanceof TileWMS || layer.getSource() instanceof ImageWMS
     }
@@ -19,15 +16,14 @@ class LayersHelper {
     layerNameSpace(typeName) {
         return typeName.split(":")[0]
     }
-    getLayerURL(layer, accessToken = null) {
+    getLayerURL(layer, accessToken = null, proxy = null) {
         var wmsURL = null
         try {
             wmsURL = layer.getSource().getUrls()[0]
         } catch (err) {
             wmsURL = layer.getSource().getUrl()
         }
-
-        return `${wmsURL}${accessToken ? `?access_token=${accessToken}` : ""}`
+        return !accessToken ? wmsURL : new URLS(proxy).getParamterizedURL(wmsURL, { 'access_token': accessToken })
     }
     getLocalLayers(map) {
         let layers = []
@@ -47,7 +43,7 @@ class LayersHelper {
         })
         return layers.slice(0).reverse()
     }
-    getLegends(layers, accessToken) {
+    getLegends(layers, accessToken, proxy = null) {
         let legends = []
         layers.map(layer => {
             if (layer.getVisible()) {
@@ -60,14 +56,16 @@ class LayersHelper {
         })
         return legends
     }
-    getLegendURL(layer, accessToken) {
+    getLegendURL(layer, accessToken, proxy = null) {
         let wmsURL = this.getLayerURL(layer, accessToken)
-        const url = this.urlHelpers.getParamterizedURL(wmsURL, {
+        let query = {
             'REQUEST': 'GetLegendGraphic',
             'VERSION': '1.0.0',
             'FORMAT': 'image/png',
             "LAYER": layer.getProperties().name
-        })
+        }
+        let url = new URLS(proxy).getParamterizedURL(wmsURL, query)
+
         return url
     }
     addSelectionLayer(map, featureCollection, styleFunction) {

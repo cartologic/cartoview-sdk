@@ -1,6 +1,7 @@
 import FileSaver from 'file-saver'
 import copy from 'clipboard-copy'
 import { getCRSFToken } from '../helpers/helpers'
+
 export const doGet = (url, extraHeaders = {}, type = 'json') => {
     return fetch(url, {
         method: 'GET',
