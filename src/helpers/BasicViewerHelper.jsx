@@ -30,34 +30,44 @@ class BasicViewerHelper {
         })
     }
     resizeSendThumbnail(originalCanvas, thumnailURL) {
-        const picaResizer = pica()
-        let resizedCanvas = document.createElement('canvas')
-        resizedCanvas.width = 280
-        resizedCanvas.height = 210
-        picaResizer.resize(originalCanvas, resizedCanvas)
-            .then(result => picaResizer.toBlob(result, 'image/jpeg', 0.90))
-            .then(blob => {
-                var reader = new FileReader()
-                reader.readAsDataURL(blob)
-                reader.onloadend = () => {
-                    const postData = JSON.stringify({
-                        image: reader.result,
-                        preview: "react"
-                    })
-                    try {
-                        doPost(thumnailURL, postData, {}, 'xml').then(result => console.log(result))
-                    } catch (err) {
-                        console.error(err.message)
+        let thumbnailPromise = new Promise((resolve, reject) => {
+            const picaResizer = pica()
+            let resizedCanvas = document.createElement('canvas')
+            resizedCanvas.width = 280
+            resizedCanvas.height = 210
+            picaResizer.resize(originalCanvas, resizedCanvas)
+                .then(result => picaResizer.toBlob(result, 'image/jpeg', 0.90))
+                .then(blob => {
+                    var reader = new FileReader()
+                    reader.readAsDataURL(blob)
+                    reader.onloadend = () => {
+                        const postData = JSON.stringify({
+                            image: reader.result,
+                            preview: "react"
+                        })
+                        try {
+                            doPost(thumnailURL, postData, {}, 'xml').then(result => resolve(result))
+                        } catch (err) {
+                            reject(err.message)
+                        }
                     }
-                }
-            })
+                })
+        })
+        return thumbnailPromise
+
     }
     setThumbnail(map, thumnailURL) {
-        map.once('postcompose', (event) => {
-            var canvas = event.context.canvas
-            this.resizeSendThumbnail(canvas, thumnailURL)
+        let generationPromise = new Promise((resolve, reject) => {
+            map.once('postcompose', (event) => {
+                var canvas = event.context.canvas
+                this.resizeSendThumbnail(canvas, thumnailURL).then(result => resolve(result)).catch(err => {
+                    reject(err)
+                })
+            })
+            map.renderSync()
         })
-        map.renderSync()
+        return generationPromise
+
     }
     getControls(config) {
         let controls = []
@@ -132,7 +142,7 @@ class BasicViewerHelper {
             loadTilesWhileInteracting: true,
             view: new View({
                 center: proj.fromLonLat([0, 0]),
-                minZoom: 2,
+                minZoom: 1,
                 zoom: 2,
                 maxZoom: 19,
             })

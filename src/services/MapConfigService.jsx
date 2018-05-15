@@ -51,7 +51,7 @@ import Zoomify from 'ol/source/zoomify'
 import { default as olProj } from 'ol/proj'
 import util from './sdkUtils'
 
-let sources = {
+export let sources = {
     'BingMaps': BingMaps,
     'CartoDB': CartoDB,
     'Cluster': Cluster,

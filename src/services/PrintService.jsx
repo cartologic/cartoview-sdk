@@ -3,8 +3,10 @@ const INCHES_PER_METER = 39.37
 
 import { doGet, doPost, downloadFile } from '../utils/utils'
 
+import BasicViewerHelper from '../helpers/BasicViewerHelper'
 import LayersHelper from '../helpers/LayersHelper'
 import URLS from '../urls/urls'
+import { sources } from '../services/MapConfigService'
 
 export default class Print {
     constructor(map, geoserverURL, accessToken, proxyURL = null) {
@@ -82,6 +84,11 @@ export default class Print {
         const pointResolution = mapProjection.getMetersPerUnit() * mapResolution
         return Math.round(pointResolution * dpi * INCHES_PER_METER)
     }
+    getResolutionFromScale(scale, dpi) {
+        const mapProjection = this.map.getView().getProjection()
+        let resolution = parseFloat(scale) / (dpi * INCHES_PER_METER * mapProjection.getMetersPerUnit())
+        return resolution
+    }
     getMapScales() {
         let scales = {}
         this.pdfInfo.dpis.map(dpi => {
@@ -90,124 +97,136 @@ export default class Print {
         })
         return scales
     }
-    getResolutionFromScale(scale, dpi) {
-        const mapProjection = this.map.getView().getProjection()
-        let resolution = scale / (dpi * INCHES_PER_METER * mapProjection.getMetersPerUnit())
-        return resolution
-    }
     getLayerParams(layer) {
         return layer.getSource().getParams()
     }
     getLegendItem(legend) {
-        let template = `{  
-            "name":"${legend.layer}",
-            "classes":[  
-               {  
-                  "name":"",
-                  "icons":[  
-                     "${legend.url}"
-                  ]
-               }
+        let legendItem = {
+            name: legend.layer,
+            classes: [
+                {
+                    "name": "",
+                    "icons": [legend.url]
+                }
             ]
-         }`
-        return template
+        }
+        return legendItem
     }
-    getPrintLegends(legends) {
-        let printLegends = legends.map(legend => this.getLegendItem(legend))
-        return printLegends.join(",")
+    getPrintLegends() {
+        const layers = LayersHelper.getLocalLayers(this.map)
+        let printLegends = LayersHelper.getLegends(layers, this.accessToken).map(legend => this.getLegendItem(legend))
+        return printLegends
+    }
+    getSourceType(lyr) {
+        const source = lyr.getSource()
+        let type = null
+        const sourceTypes = Object.keys(sources)
+        for (let i = 0; i < Object.keys(sources).length; i++) {
+            const sourceType = sourceTypes[i]
+            const sourceClass = sources[sourceType]
+            if (source instanceof sourceClass) {
+                type = sourceType
+                break
+            }
+        }
+        return type
+    }
+    getBaseLayerMaxExtent(lyr) {
+        const sourceProjection = lyr.getSource().getProjection()
+        return sourceProjection.getWorldExtent()
+
+    }
+    getBaseLayers() {
+        let baseLayers = LayersHelper.getBaseLayers(this.map).filter(baselyr => baselyr.getVisible())
+        baseLayers = baseLayers.map(baseLayer => {
+            const tileGrid = baseLayer.getSource().getTileGrid()
+            const tileSize = tileGrid.getTileSize()
+            const layerURL = new URL(LayersHelper.getLayerURL(baseLayer))
+            let maxExtent = this.getBaseLayerMaxExtent(baseLayer)
+            maxExtent = BasicViewerHelper.reprojectExtent(maxExtent, this.map)
+            let lyr = {
+                baseURL: layerURL.origin,//TODO: get the correct URL
+                opacity: baseLayer.getOpacity(),
+                maxExtent,
+                // type: this.getSourceType(baseLayer),
+                type: "OSM",//TODO:Check types supported by openlayers in geoserver
+                tileSize: [
+                    tileSize,
+                    tileSize
+                ],
+                extension: "png",
+                resolutions: baseLayer.getSource().getTileGrid().getResolutions()
+            }
+            return lyr
+        })
+        return baseLayers
+    }
+    getPrintLocalLayers() {
+        let layers = LayersHelper.getLocalLayers(this.map)
+        layers = layers.map(lyr => {
+            if (lyr.getVisible()) {
+                const layerObj = {
+                    baseURL: LayersHelper.getLayerURL(lyr, this.accessToken),
+                    opacity: lyr.getOpacity(),
+                    singleTile: false,
+                    type: "WMS",//TODO: get layer type from openlayers
+                    layers: [lyr.getProperties().name],
+                    format: this.getSourceFormat(lyr), // TODO get format from source
+                    styles: [],
+                    customParams: {
+                        ...this.getCustomParams(lyr)
+                    }
+                }
+                return layerObj
+            }
+        })
+        return layers.reverse()
+    }
+    getPrintObj(options = { dpi: DOTS_PER_INCH, layout: null, title: "", comment: "", scale: null }) {
+        let { dpi, title, comment, layout, scale } = options
+        const srs = this.map.getView().getProjection().getCode()
+        let legends = this.getPrintLegends()
+        const printObj = {
+            units: 'm',
+            srs,
+            mapTitle: title,
+            comment,
+            layout,
+            outputFormat: 'pdf',
+            layers: [
+                ...this.getBaseLayers(),
+                ...this.getPrintLocalLayers()
+            ],
+            legends,
+            pages: [
+                {
+                    dpi,
+                    geodetic: false,
+                    strictEpsg4326: false,
+                    // bbox: this.map.getView().calculateExtent(this.map.getSize()),
+                    scale,
+                    center: this.map.getView().getCenter(),
+                    rotation: this.map.getView().getRotation()
+                }
+            ]
+        }
+        return printObj
+
+    }
+    getSourceFormat(lyr) {
+        const sourceParams = { ...lyr.getSource().getParams() }
+        return Object.keys(sourceParams).includes("FORMAT") ? sourceParams["FORMAT"] : "image/png"
+    }
+    getCustomParams(lyr) {
+        let sourceParams = { ...lyr.getSource().getParams() }
+        delete sourceParams['LAYERS']
+        delete sourceParams['FORMAT']
+        delete sourceParams['SERVERTYPE']
+        delete sourceParams['VERSION']
+        return sourceParams
     }
     printPayload(title, comment, layout = "A4", scale, dpi = DOTS_PER_INCH) {
-        let layers = LayersHelper.getLocalLayers(this.map)
-        let legends = LayersHelper.getLegends(layers, this.accessToken)
-        let layerTemplate = []
-        layers.forEach(lyr => {
-            if (lyr.getVisible()) {
-                //TODO: use this layerTemplate.push(`"${lyr.getProperties().name}"`)
-                layerTemplate.push('"' + lyr.getProperties().name + '"')
-            }
-        }, this)
-        let payload = `
-        {  
-            "units":"m",
-            "srs":"${this.map.getView().getProjection().getCode()}",
-            "layout":"${layout}",
-            "dpi":${dpi},
-            "outputFormat":"pdf",
-            "comment":"${comment}",
-            "mapTitle":"${title}",
-            "layers":[  
-               {  
-                  "baseURL":"http://a.tile.openstreetmap.org/",
-                  "opacity":1,
-                  "type":"OSM",
-                  "maxExtent":[  
-                     -20037508.3392,
-                     -20037508.3392,
-                     20037508.3392,
-                     20037508.3392
-                  ],
-                  "tileSize":[  
-                     256,
-                     256
-                  ],
-                  "extension":"png",
-                  "resolutions":[  
-                     156543.03390625,
-                     78271.516953125,
-                     39135.7584765625,
-                     19567.87923828125,
-                     9783.939619140625,
-                     4891.9698095703125,
-                     2445.9849047851562,
-                     1222.9924523925781,
-                     611.4962261962891,
-                     305.74811309814453,
-                     152.87405654907226,
-                     76.43702827453613,
-                     38.218514137268066,
-                     19.109257068634033,
-                     9.554628534317017,
-                     4.777314267158508,
-                     2.388657133579254,
-                     1.194328566789627,
-                     0.5971642833948135,
-                     0.29858214169740677,
-                     0.14929107084870338,
-                     0.07464553542435169,
-                     0.037322767712175846,
-                     0.018661383856087923,
-                     0.009330691928043961,
-                     0.004665345964021981,
-                     0.0023326729820109904,
-                     0.0011663364910054952
-                  ]
-               },
-               {  
-                  "baseURL":"${this.geoserverWMSURL}",
-                  "opacity":1,
-                  "singleTile":false,
-                  "type":"WMS",
-                  "layers":[${layerTemplate.join(',')}],
-                  "format":"image/png",
-                  "styles":[  
-                     ""
-                  ],
-                  "customParams":{  
-                     "TRANSPARENT":true,
-                     "TILED":true
-                  }
-               }
-            ],
-            "pages":[  
-               {  
-                  "center":[${this.map.getView().getCenter().join(',')}],
-                  "scale":${scale},
-                  "rotation":${this.map.getView().getRotation()}
-               }
-            ],
-            "legends":[${this.getPrintLegends(legends)}]
-         }
-        `
+        let payload = JSON.stringify(this.getPrintObj({ dpi, comment, title, layout, scale }))
         return payload
     }
 }

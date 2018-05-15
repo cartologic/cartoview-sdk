@@ -38,14 +38,25 @@ class LayersHelper {
         })
         return layers.slice(0).reverse()
     }
+    getBaseLayers(map) {
+        let layers = []
+        map.getLayers().getArray().map(layer => {
+            if (layer instanceof Group && layer.get('type') === 'base-group') {
+                layer.getLayers().getArray().map(lyr => layers.push(lyr))
+            }
+        })
+        return layers.slice(0).reverse()
+    }
     getLegends(layers, accessToken) {
         let legends = []
         layers.map(layer => {
-            const layerTitle = layer.getProperties().title
-            legends.push({
-                layer: layerTitle,
-                url: this.getLegendURL(layer, accessToken)
-            })
+            if (layer.getVisible()) {
+                const layerTitle = layer.getProperties().title
+                legends.push({
+                    layer: layerTitle,
+                    url: this.getLegendURL(layer, accessToken)
+                })
+            }
         })
         return legends
     }
