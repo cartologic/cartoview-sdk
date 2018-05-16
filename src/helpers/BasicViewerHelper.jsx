@@ -1,5 +1,6 @@
 import { doGet, doPost } from '../utils/utils'
 
+import DragPan from 'ol/interaction/dragpan'
 import DragRotateAndZoom from 'ol/interaction/dragrotateandzoom'
 import FileSaver from 'file-saver'
 import FullScreen from 'ol/control/fullscreen'
@@ -106,9 +107,8 @@ class BasicViewerHelper {
             maxZoom: 19,
         }
         let controls = this.getControls(config)
-        let interactions = this.getInteractions(config)
         let map = new Map({
-            interactions: interaction.defaults().extend(interactions),
+            interactions: interaction.defaults({ dragPan: true }),
             controls: control.defaults().extend(controls),
             layers: [
                 new Tile({
