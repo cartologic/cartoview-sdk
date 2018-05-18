@@ -2,9 +2,20 @@ class URLS {
     constructor(proxyURL) {
         this.proxy = proxyURL
     }
+    /**
+     * This function encodes special characters. In addition, it encodes the following characters: , / ? : @ & = + $ #
+     * @param {string} url url to encode
+     * @returns {string} encoded url
+     */
     encodeURL(url) {
         return encodeURIComponent(url)
     }
+    /**
+     * This function add paramters to url as query string
+     * @param {string} url url to add paramters to 
+     * @param {object} query paramters to be added to the url
+     * @returns {string} paramterized url
+     */
     getParamterizedURL(url, query) {
         let newURL = url
         if (query && query != {}) {
@@ -21,6 +32,11 @@ class URLS {
         }
         return newURL
     }
+    /**
+     * This function add paramters to url as query string
+     * @param {string} url url to to be proxied
+     * @returns {string} proxied url
+     */
     getProxiedURL(url) {
         const proxy = this.proxy
         let proxiedURL = url
