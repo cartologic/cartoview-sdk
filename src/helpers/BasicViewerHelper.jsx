@@ -1,6 +1,5 @@
 import { doGet, doPost } from '../utils/utils'
 
-import DragPan from 'ol/interaction/dragpan'
 import DragRotateAndZoom from 'ol/interaction/dragrotateandzoom'
 import FileSaver from 'file-saver'
 import FullScreen from 'ol/control/fullscreen'
