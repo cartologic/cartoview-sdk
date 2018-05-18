@@ -83,7 +83,7 @@ export const doPost = (url, data, extraHeaders = {}, type = 'json') => {
  * Download binary data as file from the server
  * @param {string} url to send request to
  * @param {string} fileName the desired name of the file
- * @param {string} data [data=null] - request body if you want to send post request
+ * @param {string} [data=null] request body if you want to send post request
  * @returns {void}
  */
 export const downloadFile = (url, fileName, data = null) => {

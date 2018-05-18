@@ -1,5 +1,10 @@
+/** Class for URLS manipulation */
 class URLS {
-    constructor(proxyURL) {
+    /**
+     * Create a URLS helper.
+     * @param {string|null} proxyURL - proxy
+     */
+    constructor(proxyURL=null) {
         this.proxy = proxyURL
     }
     /**

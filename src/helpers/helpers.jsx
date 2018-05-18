@@ -1,13 +1,27 @@
+/**
+ * this function get django csrf token from cookie
+ * @returns {string} return django csrf token
+ */
 export const getCRSFToken = () => {
     let csrfToken, csrfMatch = document.cookie.match( /csrftoken=(\w+)/ )
     if ( csrfMatch && csrfMatch.length > 0 ) {
         csrfToken = csrfMatch[ 1 ]
     }
     return csrfToken
-};
+}
+/**
+ * this function check if URL has a slash at the end
+ * @param {string} str url to check
+ * @returns {bool} return true if has Trailing Slash, false if not
+ */
 export const hasTrailingSlash = ( str ) => {
     return ( /.*\/$/ ).test( str )
 }
+/**
+ * this function check if URL has a slash at the end
+ * @param {string} str url to remove slash from
+ * @returns {string}
+ */
 export const removeTrailingSlash = ( str ) => {
     return hasTrailingSlash( str ) ? str.slice( 0, -1 ) : str
 }
