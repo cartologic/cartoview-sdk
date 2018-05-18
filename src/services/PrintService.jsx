@@ -6,6 +6,7 @@ import { doGet, doPost, downloadFile } from '../utils/utils'
 import BasicViewerHelper from '../helpers/BasicViewerHelper'
 import LayersHelper from '../helpers/LayersHelper'
 import URLS from '../urls/urls'
+import { convToDegree } from '../utils/math'
 import { sources } from '../services/MapConfigService'
 
 export default class Print {
@@ -26,7 +27,7 @@ export default class Print {
     getGeoserverDPIS() {
         let dpisPromise = new Promise((resolve, reject) => {
             if (!this.pdfInfo) {
-                this.getPrintInfo().then(pdfInfo => resolve(pdfInfo.dpis))
+                this.getPrintInfo().then(pdfInfo => resolve(pdfInfo.dpis)).catch(err => reject(err))
             } else {
                 resolve(this.pdfInfo.dpis)
             }
@@ -36,10 +37,14 @@ export default class Print {
     getPrintInfo() {
         let infoPromise = new Promise((resolve, reject) => {
             const targetURL = this.urls.getProxiedURL(this.infoURL)
-            doGet(targetURL).then(result => {
-                this.pdfInfo = result
+            if (!this.pdfInfo) {
+                doGet(targetURL).then(result => {
+                    this.pdfInfo = result
+                    resolve(this.pdfInfo)
+                }).catch(err => reject(err))
+            } else {
                 resolve(this.pdfInfo)
-            })
+            }
         })
         return infoPromise
     }
@@ -185,6 +190,8 @@ export default class Print {
     getPrintObj(options = { dpi: DOTS_PER_INCH, layout: null, title: "", comment: "", scale: null }) {
         let { dpi, title, comment, layout, scale } = options
         const srs = this.map.getView().getProjection().getCode()
+        const rotationRadian = this.map.getView().getRotation()
+        const center = this.map.getView().getCenter()
         let legends = this.getPrintLegends()
         const printObj = {
             units: 'm',
@@ -205,8 +212,8 @@ export default class Print {
                     strictEpsg4326: false,
                     // bbox: this.map.getView().calculateExtent(this.map.getSize()),
                     scale,
-                    center: this.map.getView().getCenter(),
-                    rotation: this.map.getView().getRotation()
+                    center,
+                    rotation: convToDegree(rotationRadian)
                 }
             ]
         }
