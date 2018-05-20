@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: helpers/helpers.jsx</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,45 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: helpers/helpers.jsx</h1>
 
     
 
 
 
     
-
-
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * this function get django csrf token from cookie
+ * @returns {string} return django csrf token
+ */
+export const getCRSFToken = () => {
+    let csrfToken, csrfMatch = document.cookie.match( /csrftoken=(\w+)/ )
+    if ( csrfMatch &amp;&amp; csrfMatch.length > 0 ) {
+        csrfToken = csrfMatch[ 1 ]
+    }
+    return csrfToken
+}
+/**
+ * this function check if URL has a slash at the end
+ * @param {string} str url to check
+ * @returns {bool} return true if has Trailing Slash, false if not
+ */
+export const hasTrailingSlash = ( str ) => {
+    return ( /.*\/$/ ).test( str )
+}
+/**
+ * this function check if URL has a slash at the end
+ * @param {string} str url to remove slash from
+ * @returns {string}
+ */
+export const removeTrailingSlash = ( str ) => {
+    return hasTrailingSlash( str ) ? str.slice( 0, -1 ) : str
+}
+</code></pre>
+        </article>
+    </section>
 
 
 

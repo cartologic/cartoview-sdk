@@ -9,8 +9,8 @@
         "dist": "npm run build && cd lib && npm publish",
         "dist_beta": "npm run build && cd lib && npm publish --tag next",
         "copypackage": "cp -rf package.json README.md lib",
-        "docs": "node_modules/documentation/bin/documentation.js build src/** -f html -o docs",
-        "docs_md": "node_modules/documentation/bin/documentation.js build src/** -f md -o docs_md/docs",
+        "docs": "node_modules/documentation/bin/documentation.js build src/** -f html  -o docs",
+        "docs_md": "node_modules/documentation/bin/documentation.js build src/** -f md -o docs_md/docs.md",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
@@ -44,7 +44,8 @@
         "babel-preset-stage-1": "^6.24.1",
         "documentation": "^6.3.3",
         "eslint": "^3.19.0",
-        "eslint-plugin-react": "^7.0.1"
+        "eslint-plugin-react": "^7.0.1",
+        "jsdoc": "^3.5.5"
     },
     "dependencies": {
         "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",

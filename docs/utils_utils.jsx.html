@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: utils/utils.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: utils/utils.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import FileSaver from 'file-saver'
+import copy from 'clipboard-copy'
+import { getCRSFToken } from '../helpers/helpers'
+/**
+ * send get Request to an URL 
+ * @param {string} url to send request to
+ * @param {object} extraHeaders custom headers to add to the request
+ * @param {string} type expected response type to parse
+ * @returns {Promise} result
+ */
+export const doGet = (url, extraHeaders = {}, type = 'json') => {
+    return fetch(url, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            "X-CSRFToken": getCRSFToken(),
+            ...extraHeaders
+        }
+    }).then((response) => {
+        if (type === 'json') {
+            return response.json()
+        } else if (type === 'xml') {
+            return response.text()
+        }
+    })
+}
+/**
+ * send get Request to an External URL (i.e not on the same domain)
+ * @param {string} url to send request to
+ * @param {object} extraHeaders custom headers to add to the request
+ * @param {string} type expected response type to parse
+ * @returns {Promise} result
+ */
+export const doExternalGet = (url, extraHeaders = {}, type = 'json') => {
+    return fetch(url, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            ...extraHeaders
+        }
+    }).then((response) => {
+        if (type === 'json') {
+            return response.json()
+        } else if (type === 'xml') {
+            return response.text()
+        }
+    })
+}
+/**
+ * capitalize First Letter of string
+ * @param {string} string the word to capitalize
+ * @returns {string} capitalized word
+ */
+export const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1)
+}
+/**
+ * send post Request to an URL 
+ * @param {string} url to send request to
+ * @param {object} extraHeaders custom headers to add to the request
+ * @param {string} type expected response type to parse
+ * @returns {Promise} result
+ */
+export const doPost = (url, data, extraHeaders = {}, type = 'json') => {
+    return fetch(url, {
+        method: 'POST',
+        mode: 'cors',
+        credentials: 'include',
+        headers: new Headers({
+            "X-CSRFToken": getCRSFToken(),
+            ...extraHeaders
+        }),
+        body: data
+    }).then((response) => {
+        if (type === 'json') {
+            return response.json()
+        } else if (type === 'xml') {
+            return response.text()
+        }
+    })
+}
+/**
+ * Download binary data as file from the server
+ * @param {string} url to send request to
+ * @param {string} fileName the desired name of the file
+ * @param {string} [data=null] request body if you want to send post request
+ * @returns {void}
+ */
+export const downloadFile = (url, fileName, data = null) => {
+    let mainProps = { method: 'GET' }
+    if (data) {
+        mainProps.method = 'POST'
+        mainProps.body = data
+    }
+    fetch(url, {
+        ...mainProps,
+        credentials: 'include',
+        cache: 'no-cache',
+        mode: 'cors',
+        headers: new Headers({
+            "X-CSRFToken": getCRSFToken(),
+        }),
+    }).then(response => response.blob().then(data => {
+        FileSaver.saveAs(data, fileName)
+    }))
+}
+/**
+ * Copy data to system Clipboard
+ * @param {string} text text you want to copy
+ * @returns {Promise}
+ */
+export const copyToClipboard = (text = '') => {
+    return copy(text)
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationHelper.html">AnimationHelper</a></li><li><a href="BasicViewerHelper.html">BasicViewerHelper</a></li><li><a href="FeatureHelper.html">FeatureHelper</a></li><li><a href="LayersHelper.html">LayersHelper</a></li><li><a href="MapConfigTransformService.html">MapConfigTransformService</a></li><li><a href="URLS.html">URLS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#capitalizeFirstLetter">capitalizeFirstLetter</a></li><li><a href="global.html#convToDegree">convToDegree</a></li><li><a href="global.html#convToRadian">convToRadian</a></li><li><a href="global.html#copyToClipboard">copyToClipboard</a></li><li><a href="global.html#doExternalGet">doExternalGet</a></li><li><a href="global.html#doGet">doGet</a></li><li><a href="global.html#doPost">doPost</a></li><li><a href="global.html#downloadFile">downloadFile</a></li><li><a href="global.html#getCRSFToken">getCRSFToken</a></li><li><a href="global.html#hasTrailingSlash">hasTrailingSlash</a></li><li><a href="global.html#moveBottomLeft">moveBottomLeft</a></li><li><a href="global.html#moveBottomRight">moveBottomRight</a></li><li><a href="global.html#moveTopLeft">moveTopLeft</a></li><li><a href="global.html#moveTopRight">moveTopRight</a></li><li><a href="global.html#removeTrailingSlash">removeTrailingSlash</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun May 20 2018 16:35:04 GMT+0200 (EET)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

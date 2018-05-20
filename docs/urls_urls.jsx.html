@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: urls/urls.jsx</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,71 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: urls/urls.jsx</h1>
 
     
 
 
 
     
-
-
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/** Class for URLS manipulation */
+class URLS {
+    /**
+     * Create a URLS helper.
+     * @param {string|null} proxyURL - proxy
+     */
+    constructor(proxyURL=null) {
+        this.proxy = proxyURL
+    }
+    /**
+     * This function encodes special characters. In addition, it encodes the following characters: , / ? : @ &amp; = + $ #
+     * @param {string} url url to encode
+     * @returns {string} encoded url
+     */
+    encodeURL(url) {
+        return encodeURIComponent(url)
+    }
+    /**
+     * This function add paramters to url as query string
+     * @param {string} url url to add paramters to 
+     * @param {object} query paramters to be added to the url
+     * @returns {string} paramterized url
+     */
+    getParamterizedURL(url, query) {
+        let newURL = url
+        if (query &amp;&amp; query != {}) {
+            if (Object.keys(query).length > 0 &amp;&amp; newURL.indexOf('?') === -1) {
+                newURL += '?'
+            } else {
+                newURL += '&amp;'
+            }
+            let newQuery = []
+            Object.keys(query).map((key) => {
+                newQuery.push(`${key}=${query[key]}`)
+            })
+            newURL += newQuery.join('&amp;')
+        }
+        return newURL
+    }
+    /**
+     * This function add paramters to url as query string
+     * @param {string} url url to to be proxied
+     * @returns {string} proxied url
+     */
+    getProxiedURL(url) {
+        const proxy = this.proxy
+        let proxiedURL = url
+        if (proxy) {
+            proxiedURL = this.proxy + this.encodeURL(url)
+        }
+        return proxiedURL
+    }
+}
+export default URLS</code></pre>
+        </article>
+    </section>
 
 
 
