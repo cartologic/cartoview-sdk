@@ -10,6 +10,7 @@
         "dist_beta": "npm run build && cd lib && npm publish --tag next",
         "copypackage": "cp -rf package.json README.md lib",
         "docs": "node_modules/documentation/bin/documentation.js build src/** -f html -o docs",
+        "docs_md": "node_modules/documentation/bin/documentation.js build src/** -f md -o docs_md/docs",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
