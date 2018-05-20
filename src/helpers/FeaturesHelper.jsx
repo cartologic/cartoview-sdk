@@ -55,41 +55,52 @@ class FeatureHelper {
     }
     featureIdentify(map, coordinate, proxyURL = null, token, metaAtrributesURL = null) {
         const view = map.getView()
-        let identifyPromises = LayersHelper.getLayers(map.getLayers().getArray())
-            .map(
-                (layer) => {
-                    let attributes = []
-                    const layerName = layer.get("name")
-                    let identifyPromiseHandler = new Promise((resolve, reject) => {
-                        if (metaAtrributesURL) {
-                            this.getAtrributes(metaAtrributesURL + "?layer__typename=" + layerName).then(metaAttributes => {
-                                attributes = metaAttributes.objects
-                                this.readFeaturesThenTransform(proxyURL, layer, coordinate, view, map, token, attributes).then(result => {
-                                    resolve(result)
-                                }).catch(err => {
-                                    console.error(`Layer ${layerName} => Feature Identify Error:`, err)
-                                    resolve([])
-                                })
-                            })
-                        }
-                        else {
+        const layers = LayersHelper.getLayers(map.getLayers().getArray()).reverse()
+        let identifyPromises = layers.map(
+            (layer) => {
+                let attributes = []
+                const layerName = layer.get("name")
+                let identifyPromiseHandler = new Promise((resolve, reject) => {
+                    if (metaAtrributesURL) {
+                        this.getAtrributes(metaAtrributesURL + "?layer__typename=" + layerName).then(metaAttributes => {
+                            attributes = metaAttributes.objects
                             this.readFeaturesThenTransform(proxyURL, layer, coordinate, view, map, token, attributes).then(result => {
                                 resolve(result)
                             }).catch(err => {
                                 console.error(`Layer ${layerName} => Feature Identify Error:`, err)
                                 resolve([])
                             })
-                        }
-                    })
-                    return identifyPromiseHandler
-
-
+                        })
+                    }
+                    else {
+                        this.readFeaturesThenTransform(proxyURL, layer, coordinate, view, map, token, attributes).then(result => {
+                            resolve(result)
+                        }).catch(err => {
+                            console.error(`Layer ${layerName} => Feature Identify Error:`, err)
+                            resolve([])
+                        })
+                    }
                 })
+                return identifyPromiseHandler
+
+
+            })
         let identifyAllPromise = new Promise((resolve, reject) => {
             Promise.all(identifyPromises).then(result => {
-                const featureIdentifyResult = result.reduce((array1,
+                let featureIdentifyResult = result.reduce((array1,
                     array2) => array1.concat(array2), [])
-                resolve(featureIdentifyResult)
+                //sort features based on layer order
+                let sortedFeatures = []
+                layers.forEach(lyr => {
+                    const layerName = lyr.get('name')
+                    featureIdentifyResult.map(f => {
+                        const featureLayer = f.get('_layerName')
+                        if (layerName === featureLayer) {
+                            sortedFeatures.push(f)
+                        }
+                    })
+                }, this)
+                resolve(sortedFeatures)
             })
         })
         return identifyAllPromise

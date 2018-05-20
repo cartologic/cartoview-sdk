@@ -1,12 +1,13 @@
 {
     "name": "cartoview-sdk",
-    "version": "1.3.31",
+    "version": "2.0.0-beta2",
     "description": "cartoview sdk is a NPM package which contains serives and hepers for cartoview apps development",
     "main": "lib/index.js",
     "scripts": {
         "build": "npm run clean-lib && babel -d lib/ src/ --source-maps inline && touch lib/index.js && npm run copypackage",
         "clean-lib": "node_modules/.bin/rimraf ./lib",
         "dist": "npm run build && cd lib && npm publish",
+        "dist_beta": "npm run build && cd lib && npm publish --tag next",
         "copypackage": "cp -rf package.json README.md lib",
         "test": "echo \"Error: no test specified\" && exit 1"
     },

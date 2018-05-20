@@ -16,12 +16,6 @@ const INITIAL_TYPE_MAPPING = {
     "date-time": "datetime",
     date: "date",
 }
-const TYPE_FILTERS_MAPPING = {
-    "text": ["Like", "=", "!="],
-    "number": ["=", "<=", "<", "!=", ">", ">="],
-    "datetime": ["=", "!=", "During"],
-    "date": ["=", "!=", "During"],
-}
 export const getFilterObj = (attribute = null, operator = "=", value = "") => {
     return { attribute: "", operator: "=", value: value }
 }
