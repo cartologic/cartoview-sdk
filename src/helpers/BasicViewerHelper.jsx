@@ -18,17 +18,38 @@ import interaction from 'ol/interaction'
 import pica from 'pica/dist/pica'
 import proj from 'ol/proj'
 
+/** Class for Basic Viewer main Operation */
 class BasicViewerHelper {
+    /**
+    * This function return center of extent
+    * @param {ol.Extent} extent openlayers extent
+    * @returns {Array.<Number>}
+    */
     getCenterOfExtent(ext) {
         const center = extent.getCenter(ext)
         return center
     }
+    /**
+    * This function initialize openlayer map instance from geonode json obj
+    * @param {string} mapJsonUrl url to get geonode json object from 
+    * @param {ol.Map} map openlayers map instance
+    * @param {string} proxyURL proxy url
+    * @param {string} access_token user access token
+    * @param {Function} callback function to be invoked after initializtion
+    * @returns {void}
+    */
     mapInit(mapJsonUrl, map, proxyURL, access_token, callback = () => { }) {
         doGet(mapJsonUrl).then((config) => {
             MapConfigService.load(MapConfigTransformService.transform(config), map, proxyURL, access_token)
             callback()
         })
     }
+    /**
+    * This function get map as images resizing it and sending it to the server
+    * @param {HTMLCanvasElement}  originalCanvas
+    * @param {string} thumnailURL save thumbnail url
+    * @returns {Promise}
+    */
     resizeSendThumbnail(originalCanvas, thumnailURL) {
         let thumbnailPromise = new Promise((resolve, reject) => {
             const picaResizer = pica()
@@ -56,6 +77,12 @@ class BasicViewerHelper {
         return thumbnailPromise
 
     }
+    /**
+    * This function get map as images resizing it and sending it to the server
+    * @param {ol.Map}  map openlayers map instance
+    * @param {string} thumnailURL save thumbnail url
+    * @returns {Promise}
+    */
     setThumbnail(map, thumnailURL) {
         let generationPromise = new Promise((resolve, reject) => {
             map.once('postcompose', (event) => {
@@ -69,6 +96,21 @@ class BasicViewerHelper {
         return generationPromise
 
     }
+    /**
+    * This function return array of openlayers controls based on configuration object
+    * @typedef {Object} Zoom
+    * @property {Number} minZoom - minimum zoom of map
+    * @property {Number} maxZoom - maximum zoom of map
+    * @property {Number} zoom - initial zoom of map
+    * @typedef {Object} Config
+    * @property {Boolean} scaleLine - scaleline control
+    * @property {Boolean} zoomSlider - zoom slider control
+    * @property {Boolean} fullScreen - fullScreen control
+    * @property {Boolean} dragRotateAndZoom - dragRotateAndZoom interaction
+    * @property {Zoom} zoom - zoom configuration
+    * @param {Config}  config 
+    * @returns {Promise}
+    */
     getControls(config) {
         let controls = []
         if (config.scaleLine) {
@@ -82,6 +124,11 @@ class BasicViewerHelper {
         }
         return controls
     }
+    /**
+    * This function return array of openlayers interactions based on configuration object
+    * @param {Config}  config 
+    * @returns {Promise}
+    */
     getInteractions(config) {
         let interactions = []
         if (config.dragRotateAndZoom) {
@@ -89,6 +136,10 @@ class BasicViewerHelper {
         }
         return interactions
     }
+    /**
+    * This function return default configuration object
+    * @returns {Config}
+    */
     getMapDefaultConfig() {
         let config = {
             dragRotateAndZoom: true, scaleLine: true, zoomSlider: true, fullScreen: true, zoom: {
@@ -99,6 +150,11 @@ class BasicViewerHelper {
         }
         return config
     }
+    /**
+    * This function return openlayers map instance based on configuration
+    * @param {Config}  config 
+    * @returns {ol.Map}
+    */
     getMap(config = this.getMapDefaultConfig()) {
         let zoomConfig = config && config.zoom ? config.zoom : {
             minZoom: 1,
@@ -123,6 +179,10 @@ class BasicViewerHelper {
         })
         return map
     }
+    /**
+    * This function return openlayers map instance for print
+    * @returns {ol.Map}
+    */
     getPrintMap() {
         let map = new Map({
             interactions: interaction.defaults({
@@ -149,6 +209,13 @@ class BasicViewerHelper {
         map.addControl(new ScaleLine())
         return map
     }
+    /**
+    * This function fit map view to point or coordinate
+    * @param {Array.<Number>} pointArray
+    * @param {ol.Map} map
+    * @param {Boolean} changeZoom
+    * @returns {void}
+    */
     zoomToLocation(pointArray, map, changeZoom = true) {
         const zoom = map.getView().getMaxZoom()
         const lonLat = this.reprojectLocation(pointArray, map)
@@ -158,6 +225,13 @@ class BasicViewerHelper {
         }
 
     }
+    /**
+    * This function reproject coordinates from projection to map projection
+    * @param {Array.<Number>} pointArray
+    * @param {ol.Map} map
+    * @param {string|ol.ProjectionLike} from
+    * @returns {Array.<Number>}
+    */
     reprojectLocation(pointArray, map, from = 'EPSG:4326') {
         /**
          * Reproject x,y .
@@ -170,6 +244,13 @@ class BasicViewerHelper {
         }
         return proj.transform(pointArray, from, mapProjection)
     }
+    /**
+    * This function reproject extent from projection to map projection
+    * @param {ol.Extent} extent
+    * @param {ol.Map} map
+    * @param {string|ol.ProjectionLike} from
+    * @returns {ol.Extent}
+    */
     reprojectExtent(extent, map, from = 'EPSG:4326') {
         /**
          * Reproject extent .
@@ -184,9 +265,21 @@ class BasicViewerHelper {
         const transformedExtent = from === mapProjection.getCode() ? extent : proj.transformExtent(extent, from, mapProjection)
         return transformedExtent
     }
+    /**
+    * This function fit map view to extent
+    * @param {ol.Extent} extent
+    * @param {ol.Map} map
+    * @param {Number} duration
+    * @returns {void}
+    */
     fitExtent(extent, map, duration = undefined) {
         map.getView().fit(extent, map.getSize(), { duration })
     }
+    /**
+    * This function save map as png
+    * @param {ol.Map} map
+    * @returns {void}
+    */
     exportMap(map) {
         map.once('postcompose', (event) => {
             let canvas = event.context.canvas

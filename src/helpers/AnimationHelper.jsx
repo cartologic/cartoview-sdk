@@ -3,7 +3,14 @@ import Observable from 'ol/observable'
 import Stroke from 'ol/style/stroke'
 import Style from 'ol/style/style'
 import easing from 'ol/easing'
+/** Class for Animation manipulation */
 class AnimationHelper {
+    /**
+    * This function add flash style to feature (point)
+    * @param {ol.Feature} feature
+    * @param {ol.Map} map
+    * @returns {void}
+    */
     flash(feature, map) {
         let start = new Date().getTime()
         let listenerKey
@@ -39,6 +46,14 @@ class AnimationHelper {
         }
         listenerKey = map.on('postcompose', animate)
     }
+    /**
+    * This function apply animation fly when zoom to feature
+    * @param {Array.<Number>} location
+    * @param {ol.View} view
+    * @param {Number} zoom
+    * @param {Boolean} done
+    * @returns {void}
+    */
     flyTo(location, view, zoom, done) {
         let duration = 3000
         let parts = 2

@@ -4,11 +4,12 @@
     "description": "cartoview sdk is a NPM package which contains serives and hepers for cartoview apps development",
     "main": "lib/index.js",
     "scripts": {
-        "build": "npm run clean-lib && babel -d lib/ src/ --source-maps inline && touch lib/index.js && npm run copypackage",
+        "build": "npm run clean-lib && babel -d lib/ src/ --source-maps inline && touch lib/index.js && npm run docs && npm run copypackage",
         "clean-lib": "node_modules/.bin/rimraf ./lib",
         "dist": "npm run build && cd lib && npm publish",
         "dist_beta": "npm run build && cd lib && npm publish --tag next",
         "copypackage": "cp -rf package.json README.md lib",
+        "docs": "node_modules/documentation/bin/documentation.js build src/** -f html -o docs",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
@@ -40,6 +41,7 @@
         "babel-preset-es2015": "^6.24.1",
         "babel-preset-react": "^6.24.1",
         "babel-preset-stage-1": "^6.24.1",
+        "documentation": "^6.3.3",
         "eslint": "^3.19.0",
         "eslint-plugin-react": "^7.0.1"
     },

@@ -10,11 +10,27 @@ export const wmsGetFeatureInfoFormats = {
     'application/json': new GeoJSON(),
     'application/vnd.ogc.gml': new WMSGetFeatureInfo()
 }
+/** Class for Features manipulation */
 class FeatureHelper {
+    /**
+    * This function return openlayers format
+    * @param {string} format desired format one of application/json or application/vnd.ogc.gml
+    * @returns {ol.format} instance of openlayers format
+    */
     getFormat(format) {
         return wmsGetFeatureInfoFormats[format]
     }
-    getFeatureInfoUrl(layer, coordinate, view, infoFormat, token = null) {
+    /**
+    * This function return feature info url
+    * @param {ol.layer} layer openlayers layer to get url from
+    * @param {ol.Coordinate} coordinate coordinate 
+    * @param {ol.View} view view  map view
+    * @param {ol.format} infoFormat format of result
+    * @param {string} [token=null] user access token
+    * @param {number} [featureCount=null] max number of features to return
+    * @returns {string}
+    */
+    getFeatureInfoUrl(layer, coordinate, view, infoFormat, token = null, featureCount = 10) {
         const resolution = view.getResolution(),
             projection = view.getProjection()
         const url = layer.getSource().getGetFeatureInfoUrl(coordinate,
@@ -22,7 +38,7 @@ class FeatureHelper {
                 'INFO_FORMAT': infoFormat
             })
         let query = {
-            "FEATURE_COUNT": 10
+            "FEATURE_COUNT": featureCount
         }
         if (token) {
             query.access_token = token
@@ -34,6 +50,15 @@ class FeatureHelper {
         const proxiedURL = new URLS(proxyURL).getProxiedURL(url)
         return doGet(proxiedURL)
     }
+    /**
+    * This function return feature info url
+    * @param {ol.layer} layer openlayers layer to get url from
+    * @param {Array.<ol.Feature>} features to be transformed 
+    * @param {ol.Map} map openlayers map instance
+    * @param {Number} crs target Projection
+    * @param {Array} [attributes=[]] Layer Attributes
+    * @returns {Array.<ol.Feature>}
+    */
     transformFeatures(layer, features, map, crs, attributes = []) {
         let transformedFeatures = []
         features.forEach((feature) => {
@@ -50,9 +75,23 @@ class FeatureHelper {
         })
         return transformedFeatures
     }
+    /**
+    * This function return feature info url
+    * @param {string} metaAtrributesURL layer attributes api url
+    * @returns {Promise}
+    */
     getAtrributes(metaAtrributesURL) {
         return doGet(metaAtrributesURL)
     }
+    /**
+    * This function used to identify features
+    * @param {ol.Map} map openlayers map instance
+    * @param {ol.Coordinate} coordinate coordinate 
+    * @param {string} [proxyURL=null] view  map view
+    * @param {string} [token=null] user access token
+    * @param {string} [metaAtrributesURL=null] layer atrributes api url
+    * @returns {Array.<ol.Feature>}
+    */
     featureIdentify(map, coordinate, proxyURL = null, token, metaAtrributesURL = null) {
         const view = map.getView()
         const layers = LayersHelper.getLayers(map.getLayers().getArray()).reverse()
@@ -106,6 +145,11 @@ class FeatureHelper {
         return identifyAllPromise
 
     }
+    /**
+    * This function check if crs defiend or not , if not defined if define the crs and return it back
+    * @param {Number} crs projection number e.g 4326
+    * @returns {Promise}
+    */
     getCRS(crs) {
         let promise = new Promise((resolve, reject) => {
             if (proj4.defs('EPSG:' + crs)) {
@@ -121,6 +165,17 @@ class FeatureHelper {
         })
         return promise
     }
+    /**
+    * This function return feature info url
+    * @param {string} [proxyURL=null] user access token
+    * @param {ol.layer} layer openlayers layer to get url from
+    * @param {ol.Coordinate} coordinate coordinate 
+    * @param {ol.View} view view  map view
+    * @param {ol.Map} map openlayers map instance
+    * @param {string} user access token
+    * @param {Array} attributes layer attributes
+    * @returns {Array.<ol.Feature>}
+    */
     readFeaturesThenTransform(proxyURL = null, layer, coordinate, view, map, token, attributes) {
         const url = this.getFeatureInfoUrl(layer, coordinate, view,
             'application/json', token)

@@ -1,7 +1,7 @@
 /**
  * convert radian to degree
- * @param {number} radian angle in radian
- * @returns {number} angle in degree
+ * @param {Number} radian angle in radian
+ * @returns {Number} angle in degree
  */
 export const convToDegree = (radian) => {
     return radian * (180 / Math.PI)
@@ -16,10 +16,10 @@ export const convToRadian = (degree) => {
 }
 /**
  * Moves a vertex at an angle for a specific distance, 0 degrees points up and 180 degrees points down
- * @param {array} point Location on a cartesian graph formatted as [x, y]
- * @param {number} angle Angle at which a point should move in degrees
- * @param {number} distance How far should the point move at the given angle in pixels?
- * @returns {array} Newly moved point formatted as [x, y]
+ * @param {Array} point Location on a cartesian graph formatted as [x, y]
+ * @param {Number} angle Angle at which a point should move in degrees
+ * @param {Number} distance How far should the point move at the given angle in pixels?
+ * @returns {Array} Newly moved point formatted as [x, y]
  */
 export const moveTopRight = (point, angle, distance) => {
     return [
@@ -29,10 +29,10 @@ export const moveTopRight = (point, angle, distance) => {
 }
 /**
  * Moves a vertex at an angle for a specific distance, 0 degrees points up and 180 degrees points down
- * @param {array} point Location on a cartesian graph formatted as [x, y]
- * @param {number} angle Angle at which a point should move in degrees
- * @param {number} distance How far should the point move at the given angle in pixels?
- * @returns {array} Newly moved point formatted as [x, y]
+ * @param {Array} point Location on a cartesian graph formatted as [x, y]
+ * @param {Number} angle Angle at which a point should move in degrees
+ * @param {Number} distance How far should the point move at the given angle in pixels?
+ * @returns {Array} Newly moved point formatted as [x, y]
  */
 export const moveTopLeft = (point, angle, distance) => {
     return [
@@ -42,10 +42,10 @@ export const moveTopLeft = (point, angle, distance) => {
 }
 /**
  * Moves a vertex at an angle for a specific distance, 0 degrees points up and 180 degrees points down
- * @param {array} point Location on a cartesian graph formatted as [x, y]
- * @param {number} angle Angle at which a point should move in degrees
- * @param {number} distance How far should the point move at the given angle in pixels?
- * @returns {array} Newly moved point formatted as [x, y]
+ * @param {Array} point Location on a cartesian graph formatted as [x, y]
+ * @param {Number} angle Angle at which a point should move in degrees
+ * @param {Number} distance How far should the point move at the given angle in pixels?
+ * @returns {Array} Newly moved point formatted as [x, y]
  */
 export const moveBottomRight = (point, angle, distance) => {
     return [
@@ -55,10 +55,10 @@ export const moveBottomRight = (point, angle, distance) => {
 }
 /**
  * Moves a vertex at an angle for a specific distance, 0 degrees points up and 180 degrees points down
- * @param {array} point Location on a cartesian graph formatted as [x, y]
- * @param {number} angle Angle at which a point should move in degrees
- * @param {number} distance How far should the point move at the given angle in pixels?
- * @returns {array} Newly moved point formatted as [x, y]
+ * @param {Array} point Location on a cartesian graph formatted as [x, y]
+ * @param {Number} angle Angle at which a point should move in degrees
+ * @param {Number} distance How far should the point move at the given angle in pixels?
+ * @returns {Array} Newly moved point formatted as [x, y]
  */
 export const moveBottomLeft = (point, angle, distance) => {
     return [
