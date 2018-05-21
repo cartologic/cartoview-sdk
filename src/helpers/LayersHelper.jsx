@@ -7,7 +7,7 @@ import URLS from '../urls/urls'
 import Vector from 'ol/source/vector'
 import { default as VectorLayer } from 'ol/layer/vector'
 /** Class for Layers manipulation */
-class LayersHelper {
+export class LayersHelper {
     /**
     * this function check if layer is a wms layer
     * @param {ol.layer} layer to be checked if it is wms layer or not

@@ -19,7 +19,7 @@ import pica from 'pica/dist/pica'
 import proj from 'ol/proj'
 
 /** Class for Basic Viewer main Operation */
-class BasicViewerHelper {
+export class BasicViewerHelper {
     /**
     * This function return center of extent
     * @param {ol.Extent} extent openlayers extent
@@ -102,13 +102,14 @@ class BasicViewerHelper {
     * @property {Number} minZoom - minimum zoom of map
     * @property {Number} maxZoom - maximum zoom of map
     * @property {Number} zoom - initial zoom of map
-    * @typedef {Object} Config
+    * @typedef {Object} Configuration
     * @property {Boolean} scaleLine - scaleline control
     * @property {Boolean} zoomSlider - zoom slider control
     * @property {Boolean} fullScreen - fullScreen control
     * @property {Boolean} dragRotateAndZoom - dragRotateAndZoom interaction
     * @property {Zoom} zoom - zoom configuration
-    * @param {Config}  config 
+    * @property {Array.<string>} attachmentTags - attachment tags
+    * @param {Configuration}  config 
     * @returns {Promise}
     */
     getControls(config) {
@@ -126,7 +127,7 @@ class BasicViewerHelper {
     }
     /**
     * This function return array of openlayers interactions based on configuration object
-    * @param {Config}  config 
+    * @param {Configuration}  config 
     * @returns {Promise}
     */
     getInteractions(config) {
@@ -138,7 +139,7 @@ class BasicViewerHelper {
     }
     /**
     * This function return default configuration object
-    * @returns {Config}
+    * @returns {Configuration}
     */
     getMapDefaultConfig() {
         let config = {
@@ -152,7 +153,7 @@ class BasicViewerHelper {
     }
     /**
     * This function return openlayers map instance based on configuration
-    * @param {Config}  config 
+    * @param {Configuration}  config 
     * @returns {ol.Map}
     */
     getMap(config = this.getMapDefaultConfig()) {

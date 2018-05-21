@@ -11,7 +11,7 @@ export const wmsGetFeatureInfoFormats = {
     'application/vnd.ogc.gml': new WMSGetFeatureInfo()
 }
 /** Class for Features manipulation */
-class FeatureHelper {
+export class FeatureHelper {
     /**
     * This function return openlayers format
     * @param {string} format desired format one of application/json or application/vnd.ogc.gml

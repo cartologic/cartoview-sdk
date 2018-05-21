@@ -4,7 +4,7 @@ import Stroke from 'ol/style/stroke'
 import Style from 'ol/style/style'
 import easing from 'ol/easing'
 /** Class for Animation manipulation */
-class AnimationHelper {
+export class AnimationHelper {
     /**
     * This function add flash style to feature (point)
     * @param {ol.Feature} feature

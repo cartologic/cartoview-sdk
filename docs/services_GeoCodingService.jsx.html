@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: helpers/helpers.jsx</title>
+    <title>JSDoc: Source: services/GeoCodingService.jsx</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: helpers/helpers.jsx</h1>
+    <h1 class="page-title">Source: services/GeoCodingService.jsx</h1>
 
     
 
@@ -26,34 +26,65 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
- * this function get django csrf token from cookie
- * @returns {string} return django csrf token
- */
-export function getCRSFToken() {
-    let csrfToken, csrfMatch = document.cookie.match(/csrftoken=(\w+)/)
-    if (csrfMatch &amp;&amp; csrfMatch.length > 0) {
-        csrfToken = csrfMatch[1]
+            <pre class="prettyprint source linenums"><code>import URLS from '../urls/urls'
+import { doExternalGet } from '../utils/utils'
+/** Class for Geocoding Search */
+export class OSMGeoCoding {
+    /**
+    * Create a OSMGeoCoding instance.
+    * @typedef {Object} Settings
+    * @property {string} q - search keyword
+    * @property {string} format - result format
+    * @property {Number} addressdetails - osm address details
+    * @property {Number} limit - result limit
+    * @param {string} [url="https://nominatim.openstreetmap.org/search?"] geocoding service url
+    * @param {Settings} [settings={q: '',format: 'json',addressdetails: 1,limit: 10,countrycodes: '','accept-language': 'en-US'}] geocoding service url
+    */
+    constructor(url = "https://nominatim.openstreetmap.org/search?", settings = {
+        q: '',
+        format: 'json',
+        addressdetails: 1,
+        limit: 10,
+        countrycodes: '',
+        'accept-language': 'en-US'
+    }) {
+        this.geocodingURL = url
+        this.settings = settings
+        this.urls = new URLS(null)
     }
-    return csrfToken
+    /**
+    * this function return query string object for geocoding service
+    * @param {string} query keyword to search by
+    * @param {Settings}
+    */
+    getPatamters(query) {
+        if (this.settings) {
+            this.settings.q = query
+            return this.OSMSettings
+        }
+        return {}
+    }
+    /**
+    * this function url with query string if any
+    * @param {string} query keyword to search by
+    * @param {string}
+    */
+    getURL(query) {
+        const paramters = this.getPatamters(query)
+        return this.urls.getParamterizedURL(this.geocodingURL, paramters)
+    }
+    /**
+    * this function performe search and return result
+    * @param {string} query keyword to search by
+    * @param {Function} callBack Function to be executed after result return , takes result of search as paramter
+    * @param {string}
+    */
+    search(query, callBack) {
+        this.url = this.getURL(query)
+        doExternalGet(this.url).then(result => callBack(result))
+    }
 }
-/**
- * this function check if URL has a slash at the end
- * @param {string} str url to check
- * @returns {bool} return true if has Trailing Slash, false if not
- */
-export function hasTrailingSlash(str) {
-    return (/.*\/$/).test(str)
-}
-/**
- * this function check if URL has a slash at the end
- * @param {string} str url to remove slash from
- * @returns {string}
- */
-export function removeTrailingSlash(str) {
-    return hasTrailingSlash(str) ? str.slice(0, -1) : str
-}
-</code></pre>
+export default new OSMGeoCoding()</code></pre>
         </article>
     </section>
 

@@ -31,7 +31,7 @@
  * @param {Number} radian angle in radian
  * @returns {Number} angle in degree
  */
-export const convToDegree = (radian) => {
+export function convToDegree(radian) {
     return radian * (180 / Math.PI)
 }
 /**
@@ -39,7 +39,7 @@ export const convToDegree = (radian) => {
  * @param {number} degree angle in degree
  * @returns {number} angle in radian
  */
-export const convToRadian = (degree) => {
+export function convToRadian(degree) {
     return degree * (Math.PI / 180)
 }
 /**
@@ -49,7 +49,7 @@ export const convToRadian = (degree) => {
  * @param {Number} distance How far should the point move at the given angle in pixels?
  * @returns {Array} Newly moved point formatted as [x, y]
  */
-export const moveTopRight = (point, angle, distance) => {
+export function moveTopRight(point, angle, distance) {
     return [
         point[0] + (Math.sin(convToRadian(angle)) * distance),
         point[1] + (Math.cos(convToRadian(angle)) * distance)
@@ -62,7 +62,7 @@ export const moveTopRight = (point, angle, distance) => {
  * @param {Number} distance How far should the point move at the given angle in pixels?
  * @returns {Array} Newly moved point formatted as [x, y]
  */
-export const moveTopLeft = (point, angle, distance) => {
+export function moveTopLeft(point, angle, distance) {
     return [
         point[0] - (Math.sin(convToRadian(angle)) * distance),
         point[1] + (Math.cos(convToRadian(angle)) * distance)
@@ -75,7 +75,7 @@ export const moveTopLeft = (point, angle, distance) => {
  * @param {Number} distance How far should the point move at the given angle in pixels?
  * @returns {Array} Newly moved point formatted as [x, y]
  */
-export const moveBottomRight = (point, angle, distance) => {
+export function moveBottomRight(point, angle, distance) {
     return [
         point[0] + (Math.sin(convToRadian(angle)) * distance),
         point[1] - (Math.cos(convToRadian(angle)) * distance)
@@ -88,7 +88,7 @@ export const moveBottomRight = (point, angle, distance) => {
  * @param {Number} distance How far should the point move at the given angle in pixels?
  * @returns {Array} Newly moved point formatted as [x, y]
  */
-export const moveBottomLeft = (point, angle, distance) => {
+export function moveBottomLeft(point, angle, distance) {
     return [
         point[0] - (Math.sin(convToRadian(angle)) * distance),
         point[1] - (Math.cos(convToRadian(angle)) * distance)
@@ -103,13 +103,13 @@ export const moveBottomLeft = (point, angle, distance) => {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationHelper.html">AnimationHelper</a></li><li><a href="BasicViewerHelper.html">BasicViewerHelper</a></li><li><a href="FeatureHelper.html">FeatureHelper</a></li><li><a href="LayersHelper.html">LayersHelper</a></li><li><a href="MapConfigTransformService.html">MapConfigTransformService</a></li><li><a href="URLS.html">URLS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#capitalizeFirstLetter">capitalizeFirstLetter</a></li><li><a href="global.html#convToDegree">convToDegree</a></li><li><a href="global.html#convToRadian">convToRadian</a></li><li><a href="global.html#copyToClipboard">copyToClipboard</a></li><li><a href="global.html#doExternalGet">doExternalGet</a></li><li><a href="global.html#doGet">doGet</a></li><li><a href="global.html#doPost">doPost</a></li><li><a href="global.html#downloadFile">downloadFile</a></li><li><a href="global.html#getCRSFToken">getCRSFToken</a></li><li><a href="global.html#hasTrailingSlash">hasTrailingSlash</a></li><li><a href="global.html#moveBottomLeft">moveBottomLeft</a></li><li><a href="global.html#moveBottomRight">moveBottomRight</a></li><li><a href="global.html#moveTopLeft">moveTopLeft</a></li><li><a href="global.html#moveTopRight">moveTopRight</a></li><li><a href="global.html#removeTrailingSlash">removeTrailingSlash</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationHelper.html">AnimationHelper</a></li><li><a href="BasicViewerHelper.html">BasicViewerHelper</a></li><li><a href="FeatureHelper.html">FeatureHelper</a></li><li><a href="FeatureListHelper.html">FeatureListHelper</a></li><li><a href="LayersHelper.html">LayersHelper</a></li><li><a href="MapConfigTransformService.html">MapConfigTransformService</a></li><li><a href="OSMGeoCoding.html">OSMGeoCoding</a></li><li><a href="StyleHelper.html">StyleHelper</a></li><li><a href="URLS.html">URLS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#capitalizeFirstLetter">capitalizeFirstLetter</a></li><li><a href="global.html#convToDegree">convToDegree</a></li><li><a href="global.html#convToRadian">convToRadian</a></li><li><a href="global.html#copyToClipboard">copyToClipboard</a></li><li><a href="global.html#doExternalGet">doExternalGet</a></li><li><a href="global.html#doGet">doGet</a></li><li><a href="global.html#doPost">doPost</a></li><li><a href="global.html#downloadFile">downloadFile</a></li><li><a href="global.html#getCRSFToken">getCRSFToken</a></li><li><a href="global.html#hasTrailingSlash">hasTrailingSlash</a></li><li><a href="global.html#moveBottomLeft">moveBottomLeft</a></li><li><a href="global.html#moveBottomRight">moveBottomRight</a></li><li><a href="global.html#moveTopLeft">moveTopLeft</a></li><li><a href="global.html#moveTopRight">moveTopRight</a></li><li><a href="global.html#removeTrailingSlash">removeTrailingSlash</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun May 20 2018 16:35:04 GMT+0200 (EET)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon May 21 2018 02:18:55 GMT+0200 (EET)
 </footer>
 
 <script> prettyPrint(); </script>

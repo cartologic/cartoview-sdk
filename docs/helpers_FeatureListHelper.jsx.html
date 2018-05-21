@@ -1,4 +1,32 @@
-import LayerHelper from './LayersHelper'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: helpers/FeatureListHelper.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: helpers/FeatureListHelper.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import LayerHelper from './LayersHelper'
 import { doGet } from '../utils/utils'
 import isURL from 'validator/lib/isURL'
 /** Class for FeatureList manipulation */
@@ -15,13 +43,13 @@ export class FeatureListHelper {
     * @property {Boolean} fullScreen - fullScreen control
     * @property {Boolean} dragRotateAndZoom - dragRotateAndZoom interaction
     * @property {Zoom} zoom - zoom configuration
-    * @property {Array.<string>} attachmentTags - attachment tags
+    * @property {Array.&lt;string>} attachmentTags - attachment tags
     * @param {Configuration}  config configuration object
-    * @returns {Array.<string>}
+    * @returns {Array.&lt;string>}
     */
     getAttachmentTags(config) {
         const configTags = config.attachmentTags
-        const tags = (configTags && configTags.length > 0) ? configTags : [
+        const tags = (configTags &amp;&amp; configTags.length > 0) ? configTags : [
             `feature_list_${LayerHelper.layerName(config.layer)}`]
         return tags
     }
@@ -33,11 +61,11 @@ export class FeatureListHelper {
     * @param {Array}  arr array of items you want to generate options for
     * @param {string}  [label=null] if arr of objects -> label propertry 
     * @param {string}  [value=null] if arr of objects -> value propertry 
-    * @returns {Array.<SelectOption>}
+    * @returns {Array.&lt;SelectOption>}
     */
     getSelectOptions(arr, label = null, value = null) {
         let options = []
-        if (arr && arr.length > 0) {
+        if (arr &amp;&amp; arr.length > 0) {
             options = arr.map(item => {
                 if (!label) {
                     return { value: item, label: item }
@@ -72,14 +100,14 @@ export class FeatureListHelper {
     /**
     * This function search in attachments image by id
     * @param {Number}  id image object id
-    * @returns {Array.<Object>}
+    * @returns {Array.&lt;Object>}
     */
     searchById(id) {
         const { attachments } = this.state
         let result = []
         if (attachments) {
             attachments.map((imageObj) => {
-                if (imageObj.is_image && imageObj.feature_id === id) {
+                if (imageObj.is_image &amp;&amp; imageObj.feature_id === id) {
                     result.push(imageObj)
                 }
             })
@@ -88,9 +116,9 @@ export class FeatureListHelper {
     }
     /**
     * This function get specific attrubute by name
-    * @param {Array.<Object>}  attrs Array of attributes to search within
+    * @param {Array.&lt;Object>}  attrs Array of attributes to search within
     * @param {string}  attrName attribute name
-    * @returns {Array.<Object>}
+    * @returns {Array.&lt;Object>}
     */
     getFilterByName(attrs, attrName) {
         let attributeType = null
@@ -117,3 +145,26 @@ export class FeatureListHelper {
     }
 }
 export default new FeatureListHelper()
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationHelper.html">AnimationHelper</a></li><li><a href="BasicViewerHelper.html">BasicViewerHelper</a></li><li><a href="FeatureHelper.html">FeatureHelper</a></li><li><a href="FeatureListHelper.html">FeatureListHelper</a></li><li><a href="LayersHelper.html">LayersHelper</a></li><li><a href="MapConfigTransformService.html">MapConfigTransformService</a></li><li><a href="OSMGeoCoding.html">OSMGeoCoding</a></li><li><a href="StyleHelper.html">StyleHelper</a></li><li><a href="URLS.html">URLS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#capitalizeFirstLetter">capitalizeFirstLetter</a></li><li><a href="global.html#convToDegree">convToDegree</a></li><li><a href="global.html#convToRadian">convToRadian</a></li><li><a href="global.html#copyToClipboard">copyToClipboard</a></li><li><a href="global.html#doExternalGet">doExternalGet</a></li><li><a href="global.html#doGet">doGet</a></li><li><a href="global.html#doPost">doPost</a></li><li><a href="global.html#downloadFile">downloadFile</a></li><li><a href="global.html#getCRSFToken">getCRSFToken</a></li><li><a href="global.html#hasTrailingSlash">hasTrailingSlash</a></li><li><a href="global.html#moveBottomLeft">moveBottomLeft</a></li><li><a href="global.html#moveBottomRight">moveBottomRight</a></li><li><a href="global.html#moveTopLeft">moveTopLeft</a></li><li><a href="global.html#moveTopRight">moveTopRight</a></li><li><a href="global.html#removeTrailingSlash">removeTrailingSlash</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon May 21 2018 02:18:55 GMT+0200 (EET)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

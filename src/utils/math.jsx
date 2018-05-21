@@ -3,7 +3,7 @@
  * @param {Number} radian angle in radian
  * @returns {Number} angle in degree
  */
-export const convToDegree = (radian) => {
+export function convToDegree(radian) {
     return radian * (180 / Math.PI)
 }
 /**
@@ -11,7 +11,7 @@ export const convToDegree = (radian) => {
  * @param {number} degree angle in degree
  * @returns {number} angle in radian
  */
-export const convToRadian = (degree) => {
+export function convToRadian(degree) {
     return degree * (Math.PI / 180)
 }
 /**
@@ -21,7 +21,7 @@ export const convToRadian = (degree) => {
  * @param {Number} distance How far should the point move at the given angle in pixels?
  * @returns {Array} Newly moved point formatted as [x, y]
  */
-export const moveTopRight = (point, angle, distance) => {
+export function moveTopRight(point, angle, distance) {
     return [
         point[0] + (Math.sin(convToRadian(angle)) * distance),
         point[1] + (Math.cos(convToRadian(angle)) * distance)
@@ -34,7 +34,7 @@ export const moveTopRight = (point, angle, distance) => {
  * @param {Number} distance How far should the point move at the given angle in pixels?
  * @returns {Array} Newly moved point formatted as [x, y]
  */
-export const moveTopLeft = (point, angle, distance) => {
+export function moveTopLeft(point, angle, distance) {
     return [
         point[0] - (Math.sin(convToRadian(angle)) * distance),
         point[1] + (Math.cos(convToRadian(angle)) * distance)
@@ -47,7 +47,7 @@ export const moveTopLeft = (point, angle, distance) => {
  * @param {Number} distance How far should the point move at the given angle in pixels?
  * @returns {Array} Newly moved point formatted as [x, y]
  */
-export const moveBottomRight = (point, angle, distance) => {
+export function moveBottomRight(point, angle, distance) {
     return [
         point[0] + (Math.sin(convToRadian(angle)) * distance),
         point[1] - (Math.cos(convToRadian(angle)) * distance)
@@ -60,7 +60,7 @@ export const moveBottomRight = (point, angle, distance) => {
  * @param {Number} distance How far should the point move at the given angle in pixels?
  * @returns {Array} Newly moved point formatted as [x, y]
  */
-export const moveBottomLeft = (point, angle, distance) => {
+export function moveBottomLeft(point, angle, distance) {
     return [
         point[0] - (Math.sin(convToRadian(angle)) * distance),
         point[1] - (Math.cos(convToRadian(angle)) * distance)

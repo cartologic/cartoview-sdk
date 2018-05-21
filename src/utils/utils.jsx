@@ -8,7 +8,7 @@ import { getCRSFToken } from '../helpers/helpers'
  * @param {string} type expected response type to parse
  * @returns {Promise} result
  */
-export const doGet = (url, extraHeaders = {}, type = 'json') => {
+export function doGet(url, extraHeaders = {}, type = 'json') {
     return fetch(url, {
         method: 'GET',
         credentials: 'include',
@@ -31,7 +31,7 @@ export const doGet = (url, extraHeaders = {}, type = 'json') => {
  * @param {string} type expected response type to parse
  * @returns {Promise} result
  */
-export const doExternalGet = (url, extraHeaders = {}, type = 'json') => {
+export function doExternalGet(url, extraHeaders = {}, type = 'json') {
     return fetch(url, {
         method: 'GET',
         mode: 'cors',
@@ -51,7 +51,7 @@ export const doExternalGet = (url, extraHeaders = {}, type = 'json') => {
  * @param {string} string the word to capitalize
  * @returns {string} capitalized word
  */
-export const capitalizeFirstLetter = (string) => {
+export function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1)
 }
 /**
@@ -61,7 +61,7 @@ export const capitalizeFirstLetter = (string) => {
  * @param {string} type expected response type to parse
  * @returns {Promise} result
  */
-export const doPost = (url, data, extraHeaders = {}, type = 'json') => {
+export function doPost(url, data, extraHeaders = {}, type = 'json') {
     return fetch(url, {
         method: 'POST',
         mode: 'cors',
@@ -86,7 +86,7 @@ export const doPost = (url, data, extraHeaders = {}, type = 'json') => {
  * @param {string} [data=null] request body if you want to send post request
  * @returns {void}
  */
-export const downloadFile = (url, fileName, data = null) => {
+export function downloadFile(url, fileName, data = null) {
     let mainProps = { method: 'GET' }
     if (data) {
         mainProps.method = 'POST'
@@ -109,6 +109,6 @@ export const downloadFile = (url, fileName, data = null) => {
  * @param {string} text text you want to copy
  * @returns {Promise}
  */
-export const copyToClipboard = (text = '') => {
+export function copyToClipboard(text = '') {
     return copy(text)
 }
