@@ -5,6 +5,10 @@ import Stroke from 'ol/style/stroke'
 import Style from 'ol/style/style'
 import Text from 'ol/style/text'
 import randomColor from 'randomcolor'
+/**
+* this function return image Style
+* @returns {ol.style}
+*/
 function getImageStyle() {
     return new Circle({
         radius: 5,
@@ -12,12 +16,20 @@ function getImageStyle() {
         stroke: new Stroke({ color: 'black', width: 2 })
     })
 }
+/**
+* this function return bright color(rgba) as string
+* @returns {string}
+*/
 function randomBright() {
     return randomColor({
         luminosity: 'bright',
         format: 'rgb'
     })
 }
+/**
+* this function return dark color(rgba) as string
+* @returns {string}
+*/
 function randomDark() {
     return randomColor({
         luminosity: 'dark',
@@ -25,6 +37,10 @@ function randomDark() {
         alpha: 1
     })
 }
+/** @constant styles
+    @type {Object}
+    @default
+*/
 const styles = {
     'Point': function () {
         return new Style({ image: getImageStyle() })

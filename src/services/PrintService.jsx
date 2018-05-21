@@ -1,4 +1,12 @@
+/** @constant DOTS_PER_INCH
+    @type {Number}
+    @default
+*/
 const DOTS_PER_INCH = 96
+/** @constant INCHES_PER_METER
+    @type {Number}
+    @default
+*/
 const INCHES_PER_METER = 39.37
 
 import { doGet, doPost, downloadFile } from '../utils/utils'
