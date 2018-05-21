@@ -39,7 +39,6 @@ export class OSMGeoCoding {
     /**
     * this function url with query string if any
     * @param {string} query keyword to search by
-    * @param {string}
     */
     getURL(query) {
         const paramters = this.getPatamters(query)
@@ -49,7 +48,6 @@ export class OSMGeoCoding {
     * this function performe search and return result
     * @param {string} query keyword to search by
     * @param {Function} callBack Function to be executed after result return , takes result of search as paramter
-    * @param {string}
     */
     search(query, callBack) {
         this.url = this.getURL(query)
