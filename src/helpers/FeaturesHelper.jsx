@@ -1,5 +1,6 @@
 import { doExternalGet, doGet } from '../utils/utils'
 
+import BasicViewerHelper from './BasicViewerHelper'
 import GeoJSON from 'ol/format/geojson'
 import LayersHelper from './LayersHelper'
 import URLS from '../urls/urls'
@@ -82,6 +83,39 @@ export class FeatureHelper {
     */
     getAtrributes(metaAtrributesURL) {
         return doGet(metaAtrributesURL)
+    }
+    getCoordsCenter(coords) {
+        if (coords.length === 2 && typeof coords[0] === "number") {
+            return coords
+        }
+        return this.getCoordsCenter(coords[Math.floor(coords.length / 2)])
+    }
+    /**
+    * This function return center of geometry
+    * @param {ol.geom} geometry layer attributes api url
+    * @returns {Array.<Number>}
+    */
+    getGeometryCenter(geometry) {
+        const type = geometry.getType()
+        let center = null
+        switch (type) {
+            case 'LineString': {
+                const coords = geometry.getCoordinates()
+                center = this.getCoordsCenter(coords)
+                break
+            }
+            case 'MultiLineString': {
+                const coords = geometry.getCoordinates()
+                center = this.getCoordsCenter(coords)
+                break
+            }
+            default: {
+                const extent = geometry.getExtent()
+                center = BasicViewerHelper.getCenterOfExtent(extent)
+                break
+            }
+        }
+        return center
     }
     /**
     * This function used to identify features

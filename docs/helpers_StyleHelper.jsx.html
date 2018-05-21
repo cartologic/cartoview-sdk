@@ -32,47 +32,95 @@ import Icon from 'ol/style/icon'
 import Stroke from 'ol/style/stroke'
 import Style from 'ol/style/style'
 import Text from 'ol/style/text'
-const image = new Circle({
-    radius: 5,
-    fill: null,
-    stroke: new Stroke({ color: 'black', width: 2 })
-})
-const styles = {
-    'Point': new Style({ image: image }),
-    'LineString': new Style({
-        stroke: new Stroke({ color: 'green', width: 1 })
-    }),
-    'MultiLineString': new Style({
-        stroke: new Stroke({ color: 'green', width: 1 })
-    }),
-    'MultiPoint': new Style({ image: image }),
-    'MultiPolygon': new Style({
-        stroke: new Stroke({ color: 'yellow', width: 1 }),
-        fill: new Fill({ color: 'rgba(255, 255, 0, 0.1)' })
-    }),
-    'Polygon': new Style({
-        stroke: new Stroke({
-            color: 'blue',
-            lineDash: [
-                4],
-            width: 3
-        }),
-        fill: new Fill({ color: 'rgba(0, 0, 255, 0.1)' })
-    }),
-    'GeometryCollection': new Style({
-        stroke: new Stroke({ color: 'magenta', width: 2 }),
-        fill: new Fill({ color: 'magenta' }),
-        image: new Circle({
-            radius: 10,
-            fill: null,
-            stroke: new Stroke({ color: 'magenta' })
-        })
-    }),
-    'Circle': new Style({
-        stroke: new Stroke({ color: 'red', width: 2 }),
-        fill: new Fill({ color: 'rgba(255,0,0,0.2)' })
+import randomColor from 'randomcolor'
+function getImageStyle() {
+    return new Circle({
+        radius: 5,
+        fill: null,
+        stroke: new Stroke({ color: 'black', width: 2 })
     })
 }
+function randomBright() {
+    return randomColor({
+        luminosity: 'bright',
+        format: 'rgb'
+    })
+}
+function randomDark() {
+    return randomColor({
+        luminosity: 'dark',
+        format: 'rgba',
+        alpha: 1
+    })
+}
+const styles = {
+    'Point': function () {
+        return new Style({ image: getImageStyle() })
+    },
+    'LineString': function () {
+        return new Style({
+            stroke: new Stroke({
+                color: randomDark(), width: 3
+            })
+        })
+    },
+    'MultiLineString': function () {
+        return new Style({
+            stroke: new Stroke({ color: randomBright(), width: 1 })
+        })
+    },
+    'MultiPoint': function () {
+        return new Style({ image: getImageStyle() })
+    },
+    'MultiPolygon': function () {
+        return new Style({
+            stroke: new Stroke({ color: 'black', width: 1 }),
+            fill: new Fill({ color: randomBright() })
+        })
+    },
+    'Polygon': function () {
+        return new Style({
+            stroke: new Stroke({
+                color: randomDark(),
+                lineDash: [4],
+                width: 3
+            }),
+            fill: new Fill({ color: randomBright() })
+        })
+    },
+    'GeometryCollection': function () {
+        const cd = randomDark()
+        return new Style({
+            stroke: new Stroke({ color: cd, width: 2 }),
+            fill: new Fill({ color: randomBright() }),
+            image: new Circle({
+                radius: 10,
+                fill: null,
+                stroke: new Stroke({ color: cd })
+            })
+        })
+    },
+    'Circle': function () {
+        return new Style({
+            stroke: new Stroke({ color: randomDark(), width: 2 }),
+            fill: new Fill({ color: randomBright() })
+        })
+    }
+}
+class StylesGenerator {
+    constructor() {
+        this._stylesCache = {}
+    }
+    getStyle(geometryType) {
+        if (this._stylesCache[geometryType]) {
+            return this._stylesCache[geometryType]
+        }
+        this._stylesCache[geometryType] = styles[geometryType]()
+        return this._stylesCache[geometryType]
+    }
+
+}
+const generator = new StylesGenerator()
 /** Class for Styles manipulation */
 class StyleHelper {
     /**
@@ -88,8 +136,7 @@ class StyleHelper {
     * @returns {ol.style}
     */
     styleFunction(feature) {
-        const style = feature ? styles[feature.getGeometry().getType()] :
-            null
+        const style = feature ? generator.getStyle(feature.getGeometry().getType()) : null
         return style
     }
     /**
@@ -133,13 +180,13 @@ export default StyleHelper
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationHelper.html">AnimationHelper</a></li><li><a href="BasicViewerHelper.html">BasicViewerHelper</a></li><li><a href="FeatureHelper.html">FeatureHelper</a></li><li><a href="FeatureListHelper.html">FeatureListHelper</a></li><li><a href="LayersHelper.html">LayersHelper</a></li><li><a href="MapConfigTransformService.html">MapConfigTransformService</a></li><li><a href="module.exports.html">exports</a></li><li><a href="OSMGeoCoding.html">OSMGeoCoding</a></li><li><a href="StyleHelper.html">StyleHelper</a></li><li><a href="URLS.html">URLS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#capitalizeFirstLetter">capitalizeFirstLetter</a></li><li><a href="global.html#convToDegree">convToDegree</a></li><li><a href="global.html#convToRadian">convToRadian</a></li><li><a href="global.html#copyToClipboard">copyToClipboard</a></li><li><a href="global.html#createPDF">createPDF</a></li><li><a href="global.html#doExternalGet">doExternalGet</a></li><li><a href="global.html#doGet">doGet</a></li><li><a href="global.html#doPost">doPost</a></li><li><a href="global.html#downloadFile">downloadFile</a></li><li><a href="global.html#getBaseLayerMaxExtent">getBaseLayerMaxExtent</a></li><li><a href="global.html#getBaseLayers">getBaseLayers</a></li><li><a href="global.html#getClosestScale">getClosestScale</a></li><li><a href="global.html#getCRSFToken">getCRSFToken</a></li><li><a href="global.html#getCustomParams">getCustomParams</a></li><li><a href="global.html#getGeoserverDPIS">getGeoserverDPIS</a></li><li><a href="global.html#getGeoserverScales">getGeoserverScales</a></li><li><a href="global.html#getLayerParams">getLayerParams</a></li><li><a href="global.html#getMapScales">getMapScales</a></li><li><a href="global.html#getPrintInfo">getPrintInfo</a></li><li><a href="global.html#getPrintLegends">getPrintLegends</a></li><li><a href="global.html#getPrintLocalLayers">getPrintLocalLayers</a></li><li><a href="global.html#getPrintObj">getPrintObj</a></li><li><a href="global.html#getResolutionFromScale">getResolutionFromScale</a></li><li><a href="global.html#getScaleFromResolution">getScaleFromResolution</a></li><li><a href="global.html#getScaleIndex">getScaleIndex</a></li><li><a href="global.html#getSourceFormat">getSourceFormat</a></li><li><a href="global.html#getSourceType">getSourceType</a></li><li><a href="global.html#hasTrailingSlash">hasTrailingSlash</a></li><li><a href="global.html#moveBottomLeft">moveBottomLeft</a></li><li><a href="global.html#moveBottomRight">moveBottomRight</a></li><li><a href="global.html#moveTopLeft">moveTopLeft</a></li><li><a href="global.html#moveTopRight">moveTopRight</a></li><li><a href="global.html#printPayload">printPayload</a></li><li><a href="global.html#removeTrailingSlash">removeTrailingSlash</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationHelper.html">AnimationHelper</a></li><li><a href="BasicViewerHelper.html">BasicViewerHelper</a></li><li><a href="FeatureHelper.html">FeatureHelper</a></li><li><a href="FeatureListHelper.html">FeatureListHelper</a></li><li><a href="LayersHelper.html">LayersHelper</a></li><li><a href="MapConfigTransformService.html">MapConfigTransformService</a></li><li><a href="OSMGeoCoding.html">OSMGeoCoding</a></li><li><a href="Print.html">Print</a></li><li><a href="StyleHelper.html">StyleHelper</a></li><li><a href="URLS.html">URLS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#capitalizeFirstLetter">capitalizeFirstLetter</a></li><li><a href="global.html#convToDegree">convToDegree</a></li><li><a href="global.html#convToRadian">convToRadian</a></li><li><a href="global.html#copyToClipboard">copyToClipboard</a></li><li><a href="global.html#doExternalGet">doExternalGet</a></li><li><a href="global.html#doGet">doGet</a></li><li><a href="global.html#doPost">doPost</a></li><li><a href="global.html#downloadFile">downloadFile</a></li><li><a href="global.html#getCRSFToken">getCRSFToken</a></li><li><a href="global.html#hasTrailingSlash">hasTrailingSlash</a></li><li><a href="global.html#moveBottomLeft">moveBottomLeft</a></li><li><a href="global.html#moveBottomRight">moveBottomRight</a></li><li><a href="global.html#moveTopLeft">moveTopLeft</a></li><li><a href="global.html#moveTopRight">moveTopRight</a></li><li><a href="global.html#removeTrailingSlash">removeTrailingSlash</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon May 21 2018 13:34:12 GMT+0200 (EET)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon May 21 2018 16:57:00 GMT+0200 (EET)
 </footer>
 
 <script> prettyPrint(); </script>

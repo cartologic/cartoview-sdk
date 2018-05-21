@@ -10,7 +10,7 @@ import { convToDegree } from '../utils/math'
 import { sources } from '../services/MapConfigService'
 
 /** Class for Geoserver Print manipulation */
-export default class Print {
+class Print {
     /**
     * Create a Print instance.
     * @param {ol.Map} map map to be printed
@@ -357,3 +357,4 @@ export default class Print {
         return payload
     }
 }
+export default Print

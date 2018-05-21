@@ -4,47 +4,95 @@ import Icon from 'ol/style/icon'
 import Stroke from 'ol/style/stroke'
 import Style from 'ol/style/style'
 import Text from 'ol/style/text'
-const image = new Circle({
-    radius: 5,
-    fill: null,
-    stroke: new Stroke({ color: 'black', width: 2 })
-})
-const styles = {
-    'Point': new Style({ image: image }),
-    'LineString': new Style({
-        stroke: new Stroke({ color: 'green', width: 1 })
-    }),
-    'MultiLineString': new Style({
-        stroke: new Stroke({ color: 'green', width: 1 })
-    }),
-    'MultiPoint': new Style({ image: image }),
-    'MultiPolygon': new Style({
-        stroke: new Stroke({ color: 'yellow', width: 1 }),
-        fill: new Fill({ color: 'rgba(255, 255, 0, 0.1)' })
-    }),
-    'Polygon': new Style({
-        stroke: new Stroke({
-            color: 'blue',
-            lineDash: [
-                4],
-            width: 3
-        }),
-        fill: new Fill({ color: 'rgba(0, 0, 255, 0.1)' })
-    }),
-    'GeometryCollection': new Style({
-        stroke: new Stroke({ color: 'magenta', width: 2 }),
-        fill: new Fill({ color: 'magenta' }),
-        image: new Circle({
-            radius: 10,
-            fill: null,
-            stroke: new Stroke({ color: 'magenta' })
-        })
-    }),
-    'Circle': new Style({
-        stroke: new Stroke({ color: 'red', width: 2 }),
-        fill: new Fill({ color: 'rgba(255,0,0,0.2)' })
+import randomColor from 'randomcolor'
+function getImageStyle() {
+    return new Circle({
+        radius: 5,
+        fill: null,
+        stroke: new Stroke({ color: 'black', width: 2 })
     })
 }
+function randomBright() {
+    return randomColor({
+        luminosity: 'bright',
+        format: 'rgb'
+    })
+}
+function randomDark() {
+    return randomColor({
+        luminosity: 'dark',
+        format: 'rgba',
+        alpha: 1
+    })
+}
+const styles = {
+    'Point': function () {
+        return new Style({ image: getImageStyle() })
+    },
+    'LineString': function () {
+        return new Style({
+            stroke: new Stroke({
+                color: randomDark(), width: 3
+            })
+        })
+    },
+    'MultiLineString': function () {
+        return new Style({
+            stroke: new Stroke({ color: randomBright(), width: 1 })
+        })
+    },
+    'MultiPoint': function () {
+        return new Style({ image: getImageStyle() })
+    },
+    'MultiPolygon': function () {
+        return new Style({
+            stroke: new Stroke({ color: 'black', width: 1 }),
+            fill: new Fill({ color: randomBright() })
+        })
+    },
+    'Polygon': function () {
+        return new Style({
+            stroke: new Stroke({
+                color: randomDark(),
+                lineDash: [4],
+                width: 3
+            }),
+            fill: new Fill({ color: randomBright() })
+        })
+    },
+    'GeometryCollection': function () {
+        const cd = randomDark()
+        return new Style({
+            stroke: new Stroke({ color: cd, width: 2 }),
+            fill: new Fill({ color: randomBright() }),
+            image: new Circle({
+                radius: 10,
+                fill: null,
+                stroke: new Stroke({ color: cd })
+            })
+        })
+    },
+    'Circle': function () {
+        return new Style({
+            stroke: new Stroke({ color: randomDark(), width: 2 }),
+            fill: new Fill({ color: randomBright() })
+        })
+    }
+}
+class StylesGenerator {
+    constructor() {
+        this._stylesCache = {}
+    }
+    getStyle(geometryType) {
+        if (this._stylesCache[geometryType]) {
+            return this._stylesCache[geometryType]
+        }
+        this._stylesCache[geometryType] = styles[geometryType]()
+        return this._stylesCache[geometryType]
+    }
+
+}
+const generator = new StylesGenerator()
 /** Class for Styles manipulation */
 class StyleHelper {
     /**
@@ -60,8 +108,7 @@ class StyleHelper {
     * @returns {ol.style}
     */
     styleFunction(feature) {
-        const style = feature ? styles[feature.getGeometry().getType()] :
-            null
+        const style = feature ? generator.getStyle(feature.getGeometry().getType()) : null
         return style
     }
     /**
