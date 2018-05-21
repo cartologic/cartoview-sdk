@@ -1,4 +1,32 @@
-const DOTS_PER_INCH = 96
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: services/PrintService.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: services/PrintService.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const DOTS_PER_INCH = 96
 const INCHES_PER_METER = 39.37
 
 import { doGet, doPost, downloadFile } from '../utils/utils'
@@ -100,7 +128,7 @@ export default class Print {
     */
     getScaleIndex(target) {
         let index = -1
-        for (let i = 0; i < this.pdfInfo.scales; i++) {
+        for (let i = 0; i &lt; this.pdfInfo.scales; i++) {
             const scale = this.pdfInfo.scales
             if (target === Number(scale.value)) {
                 index = i
@@ -116,7 +144,7 @@ export default class Print {
     */
     getClosestScale(scale) {
         if (this.geoserverScales) {
-            return this.geoserverScales.reduce((prevScale, currentScale) => Math.abs(currentScale - scale) < Math.abs(prevScale - scale) ? currentScale : prevScale)
+            return this.geoserverScales.reduce((prevScale, currentScale) => Math.abs(currentScale - scale) &lt; Math.abs(prevScale - scale) ? currentScale : prevScale)
         }
         return 0.35
 
@@ -173,10 +201,10 @@ export default class Print {
     * @property {string} url - The url of the legend
     * @typedef {Object} LegendClass
     * @property {string} name - The title of the layer
-    * @property {Array.<string>} icons - array of legend urls
+    * @property {Array.&lt;string>} icons - array of legend urls
     * @typedef {Object} PrintLegend
     * @property {string} name - layer name
-    * @property {Array.<LegendClass>} classes - The url of the legend
+    * @property {Array.&lt;LegendClass>} classes - The url of the legend
     * @param {Legend} legend Layer legend
     * @returns {PrintLegend}
     */
@@ -194,7 +222,7 @@ export default class Print {
     }
     /**
     * this function return Print Legends
-    * @returns {Array.<PrintLegend>}
+    * @returns {Array.&lt;PrintLegend>}
     */
     getPrintLegends() {
         const layers = LayersHelper.getLocalLayers(this.map)
@@ -210,7 +238,7 @@ export default class Print {
         const source = lyr.getSource()
         let type = null
         const sourceTypes = Object.keys(sources)
-        for (let i = 0; i < Object.keys(sources).length; i++) {
+        for (let i = 0; i &lt; Object.keys(sources).length; i++) {
             const sourceType = sourceTypes[i]
             const sourceClass = sources[sourceType]
             if (source instanceof sourceClass) {
@@ -223,7 +251,7 @@ export default class Print {
     /**
     * this function return world extent for base Layer like OSM
     * @param {ol.layer} lyr openlayers layer to get world extent for
-    * @returns {Array.<Number>}
+    * @returns {Array.&lt;Number>}
     */
     getBaseLayerMaxExtent(lyr) {
         const sourceProjection = lyr.getSource().getProjection()
@@ -232,7 +260,7 @@ export default class Print {
     }
     /**
     * this function return map base layers ex: OSM,GoogleMaps
-    * @returns {Array.<ol.layer>}
+    * @returns {Array.&lt;ol.layer>}
     */
     getBaseLayers() {
         let baseLayers = LayersHelper.getBaseLayers(this.map).filter(baselyr => baselyr.getVisible())
@@ -356,4 +384,26 @@ export default class Print {
         let payload = JSON.stringify(this.getPrintObj({ dpi, comment, title, layout, scale }))
         return payload
     }
-}
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationHelper.html">AnimationHelper</a></li><li><a href="BasicViewerHelper.html">BasicViewerHelper</a></li><li><a href="FeatureHelper.html">FeatureHelper</a></li><li><a href="FeatureListHelper.html">FeatureListHelper</a></li><li><a href="LayersHelper.html">LayersHelper</a></li><li><a href="MapConfigTransformService.html">MapConfigTransformService</a></li><li><a href="module.exports.html">exports</a></li><li><a href="OSMGeoCoding.html">OSMGeoCoding</a></li><li><a href="StyleHelper.html">StyleHelper</a></li><li><a href="URLS.html">URLS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#capitalizeFirstLetter">capitalizeFirstLetter</a></li><li><a href="global.html#convToDegree">convToDegree</a></li><li><a href="global.html#convToRadian">convToRadian</a></li><li><a href="global.html#copyToClipboard">copyToClipboard</a></li><li><a href="global.html#createPDF">createPDF</a></li><li><a href="global.html#doExternalGet">doExternalGet</a></li><li><a href="global.html#doGet">doGet</a></li><li><a href="global.html#doPost">doPost</a></li><li><a href="global.html#downloadFile">downloadFile</a></li><li><a href="global.html#getBaseLayerMaxExtent">getBaseLayerMaxExtent</a></li><li><a href="global.html#getBaseLayers">getBaseLayers</a></li><li><a href="global.html#getClosestScale">getClosestScale</a></li><li><a href="global.html#getCRSFToken">getCRSFToken</a></li><li><a href="global.html#getCustomParams">getCustomParams</a></li><li><a href="global.html#getGeoserverDPIS">getGeoserverDPIS</a></li><li><a href="global.html#getGeoserverScales">getGeoserverScales</a></li><li><a href="global.html#getLayerParams">getLayerParams</a></li><li><a href="global.html#getMapScales">getMapScales</a></li><li><a href="global.html#getPrintInfo">getPrintInfo</a></li><li><a href="global.html#getPrintLegends">getPrintLegends</a></li><li><a href="global.html#getPrintLocalLayers">getPrintLocalLayers</a></li><li><a href="global.html#getPrintObj">getPrintObj</a></li><li><a href="global.html#getResolutionFromScale">getResolutionFromScale</a></li><li><a href="global.html#getScaleFromResolution">getScaleFromResolution</a></li><li><a href="global.html#getScaleIndex">getScaleIndex</a></li><li><a href="global.html#getSourceFormat">getSourceFormat</a></li><li><a href="global.html#getSourceType">getSourceType</a></li><li><a href="global.html#hasTrailingSlash">hasTrailingSlash</a></li><li><a href="global.html#moveBottomLeft">moveBottomLeft</a></li><li><a href="global.html#moveBottomRight">moveBottomRight</a></li><li><a href="global.html#moveTopLeft">moveTopLeft</a></li><li><a href="global.html#moveTopRight">moveTopRight</a></li><li><a href="global.html#printPayload">printPayload</a></li><li><a href="global.html#removeTrailingSlash">removeTrailingSlash</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon May 21 2018 13:34:12 GMT+0200 (EET)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

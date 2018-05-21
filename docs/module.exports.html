@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: StyleHelper</title>
+    <title>JSDoc: Class: exports</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: StyleHelper</h1>
+    <h1 class="page-title">Class: exports</h1>
 
     
 
@@ -28,9 +28,9 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>StyleHelper<span class="signature">(iconImage<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>exports<span class="signature">(map, geoserverURL, accessToken, proxyURL<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">Class for Styles manipulation</div>
+            <div class="class-description">Class for Geoserver Print manipulation</div>
         
     
 </header>
@@ -45,7 +45,7 @@
     
 
     
-    <h4 class="name" id="StyleHelper"><span class="type-signature"></span>new StyleHelper<span class="signature">(iconImage<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="exports"><span class="type-signature"></span>new exports<span class="signature">(map, geoserverURL, accessToken, proxyURL<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -53,7 +53,7 @@
 
 
 <div class="description">
-    Create a StyleHelper instance.
+    Create a Print instance.
 </div>
 
 
@@ -93,7 +93,112 @@
 
         <tr>
             
-                <td class="name"><code>iconImage</code></td>
+                <td class="name"><code>map</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ol.Map</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">map to be printed</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>geoserverURL</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">geoserver URL</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>accessToken</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">user accessToken</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>proxyURL</code></td>
             
 
             <td class="type">
@@ -120,12 +225,12 @@
             
                 <td class="default">
                 
-                    "https://openlayers.org/en/v4.6.5/examples/data/icon.png"
+                    null
                 
                 </td>
             
 
-            <td class="description last">default marker icon</td>
+            <td class="description last">geonode/geoserver proxy URL</td>
         </tr>
 
     
@@ -166,7 +271,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="helpers_StyleHelper.jsx.html">helpers/StyleHelper.jsx</a>, <a href="helpers_StyleHelper.jsx.html#line49">line 49</a>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line13">line 13</a>
     </li></ul></dd>
     
 
@@ -211,267 +316,6 @@
 
     
 
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="getMarker"><span class="type-signature"></span>getMarker<span class="signature">()</span><span class="type-signature"> &rarr; {ol.style}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    this function marker style
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="helpers_StyleHelper.jsx.html">helpers/StyleHelper.jsx</a>, <a href="helpers_StyleHelper.jsx.html#line71">line 71</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">ol.style</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="styleFunction"><span class="type-signature"></span>styleFunction<span class="signature">(feature)</span><span class="type-signature"> &rarr; {ol.style}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    this function feature styles based on geometry type
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>feature</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">ol.Feature</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">feature you want to get style for it</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="helpers_StyleHelper.jsx.html">helpers/StyleHelper.jsx</a>, <a href="helpers_StyleHelper.jsx.html#line62">line 62</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">ol.style</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
     
 
     
