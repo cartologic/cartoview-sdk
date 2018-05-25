@@ -9,15 +9,15 @@ import randomColor from 'randomcolor'
 * this function return image Style
 * @returns {ol.style}
 */
-function getImageStyle() {
+function getImageStyle(fill = null) {
     return new Circle({
         radius: 5,
-        fill: null,
+        fill,
         stroke: new Stroke({ color: 'black', width: 2 })
     })
 }
 /**
-* this function return bright color(rgba) as string
+* this function return opaque bright color(rgb) as string
 * @returns {string}
 */
 function randomBright() {
@@ -27,7 +27,18 @@ function randomBright() {
     })
 }
 /**
-* this function return dark color(rgba) as string
+* this function return transparent bright color(rgba) as string
+* @returns {string}
+*/
+function randomBrightTrans() {
+    return randomColor({
+        luminosity: 'bright',
+        format: 'rgba',
+        alpha: 0.4
+    })
+}
+/**
+* this function return opaque dark color(rgba) as string
 * @returns {string}
 */
 function randomDark() {
@@ -37,61 +48,73 @@ function randomDark() {
         alpha: 1
     })
 }
+/**
+* this function return transparent dark color(rgba) as string
+* @returns {string}
+*/
+function randomDarkTrans() {
+    return randomColor({
+        luminosity: 'dark',
+        format: 'rgba',
+        alpha: 0.4
+    })
+}
 /** @constant styles
     @type {Object}
     @default
 */
 const styles = {
     'Point': function () {
-        return new Style({ image: getImageStyle() })
+        const rc = randomDark()
+        return new Style({ image: getImageStyle(new Fill({ color: rc })) })
     },
     'LineString': function () {
         return new Style({
             stroke: new Stroke({
-                color: randomDark(), width: 3
+                color: randomDark(), width: 2
             })
         })
     },
     'MultiLineString': function () {
         return new Style({
-            stroke: new Stroke({ color: randomBright(), width: 1 })
+            stroke: new Stroke({ color: randomBright(), width: 2 })
         })
     },
     'MultiPoint': function () {
-        return new Style({ image: getImageStyle() })
+        const rc = randomDark()
+        return new Style({ image: getImageStyle(new Fill({ color: rc })) })
     },
     'MultiPolygon': function () {
         return new Style({
-            stroke: new Stroke({ color: 'black', width: 1 }),
-            fill: new Fill({ color: randomBright() })
+            stroke: new Stroke({ color: 'black', width: 2 }),
+            fill: new Fill({ color: randomBrightTrans() })
         })
     },
     'Polygon': function () {
         return new Style({
             stroke: new Stroke({
-                color: randomDark(),
+                color: 'black',
                 lineDash: [4],
                 width: 3
             }),
-            fill: new Fill({ color: randomBright() })
+            fill: new Fill({ color: randomBrightTrans() })
         })
     },
     'GeometryCollection': function () {
-        const cd = randomDark()
         return new Style({
-            stroke: new Stroke({ color: cd, width: 2 }),
-            fill: new Fill({ color: randomBright() }),
+            stroke: new Stroke({ color: 'black', width: 2 }),
+            fill: new Fill({ color: randomBrightTrans() }),
             image: new Circle({
                 radius: 10,
                 fill: null,
-                stroke: new Stroke({ color: cd })
+                stroke: new Stroke({ color: 'black' })
             })
         })
     },
     'Circle': function () {
         return new Style({
-            stroke: new Stroke({ color: randomDark(), width: 2 }),
-            fill: new Fill({ color: randomBright() })
+            stroke: new Stroke({ color: 'black', width: 2 }),
+            fill: new Fill({ color: randomBrightTrans() })
         })
     }
 }
