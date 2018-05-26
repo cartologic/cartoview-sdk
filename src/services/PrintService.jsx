@@ -8,13 +8,24 @@ const DOTS_PER_INCH = 96
     @default
 */
 const INCHES_PER_METER = 39.37
+export const PRINT_LAYER_NAME = "sdk_print_lyr"
 
 import { doGet, doPost, downloadFile } from '../utils/utils'
+import { moveBottomLeft, moveBottomRight, moveTopLeft, moveTopRight } from '../utils/math'
 
 import BasicViewerHelper from '../helpers/BasicViewerHelper'
+import Collection from 'ol/collection'
+import Feature from 'ol/feature'
 import LayersHelper from '../helpers/LayersHelper'
+import Modify from 'ol/interaction/modify'
+import Polygon from 'ol/geom/polygon'
+import StyleHelper from '../helpers/StyleHelper'
+import Translate from 'ol/interaction/translate'
 import URLS from '../urls/urls'
+import Vector from 'ol/layer/vector'
+import { default as VectorSource } from 'ol/source/vector'
 import { convToDegree } from '../utils/math'
+import proj from 'ol/proj'
 import { sources } from '../services/MapConfigService'
 
 /** Class for Geoserver Print manipulation */
@@ -39,6 +50,10 @@ class Print {
         this.accessToken = accessToken
         this.urls = new URLS(this.proxyURL)
         this.getPrintInfo().then(result => this.getGeoserverScales())
+        this.featureCollection = new Collection()
+        this.translate = new Translate({
+            features: this.featureCollection
+        })
     }
     /**
     * this function return geoserver print allowed DPIS
@@ -71,6 +86,160 @@ class Print {
             }
         })
         return infoPromise
+    }
+    _getLayout(layout) {
+        const layouts = this.pdfInfo.layouts
+        let targetLayout = null
+        if (layout) {
+            for (let i = 0; i < layouts.length; i++) {
+                const l = layouts[i]
+                if (l.name === layout) {
+                    targetLayout = l
+                    break
+                }
+            }
+        }
+        else {
+            targetLayout = layouts[0]
+        }
+        return targetLayout
+    }
+    _getMetersPerUnit(unit) {
+        return proj.METERS_PER_UNIT[unit]
+    }
+    /**
+    * this function print polygon coords
+    * @param {Number} printScale 
+    * @param {Number} [dpi=DOTS_PER_INCH] DPI
+    * @param {string} [layout=null]  print layout name
+    * @returns {Array.<Number>} extent
+    */
+    getPolygonCoords(printScale, dpi = DOTS_PER_INCH, layout = null) {
+        // var geom = this.feature.geometry
+        // var center = geom.getBounds().getCenterLonLat()
+        // var size = this.printProvider.layout.get("size")
+        // var units = units || this.feature.layer.map.baseLayer.units || "dd"
+        // var unitsRatio = OpenLayers.INCHES_PER_UNIT[units]
+        // var w = size.width / 72 / unitsRatio * s / 2
+        // var h = size.height / 72 / unitsRatio * s / 2
+        // return new OpenLayers.Bounds(center.lon - w, center.lat - h, center.lon + w, center.lat + h);
+        const view = this.map.getView()
+        const mapProjection = view.getProjection()
+        const units = this._getMetersPerUnit(mapProjection.getUnits())
+        const mapCenter = view.getCenter()
+        layout = this._getLayout(layout)
+        const unitsRatio = units * INCHES_PER_METER
+        const printMapSize = [layout.map.width, layout.map.height]
+        const scaleWidth = printMapSize[0] / dpi / unitsRatio * printScale / 2
+        const scaleHeight = printMapSize[1] / dpi / unitsRatio * printScale / 2
+        const extent = [mapCenter[0] - scaleWidth, mapCenter[1] - scaleHeight, mapCenter[0] + scaleWidth, mapCenter[1] + scaleHeight]
+        // const resolution = view.getResolution()
+        // const scaleWidth = (((size[0] / dpi) / INCHES_PER_METER) * printScale / resolution) / 2
+        // const scaleHeight = (((size[1] / dpi) / INCHES_PER_METER) * printScale / resolution) / 2
+        // const distance = Math.sqrt((Math.pow(scaleWidth, 2) + Math.pow(scaleHeight, 2))) / 2
+        // let p1 = moveTopLeft([size[0] / 2, size[1] / 2], 45, distance)
+        // let p2 = moveTopRight([size[0] / 2, size[1] / 2], 45, distance)
+        // let p3 = moveBottomLeft([size[0] / 2, size[1] / 2], 45, distance)
+        // let p4 = moveBottomRight([size[0] / 2, size[1] / 2], 45, distance)
+        // p1 = this.map.getCoordinateFromPixel(p1)
+        // p2 = this.map.getCoordinateFromPixel(p2)
+        // p3 = this.map.getCoordinateFromPixel(p3)
+        // p4 = this.map.getCoordinateFromPixel(p4)
+        return extent
+    }
+    getOptimalResolution(printMapSize, printMapScale, dpi = DOTS_PER_INCH) {
+        const mapSize = this.map.getSize()
+        const dotsPerMeter = dpi * INCHES_PER_METER
+
+        const resolutionX = (printMapSize[0] * printMapScale) / (dotsPerMeter * mapSize[0])
+        const resolutionY = (printMapSize[1] * printMapScale) / (dotsPerMeter * mapSize[1])
+
+        const optimalResolution = Math.max(resolutionX, resolutionY)
+        return optimalResolution
+    }
+    getOptimalScale(printMapSize, dpi = DOTS_PER_INCH) {
+        const printMapScales = this.getGeoserverScales()
+        const mapSize = this.map.getSize()
+        const view = this.map.getView()
+        const mapResolution = view.getResolution()
+        const mapWidth = mapSize[0] * mapResolution
+        const mapHeight = mapSize[1] * mapResolution
+        const scaleWidth = mapWidth * INCHES_PER_METER * dpi / printMapSize[0]
+        const scaleHeight = mapHeight * INCHES_PER_METER * dpi / printMapSize[1]
+        const scale = Math.min(scaleWidth, scaleHeight)
+        let optimal = -1
+        for (let i = 0, ii = printMapScales.length; i < ii; ++i) {
+            if (scale > printMapScales[i]) {
+                optimal = printMapScales[i]
+            }
+        }
+
+        return optimal
+    }
+    _getPolygonGeomtry(extent) {
+        return new Polygon.fromExtent(extent)
+    }
+    /**
+    * this function return feature with polygon geometry
+    * @param {ol.Extent|Array.<Number>} extent geometry Extent
+    * @param {string} [geometryName="the_geom"] geometry name
+    * @returns {ol.Feature} feature
+    */
+    getPolygonFeature(extent, geometryName = "the_geom") {
+        let feature = new Feature({})
+        feature.setGeometryName(geometryName)
+        feature.setGeometry(this._getPolygonGeomtry(extent))
+        return feature
+    }
+    getPrintLayer() {
+        let lyr = new Vector({
+            source: new VectorSource({
+                features: this.featureCollection
+            }),
+            style: new StyleHelper().styleFunction,
+        })
+        lyr.set('name', PRINT_LAYER_NAME)
+        return lyr
+    }
+    _getPrintLayer() {
+        let targetLayer = null
+        const layers = LayersHelper.getLocalLayers(this.map)
+        for (let i = 0; i < layers.length; i++) {
+            const lyr = layers[i]
+            if (lyr.get('name') === PRINT_LAYER_NAME) {
+                targetLayer = lyr
+                break
+            }
+        }
+        return targetLayer
+    }
+    _checkPrintLayer() {
+        return this._getPrintLayer() !== null ? true : false
+    }
+    addPrintLayer(feature) {
+        if (!this._checkPrintLayer()) {
+            this.featureCollection.extend([feature])
+            let layer = this.getPrintLayer(feature)
+            this.map.addLayer(layer)
+            this.map.addInteraction(this.translate)
+        } else {
+            this.featureCollection.clear()
+            this.featureCollection.extend([feature])
+        }
+    }
+    getModifyInteraction() {
+        let modifyInteraction = new Modify({
+            features: this.featureCollection,
+            pixelTolerance: 32
+        })
+        return modifyInteraction
+    }
+    removePrintLayer() {
+        const lyr = this.getPrintLayer()
+        if (lyr) {
+            this.map.removeLayer(lyr)
+            this.map.removeInteraction(this.translate)
+        }
     }
     /**
     * this function return geoserver print scales values
@@ -275,14 +444,17 @@ class Print {
         let layers = LayersHelper.getLocalLayers(this.map)
         layers = layers.map(lyr => {
             if (lyr.getVisible()) {
+                const params = lyr.getSource().getParams()
                 const layerObj = {
                     baseURL: LayersHelper.getLayerURL(lyr, this.accessToken),
                     opacity: lyr.getOpacity(),
-                    singleTile: false,
+                    // singleTile: false,
                     type: "WMS",//TODO: get layer type from openlayers
-                    layers: [lyr.getProperties().name],
+                    // layers: [lyr.getProperties().name],
+                    layers: params['LAYERS'].split(','),
                     format: this.getSourceFormat(lyr), // TODO get format from source
                     styles: [],
+                    version: params['VERSION'],
                     customParams: {
                         ...this.getCustomParams(lyr)
                     }
