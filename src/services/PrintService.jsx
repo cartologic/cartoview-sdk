@@ -10,8 +10,8 @@ const DOTS_PER_INCH = 96
 const INCHES_PER_METER = 39.37
 export const PRINT_LAYER_NAME = "sdk_print_lyr"
 
+//WARNING: FIX LAYERS ENCODING ACCORDING TO GEOSERVER PRINT PROTOCOL
 import { doGet, doPost, downloadFile } from '../utils/utils'
-import { moveBottomLeft, moveBottomRight, moveTopLeft, moveTopRight } from '../utils/math'
 
 import BasicViewerHelper from '../helpers/BasicViewerHelper'
 import Collection from 'ol/collection'
@@ -201,7 +201,7 @@ class Print {
         lyr.set('name', PRINT_LAYER_NAME)
         return lyr
     }
-    _getPrintLayer() {
+    findPrintLayer() {
         let targetLayer = null
         const layers = LayersHelper.getLocalLayers(this.map)
         for (let i = 0; i < layers.length; i++) {
@@ -214,7 +214,7 @@ class Print {
         return targetLayer
     }
     _checkPrintLayer() {
-        return this._getPrintLayer() !== null ? true : false
+        return this.findPrintLayer() !== null ? true : false
     }
     addPrintLayer(feature) {
         if (!this._checkPrintLayer()) {
@@ -235,7 +235,7 @@ class Print {
         return modifyInteraction
     }
     removePrintLayer() {
-        const lyr = this.getPrintLayer()
+        const lyr = this.findPrintLayer()
         if (lyr) {
             this.map.removeLayer(lyr)
             this.map.removeInteraction(this.translate)
@@ -374,7 +374,7 @@ class Print {
     * @returns {Array.<PrintLegend>}
     */
     getPrintLegends() {
-        const layers = LayersHelper.getLocalLayers(this.map)
+        const layers = this.getPrintLocalLayers()
         let printLegends = LayersHelper.getLegends(layers, this.accessToken).map(legend => this.getLegendItem(legend))
         return printLegends
     }
@@ -411,7 +411,7 @@ class Print {
     * this function return map base layers ex: OSM,GoogleMaps
     * @returns {Array.<ol.layer>}
     */
-    getBaseLayers() {
+    encodeBaseLayers() {
         let baseLayers = LayersHelper.getBaseLayers(this.map).filter(baselyr => baselyr.getVisible())
         baseLayers = baseLayers.map(baseLayer => {
             const tileGrid = baseLayer.getSource().getTileGrid()
@@ -436,12 +436,23 @@ class Print {
         })
         return baseLayers
     }
+    getPrintLocalLayers() {
+        let printLayers = []
+        const layers = LayersHelper.getLocalLayers(this.map)
+        for (let i = 0; i < layers.length; i++) {
+            const lyr = layers[i]
+            if (lyr.get('name') !== PRINT_LAYER_NAME) {
+                printLayers.push(lyr)
+            }
+        }
+        return printLayers
+    }
     /**
     * this function return layer objects for print
     * @returns {Array}
     */
-    getPrintLocalLayers() {
-        let layers = LayersHelper.getLocalLayers(this.map)
+    encodeLocalLayers() {
+        let layers = this.getPrintLocalLayers()
         layers = layers.map(lyr => {
             if (lyr.getVisible()) {
                 const params = lyr.getSource().getParams()
@@ -470,20 +481,23 @@ class Print {
     */
     getPrintObj(options = { dpi: DOTS_PER_INCH, layout: null, title: "", comment: "", scale: null }) {
         let { dpi, title, comment, layout, scale } = options
+        const mapProjection = this.map.getView().getProjection()
         const srs = this.map.getView().getProjection().getCode()
         const rotationRadian = this.map.getView().getRotation()
-        const center = this.map.getView().getCenter()
+        const currentFeature = this.featureCollection.getArray()[0]
+        const featureExtent = currentFeature.getGeometry().getExtent()
+        // const center = BasicViewerHelper.getCenterOfExtent(featureExtent)
         let legends = this.getPrintLegends()
         const printObj = {
-            units: 'm',
+            units: mapProjection.getUnits(),
             srs,
             mapTitle: title,
             comment,
             layout,
             outputFormat: 'pdf',
             layers: [
-                ...this.getBaseLayers(),
-                ...this.getPrintLocalLayers()
+                ...this.encodeBaseLayers(),
+                ...this.encodeLocalLayers()
             ],
             legends,
             pages: [
@@ -491,9 +505,9 @@ class Print {
                     dpi,
                     geodetic: false,
                     strictEpsg4326: false,
-                    // bbox: this.map.getView().calculateExtent(this.map.getSize()),
-                    scale,
-                    center,
+                    bbox: featureExtent,
+                    // scale,
+                    // center,
                     rotation: convToDegree(rotationRadian)
                 }
             ]
