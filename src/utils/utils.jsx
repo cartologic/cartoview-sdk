@@ -1,6 +1,7 @@
 import FileSaver from 'file-saver'
 import copy from 'clipboard-copy'
 import { getCRSFToken } from '../helpers/helpers'
+import { resolve } from 'path';
 /**
  * send get Request to an URL 
  * @param {string} url to send request to
@@ -84,25 +85,32 @@ export function doPost(url, data, extraHeaders = {}, type = 'json') {
  * @param {string} url to send request to
  * @param {string} fileName the desired name of the file
  * @param {string} [data=null] request body if you want to send post request
- * @returns {void}
+ * @returns {Promise}
  */
 export function downloadFile(url, fileName, data = null) {
-    let mainProps = { method: 'GET' }
-    if (data) {
-        mainProps.method = 'POST'
-        mainProps.body = data
-    }
-    fetch(url, {
-        ...mainProps,
-        credentials: 'include',
-        cache: 'no-cache',
-        mode: 'cors',
-        headers: new Headers({
-            "X-CSRFToken": getCRSFToken(),
-        }),
-    }).then(response => response.blob().then(data => {
-        FileSaver.saveAs(data, fileName)
-    }))
+    let downloadPromise = new Promise((resolve, reject) => {
+        let mainProps = { method: 'GET' }
+        if (data) {
+            mainProps.method = 'POST'
+            mainProps.body = data
+        }
+        fetch(url, {
+            ...mainProps,
+            credentials: 'include',
+            cache: 'no-cache',
+            mode: 'cors',
+            headers: new Headers({
+                "X-CSRFToken": getCRSFToken(),
+            }),
+        }).then(response => response.blob().then(data => {
+            FileSaver.saveAs(data, fileName)
+            resolve(true)
+        })).catch(err => {
+            reject(err)
+        })
+    })
+    return downloadPromise
+
 }
 /**
  * Copy data to system Clipboard

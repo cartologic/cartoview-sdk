@@ -38,20 +38,26 @@ const DOTS_PER_INCH = 96
 const INCHES_PER_METER = 39.37
 export const PRINT_LAYER_NAME = "sdk_print_lyr"
 
+import * as olSize from 'ol/size'
+
+//WARNING: FIX LAYERS ENCODING ACCORDING TO GEOSERVER PRINT PROTOCOL
 import { doGet, doPost, downloadFile } from '../utils/utils'
-import { moveBottomLeft, moveBottomRight, moveTopLeft, moveTopRight } from '../utils/math'
 
 import BasicViewerHelper from '../helpers/BasicViewerHelper'
 import Collection from 'ol/collection'
 import Feature from 'ol/feature'
+import ImageWMS from 'ol/source/imagewms'
 import LayersHelper from '../helpers/LayersHelper'
 import Modify from 'ol/interaction/modify'
 import Polygon from 'ol/geom/polygon'
 import StyleHelper from '../helpers/StyleHelper'
+import TileImage from 'ol/source/tileimage'
+import TileWMS from 'ol/source/tilewms'
 import Translate from 'ol/interaction/translate'
 import URLS from '../urls/urls'
 import Vector from 'ol/layer/vector'
 import { default as VectorSource } from 'ol/source/vector'
+import WMTS from 'ol/source/wmts'
 import { convToDegree } from '../utils/math'
 import proj from 'ol/proj'
 import { sources } from '../services/MapConfigService'
@@ -143,14 +149,6 @@ class Print {
     * @returns {Array.&lt;Number>} extent
     */
     getPolygonCoords(printScale, dpi = DOTS_PER_INCH, layout = null) {
-        // var geom = this.feature.geometry
-        // var center = geom.getBounds().getCenterLonLat()
-        // var size = this.printProvider.layout.get("size")
-        // var units = units || this.feature.layer.map.baseLayer.units || "dd"
-        // var unitsRatio = OpenLayers.INCHES_PER_UNIT[units]
-        // var w = size.width / 72 / unitsRatio * s / 2
-        // var h = size.height / 72 / unitsRatio * s / 2
-        // return new OpenLayers.Bounds(center.lon - w, center.lat - h, center.lon + w, center.lat + h);
         const view = this.map.getView()
         const mapProjection = view.getProjection()
         const units = this._getMetersPerUnit(mapProjection.getUnits())
@@ -161,18 +159,6 @@ class Print {
         const scaleWidth = printMapSize[0] / dpi / unitsRatio * printScale / 2
         const scaleHeight = printMapSize[1] / dpi / unitsRatio * printScale / 2
         const extent = [mapCenter[0] - scaleWidth, mapCenter[1] - scaleHeight, mapCenter[0] + scaleWidth, mapCenter[1] + scaleHeight]
-        // const resolution = view.getResolution()
-        // const scaleWidth = (((size[0] / dpi) / INCHES_PER_METER) * printScale / resolution) / 2
-        // const scaleHeight = (((size[1] / dpi) / INCHES_PER_METER) * printScale / resolution) / 2
-        // const distance = Math.sqrt((Math.pow(scaleWidth, 2) + Math.pow(scaleHeight, 2))) / 2
-        // let p1 = moveTopLeft([size[0] / 2, size[1] / 2], 45, distance)
-        // let p2 = moveTopRight([size[0] / 2, size[1] / 2], 45, distance)
-        // let p3 = moveBottomLeft([size[0] / 2, size[1] / 2], 45, distance)
-        // let p4 = moveBottomRight([size[0] / 2, size[1] / 2], 45, distance)
-        // p1 = this.map.getCoordinateFromPixel(p1)
-        // p2 = this.map.getCoordinateFromPixel(p2)
-        // p3 = this.map.getCoordinateFromPixel(p3)
-        // p4 = this.map.getCoordinateFromPixel(p4)
         return extent
     }
     getOptimalResolution(printMapSize, printMapScale, dpi = DOTS_PER_INCH) {
@@ -287,17 +273,24 @@ class Print {
     * @param {Number} scale print Scale
     * @returns {Promise}
     */
-    createPDF(title, comment, layout, dpi, scale) {
+    createPDF(title, comment, layout, dpi, scale, filename = "print.pdf") {
         let targetURL = this.geoserverPdfURL + "create.json"
         targetURL = this.urls.getParamterizedURL(targetURL, { "access_token": this.accessToken })
         const proxiedURL = this.urls.getProxiedURL(targetURL)
-        doPost(proxiedURL, this.printPayload(title, comment, layout, scale, dpi), { 'content-type': 'application/json' }).then(result => {
-            let pdfURL = result.getURL
-            const pfdFileID = pdfURL.split('/').pop()
-            let downloadURL = this.urls.getParamterizedURL(this.geoserverPdfURL + pfdFileID, { "access_token": this.accessToken })
-            downloadURL = this.urls.getProxiedURL(this.geoserverPdfURL + pfdFileID)
-            downloadFile(downloadURL, "print.pdf")
+        let printPromise = new Promise((resolve, reject) => {
+            doPost(proxiedURL, this.printPayload(title, comment, layout, scale, dpi), { 'content-type': 'application/json' }).then(result => {
+                let pdfURL = result.getURL
+                const pfdFileID = pdfURL.split('/').pop()
+                let downloadURL = this.urls.getParamterizedURL(this.geoserverPdfURL + pfdFileID, { "access_token": this.accessToken })
+                downloadURL = this.urls.getProxiedURL(this.geoserverPdfURL + pfdFileID)
+                downloadFile(downloadURL, filename).then(downloaded => {
+                    resolve(downloaded)
+                }).catch(err => {
+                    reject(err)
+                })
+            })
         })
+        return printPromise
     }
     /**
     * this function return geoserver print scale index by it's value
@@ -476,32 +469,105 @@ class Print {
         return printLayers
     }
     /**
+    * this function return encoded wms layer 
+    * @param {ol.layer} lyr openlayers layer to be encoded
+    * @param {boolean} [singleTile=false] 
+    * @returns {object}
+    */
+    _encodeWMS(lyr, singleTile = false) {
+        const params = lyr.getSource().getParams()
+        const layerObj = {
+            baseURL: LayersHelper.getLayerURL(lyr, this.accessToken),
+            opacity: lyr.getOpacity(),
+            singleTile,
+            type: "WMS",//TODO: get layer type from openlayers
+            layers: params['LAYERS'].split(','),
+            format: this.getSourceFormat(lyr), // TODO get format from source
+            styles: [],
+            version: params['VERSION'],
+            customParams: {
+                ...this.getCustomParams(lyr)
+            }
+        }
+        return layerObj
+    }
+    /**
+    * this function return encoded wmts layer 
+    * @param {ol.layer} lyr openlayers layer to be encoded
+    * @returns {object}
+    */
+    _encodeWMTS(lyr) {
+        const source = lyr.getSource()
+        const projection = source.getProjection()
+        const tileGrid = source.getTileGrid()
+        const matrixIds = tileGrid.getMatrixIds()
+        const matrices = []
+        for (let i = 0, ii = matrixIds.length; i &lt; ii; ++i) {
+            const tileRange = tileGrid.getFullTileRange(i)
+            matrices.push(({
+                identifier: matrixIds[i],
+                scaleDenominator: tileGrid.getResolution(i) *
+                    projection.getMetersPerUnit() / 0.28E-3,
+                tileSize: olSize.toSize(tileGrid.getTileSize(i)),
+                topLeftCorner: tileGrid.getOrigin(i),
+                matrixSize: [
+                    tileRange.maxX - tileRange.minX,
+                    tileRange.maxY - tileRange.minY
+                ]
+            }))
+        }
+        const dimensions = source.getDimensions()
+        const dimensionKeys = Object.keys(dimensions)
+        const layerObj = ({
+            baseURL: LayersHelper.getLayerURL(lyr, this.accessToken),
+            dimensions: dimensionKeys,
+            dimensionParams: dimensions,
+            imageFormat: source.getFormat(),
+            layer: source.getLayer(),
+            matrices: matrices,
+            matrixSet: source.getMatrixSet(),
+            opacity: lyr.getOpacity(),
+            requestEncoding: source.getRequestEncoding(),
+            style: source.getStyle(),
+            type: 'WMTS',
+            version: source.getVersion()
+        })
+        return layerObj
+    }
+    /**
+    * this function return encoded layer 
+    * @param {ol.layer} lyr openlayers layer to be encoded
+    * @returns {object}
+    */
+    _layersEncoder(lyr) {
+        let encodedLayer = null
+        const source = lyr.getSource()
+        if (source instanceof TileWMS) {
+            encodedLayer = this._encodeWMS(lyr)
+        }
+        else if (source instanceof ImageWMS) {
+            encodedLayer = this._encodeWMS(lyr, true)
+        }
+        else if (source instanceof WMTS) {
+            encodedLayer = this._encodeWMTS(lyr)
+        }
+        return encodedLayer
+    }
+    /**
     * this function return layer objects for print
     * @returns {Array}
     */
     encodeLocalLayers() {
         let layers = this.getPrintLocalLayers()
-        layers = layers.map(lyr => {
+        let encodedLayers = []
+        for (let i = 0; i &lt; layers.length; i++) {
+            const lyr = layers[i]
             if (lyr.getVisible()) {
-                const params = lyr.getSource().getParams()
-                const layerObj = {
-                    baseURL: LayersHelper.getLayerURL(lyr, this.accessToken),
-                    opacity: lyr.getOpacity(),
-                    // singleTile: false,
-                    type: "WMS",//TODO: get layer type from openlayers
-                    // layers: [lyr.getProperties().name],
-                    layers: params['LAYERS'].split(','),
-                    format: this.getSourceFormat(lyr), // TODO get format from source
-                    styles: [],
-                    version: params['VERSION'],
-                    customParams: {
-                        ...this.getCustomParams(lyr)
-                    }
-                }
-                return layerObj
+                const layerObj = this._layersEncoder(lyr)
+                encodedLayers.push(layerObj)
             }
-        })
-        return layers.reverse()
+        }
+        return encodedLayers.reverse()
     }
     /**
     * this function return full print Object to send to geoserver
@@ -595,7 +661,7 @@ export default Print</code></pre>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun May 27 2018 04:17:00 GMT+0200 (EET)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun May 27 2018 19:08:15 GMT+0200 (EET)
 </footer>
 
 <script> prettyPrint(); </script>
