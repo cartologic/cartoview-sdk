@@ -102,10 +102,15 @@ export function downloadFile(url, fileName, data = null) {
             headers: new Headers({
                 "X-CSRFToken": getCRSFToken(),
             }),
-        }).then(response => response.blob().then(data => {
+        }).then(response => {
+            if (response.ok) {
+                return response.blob()
+            }
+            throw Error("Error Downloading file")
+        }).then(data => {
             FileSaver.saveAs(data, fileName)
             resolve(true)
-        })).catch(err => {
+        }).catch(err => {
             reject(err)
         })
     })

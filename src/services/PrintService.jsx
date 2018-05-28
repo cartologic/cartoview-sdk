@@ -8,6 +8,10 @@ const DOTS_PER_INCH = 96
     @default
 */
 const INCHES_PER_METER = 39.37
+/** @constant PRINT_LAYER_NAME
+    @type {string}
+    @default
+*/
 export const PRINT_LAYER_NAME = "sdk_print_lyr"
 
 import * as olSize from 'ol/size'
@@ -20,10 +24,8 @@ import Collection from 'ol/collection'
 import Feature from 'ol/feature'
 import ImageWMS from 'ol/source/imagewms'
 import LayersHelper from '../helpers/LayersHelper'
-import Modify from 'ol/interaction/modify'
 import Polygon from 'ol/geom/polygon'
 import StyleHelper from '../helpers/StyleHelper'
-import TileImage from 'ol/source/tileimage'
 import TileWMS from 'ol/source/tilewms'
 import Translate from 'ol/interaction/translate'
 import URLS from '../urls/urls'
@@ -177,7 +179,11 @@ class Print {
         feature.setGeometry(this._getPolygonGeomtry(extent))
         return feature
     }
-    getPrintLayer() {
+    /**
+    * this function create print layer
+    * @returns {ol.layer}
+    */
+    createPrintLayer() {
         let lyr = new Vector({
             source: new VectorSource({
                 features: this.featureCollection
@@ -187,6 +193,10 @@ class Print {
         lyr.set('name', PRINT_LAYER_NAME)
         return lyr
     }
+    /**
+    * this function search for print layer and return it back
+    * @returns {ol.layer|null}
+    */
     findPrintLayer() {
         let targetLayer = null
         const layers = LayersHelper.getLocalLayers(this.map)
@@ -199,13 +209,21 @@ class Print {
         }
         return targetLayer
     }
+    /**
+    * this function check if print layer exists or not
+    * @returns {boolean}
+    */
     _checkPrintLayer() {
         return this.findPrintLayer() !== null ? true : false
     }
+    /**
+    * this function add print layer and interaction to map
+    * @returns {void}
+    */
     addPrintLayer(feature) {
         if (!this._checkPrintLayer()) {
             this.featureCollection.extend([feature])
-            let layer = this.getPrintLayer(feature)
+            let layer = this.createPrintLayer(feature)
             this.map.addLayer(layer)
             this.map.addInteraction(this.translate)
         } else {
@@ -213,13 +231,10 @@ class Print {
             this.featureCollection.extend([feature])
         }
     }
-    getModifyInteraction() {
-        let modifyInteraction = new Modify({
-            features: this.featureCollection,
-            pixelTolerance: 32
-        })
-        return modifyInteraction
-    }
+    /**
+    * this function remove print layer and print interaction from map
+    * @returns {void}
+    */
     removePrintLayer() {
         const lyr = this.findPrintLayer()
         if (lyr) {
@@ -408,7 +423,7 @@ class Print {
         let baseLayers = LayersHelper.getBaseLayers(this.map).filter(baselyr => baselyr.getVisible())
         baseLayers = baseLayers.map(baseLayer => {
             const tileGrid = baseLayer.getSource().getTileGrid()
-            const tileSize = tileGrid.getTileSize()
+            const tileSize = olSize.toSize(tileGrid.getTileSize())
             const layerURL = new URL(LayersHelper.getLayerURL(baseLayer))
             let maxExtent = this.getBaseLayerMaxExtent(baseLayer)
             maxExtent = BasicViewerHelper.reprojectExtent(maxExtent, this.map)
@@ -418,10 +433,7 @@ class Print {
                 maxExtent,
                 // type: this.getSourceType(baseLayer),
                 type: "OSM",//TODO:Check types supported by openlayers in geoserver
-                tileSize: [
-                    tileSize,
-                    tileSize
-                ],
+                tileSize,
                 extension: "png",
                 resolutions: baseLayer.getSource().getTileGrid().getResolutions()
             }
@@ -429,6 +441,10 @@ class Print {
         })
         return baseLayers
     }
+    /**
+    * this function map layers without print layer
+    * @returns {Array.<ol.layer>}
+    */
     getPrintLocalLayers() {
         let printLayers = []
         const layers = LayersHelper.getLocalLayers(this.map)
@@ -550,7 +566,7 @@ class Print {
         const mapProjection = this.map.getView().getProjection()
         const srs = this.map.getView().getProjection().getCode()
         const rotationRadian = this.map.getView().getRotation()
-        const currentFeature = this.featureCollection.getArray()[0]
+        const currentFeature = this.featureCollection.getArray().pop()
         const featureExtent = currentFeature.getGeometry().getExtent()
         // const center = BasicViewerHelper.getCenterOfExtent(featureExtent)
         let legends = this.getPrintLegends()

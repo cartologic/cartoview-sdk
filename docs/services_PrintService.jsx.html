@@ -36,6 +36,10 @@ const DOTS_PER_INCH = 96
     @default
 */
 const INCHES_PER_METER = 39.37
+/** @constant PRINT_LAYER_NAME
+    @type {string}
+    @default
+*/
 export const PRINT_LAYER_NAME = "sdk_print_lyr"
 
 import * as olSize from 'ol/size'
@@ -48,10 +52,8 @@ import Collection from 'ol/collection'
 import Feature from 'ol/feature'
 import ImageWMS from 'ol/source/imagewms'
 import LayersHelper from '../helpers/LayersHelper'
-import Modify from 'ol/interaction/modify'
 import Polygon from 'ol/geom/polygon'
 import StyleHelper from '../helpers/StyleHelper'
-import TileImage from 'ol/source/tileimage'
 import TileWMS from 'ol/source/tilewms'
 import Translate from 'ol/interaction/translate'
 import URLS from '../urls/urls'
@@ -205,7 +207,11 @@ class Print {
         feature.setGeometry(this._getPolygonGeomtry(extent))
         return feature
     }
-    getPrintLayer() {
+    /**
+    * this function create print layer
+    * @returns {ol.layer}
+    */
+    createPrintLayer() {
         let lyr = new Vector({
             source: new VectorSource({
                 features: this.featureCollection
@@ -215,6 +221,10 @@ class Print {
         lyr.set('name', PRINT_LAYER_NAME)
         return lyr
     }
+    /**
+    * this function search for print layer and return it back
+    * @returns {ol.layer|null}
+    */
     findPrintLayer() {
         let targetLayer = null
         const layers = LayersHelper.getLocalLayers(this.map)
@@ -227,13 +237,21 @@ class Print {
         }
         return targetLayer
     }
+    /**
+    * this function check if print layer exists or not
+    * @returns {boolean}
+    */
     _checkPrintLayer() {
         return this.findPrintLayer() !== null ? true : false
     }
+    /**
+    * this function add print layer and interaction to map
+    * @returns {void}
+    */
     addPrintLayer(feature) {
         if (!this._checkPrintLayer()) {
             this.featureCollection.extend([feature])
-            let layer = this.getPrintLayer(feature)
+            let layer = this.createPrintLayer(feature)
             this.map.addLayer(layer)
             this.map.addInteraction(this.translate)
         } else {
@@ -241,13 +259,10 @@ class Print {
             this.featureCollection.extend([feature])
         }
     }
-    getModifyInteraction() {
-        let modifyInteraction = new Modify({
-            features: this.featureCollection,
-            pixelTolerance: 32
-        })
-        return modifyInteraction
-    }
+    /**
+    * this function remove print layer and print interaction from map
+    * @returns {void}
+    */
     removePrintLayer() {
         const lyr = this.findPrintLayer()
         if (lyr) {
@@ -457,6 +472,10 @@ class Print {
         })
         return baseLayers
     }
+    /**
+    * this function map layers without print layer
+    * @returns {Array.&lt;ol.layer>}
+    */
     getPrintLocalLayers() {
         let printLayers = []
         const layers = LayersHelper.getLocalLayers(this.map)
@@ -578,7 +597,7 @@ class Print {
         const mapProjection = this.map.getView().getProjection()
         const srs = this.map.getView().getProjection().getCode()
         const rotationRadian = this.map.getView().getRotation()
-        const currentFeature = this.featureCollection.getArray()[0]
+        const currentFeature = this.featureCollection.getArray().pop()
         const featureExtent = currentFeature.getGeometry().getExtent()
         // const center = BasicViewerHelper.getCenterOfExtent(featureExtent)
         let legends = this.getPrintLegends()
@@ -655,13 +674,13 @@ export default Print</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationHelper.html">AnimationHelper</a></li><li><a href="BasicViewerHelper.html">BasicViewerHelper</a></li><li><a href="FeatureHelper.html">FeatureHelper</a></li><li><a href="FeatureListHelper.html">FeatureListHelper</a></li><li><a href="LayersHelper.html">LayersHelper</a></li><li><a href="MapConfigTransformService.html">MapConfigTransformService</a></li><li><a href="OSMGeoCoding.html">OSMGeoCoding</a></li><li><a href="Print.html">Print</a></li><li><a href="StyleHelper.html">StyleHelper</a></li><li><a href="URLS.html">URLS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#capitalizeFirstLetter">capitalizeFirstLetter</a></li><li><a href="global.html#convToDegree">convToDegree</a></li><li><a href="global.html#convToRadian">convToRadian</a></li><li><a href="global.html#copyToClipboard">copyToClipboard</a></li><li><a href="global.html#doExternalGet">doExternalGet</a></li><li><a href="global.html#doGet">doGet</a></li><li><a href="global.html#doPost">doPost</a></li><li><a href="global.html#DOTS_PER_INCH">DOTS_PER_INCH</a></li><li><a href="global.html#downloadFile">downloadFile</a></li><li><a href="global.html#getCRSFToken">getCRSFToken</a></li><li><a href="global.html#getImageStyle">getImageStyle</a></li><li><a href="global.html#hasTrailingSlash">hasTrailingSlash</a></li><li><a href="global.html#INCHES_PER_METER">INCHES_PER_METER</a></li><li><a href="global.html#moveBottomLeft">moveBottomLeft</a></li><li><a href="global.html#moveBottomRight">moveBottomRight</a></li><li><a href="global.html#moveTopLeft">moveTopLeft</a></li><li><a href="global.html#moveTopRight">moveTopRight</a></li><li><a href="global.html#randomBright">randomBright</a></li><li><a href="global.html#randomBrightTrans">randomBrightTrans</a></li><li><a href="global.html#randomDark">randomDark</a></li><li><a href="global.html#randomDarkTrans">randomDarkTrans</a></li><li><a href="global.html#removeTrailingSlash">removeTrailingSlash</a></li><li><a href="global.html#styles">styles</a></li><li><a href="global.html#wmsGetFeatureInfoFormats">wmsGetFeatureInfoFormats</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationHelper.html">AnimationHelper</a></li><li><a href="BasicViewerHelper.html">BasicViewerHelper</a></li><li><a href="FeatureHelper.html">FeatureHelper</a></li><li><a href="FeatureListHelper.html">FeatureListHelper</a></li><li><a href="LayersHelper.html">LayersHelper</a></li><li><a href="MapConfigTransformService.html">MapConfigTransformService</a></li><li><a href="OSMGeoCoding.html">OSMGeoCoding</a></li><li><a href="Print.html">Print</a></li><li><a href="StyleHelper.html">StyleHelper</a></li><li><a href="URLS.html">URLS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#capitalizeFirstLetter">capitalizeFirstLetter</a></li><li><a href="global.html#convToDegree">convToDegree</a></li><li><a href="global.html#convToRadian">convToRadian</a></li><li><a href="global.html#copyToClipboard">copyToClipboard</a></li><li><a href="global.html#doExternalGet">doExternalGet</a></li><li><a href="global.html#doGet">doGet</a></li><li><a href="global.html#doPost">doPost</a></li><li><a href="global.html#DOTS_PER_INCH">DOTS_PER_INCH</a></li><li><a href="global.html#downloadFile">downloadFile</a></li><li><a href="global.html#getCRSFToken">getCRSFToken</a></li><li><a href="global.html#getImageStyle">getImageStyle</a></li><li><a href="global.html#hasTrailingSlash">hasTrailingSlash</a></li><li><a href="global.html#INCHES_PER_METER">INCHES_PER_METER</a></li><li><a href="global.html#moveBottomLeft">moveBottomLeft</a></li><li><a href="global.html#moveBottomRight">moveBottomRight</a></li><li><a href="global.html#moveTopLeft">moveTopLeft</a></li><li><a href="global.html#moveTopRight">moveTopRight</a></li><li><a href="global.html#PRINT_LAYER_NAME">PRINT_LAYER_NAME</a></li><li><a href="global.html#randomBright">randomBright</a></li><li><a href="global.html#randomBrightTrans">randomBrightTrans</a></li><li><a href="global.html#randomDark">randomDark</a></li><li><a href="global.html#randomDarkTrans">randomDarkTrans</a></li><li><a href="global.html#removeTrailingSlash">removeTrailingSlash</a></li><li><a href="global.html#styles">styles</a></li><li><a href="global.html#wmsGetFeatureInfoFormats">wmsGetFeatureInfoFormats</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun May 27 2018 19:08:15 GMT+0200 (EET)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon May 28 2018 02:41:45 GMT+0200 (EET)
 </footer>
 
 <script> prettyPrint(); </script>
