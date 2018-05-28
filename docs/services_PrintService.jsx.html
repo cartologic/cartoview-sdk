@@ -36,13 +36,32 @@ const DOTS_PER_INCH = 96
     @default
 */
 const INCHES_PER_METER = 39.37
+/** @constant PRINT_LAYER_NAME
+    @type {string}
+    @default
+*/
+export const PRINT_LAYER_NAME = "sdk_print_lyr"
 
+import * as olSize from 'ol/size'
+
+//WARNING: FIX LAYERS ENCODING ACCORDING TO GEOSERVER PRINT PROTOCOL
 import { doGet, doPost, downloadFile } from '../utils/utils'
 
 import BasicViewerHelper from '../helpers/BasicViewerHelper'
+import Collection from 'ol/collection'
+import Feature from 'ol/feature'
+import ImageWMS from 'ol/source/imagewms'
 import LayersHelper from '../helpers/LayersHelper'
+import Polygon from 'ol/geom/polygon'
+import StyleHelper from '../helpers/StyleHelper'
+import TileWMS from 'ol/source/tilewms'
+import Translate from 'ol/interaction/translate'
 import URLS from '../urls/urls'
+import Vector from 'ol/layer/vector'
+import { default as VectorSource } from 'ol/source/vector'
+import WMTS from 'ol/source/wmts'
 import { convToDegree } from '../utils/math'
+import proj from 'ol/proj'
 import { sources } from '../services/MapConfigService'
 
 /** Class for Geoserver Print manipulation */
@@ -67,6 +86,10 @@ class Print {
         this.accessToken = accessToken
         this.urls = new URLS(this.proxyURL)
         this.getPrintInfo().then(result => this.getGeoserverScales())
+        this.featureCollection = new Collection()
+        this.translate = new Translate({
+            features: this.featureCollection
+        })
     }
     /**
     * this function return geoserver print allowed DPIS
@@ -100,6 +123,153 @@ class Print {
         })
         return infoPromise
     }
+    _getLayout(layout) {
+        const layouts = this.pdfInfo.layouts
+        let targetLayout = null
+        if (layout) {
+            for (let i = 0; i &lt; layouts.length; i++) {
+                const l = layouts[i]
+                if (l.name === layout) {
+                    targetLayout = l
+                    break
+                }
+            }
+        }
+        else {
+            targetLayout = layouts[0]
+        }
+        return targetLayout
+    }
+    _getMetersPerUnit(unit) {
+        return proj.METERS_PER_UNIT[unit]
+    }
+    /**
+    * this function print polygon coords
+    * @param {Number} printScale 
+    * @param {Number} [dpi=DOTS_PER_INCH] DPI
+    * @param {string} [layout=null]  print layout name
+    * @returns {Array.&lt;Number>} extent
+    */
+    getPolygonCoords(printScale, dpi = DOTS_PER_INCH, layout = null) {
+        const view = this.map.getView()
+        const mapProjection = view.getProjection()
+        const units = this._getMetersPerUnit(mapProjection.getUnits())
+        const mapCenter = view.getCenter()
+        layout = this._getLayout(layout)
+        const unitsRatio = units * INCHES_PER_METER
+        const printMapSize = [layout.map.width, layout.map.height]
+        const scaleWidth = printMapSize[0] / dpi / unitsRatio * printScale / 2
+        const scaleHeight = printMapSize[1] / dpi / unitsRatio * printScale / 2
+        const extent = [mapCenter[0] - scaleWidth, mapCenter[1] - scaleHeight, mapCenter[0] + scaleWidth, mapCenter[1] + scaleHeight]
+        return extent
+    }
+    getOptimalResolution(printMapSize, printMapScale, dpi = DOTS_PER_INCH) {
+        const mapSize = this.map.getSize()
+        const dotsPerMeter = dpi * INCHES_PER_METER
+
+        const resolutionX = (printMapSize[0] * printMapScale) / (dotsPerMeter * mapSize[0])
+        const resolutionY = (printMapSize[1] * printMapScale) / (dotsPerMeter * mapSize[1])
+
+        const optimalResolution = Math.max(resolutionX, resolutionY)
+        return optimalResolution
+    }
+    getOptimalScale(printMapSize, dpi = DOTS_PER_INCH) {
+        const printMapScales = this.getGeoserverScales()
+        const mapSize = this.map.getSize()
+        const view = this.map.getView()
+        const mapResolution = view.getResolution()
+        const mapWidth = mapSize[0] * mapResolution
+        const mapHeight = mapSize[1] * mapResolution
+        const scaleWidth = mapWidth * INCHES_PER_METER * dpi / printMapSize[0]
+        const scaleHeight = mapHeight * INCHES_PER_METER * dpi / printMapSize[1]
+        const scale = Math.min(scaleWidth, scaleHeight)
+        let optimal = -1
+        for (let i = 0, ii = printMapScales.length; i &lt; ii; ++i) {
+            if (scale > printMapScales[i]) {
+                optimal = printMapScales[i]
+            }
+        }
+
+        return optimal
+    }
+    _getPolygonGeomtry(extent) {
+        return new Polygon.fromExtent(extent)
+    }
+    /**
+    * this function return feature with polygon geometry
+    * @param {ol.Extent|Array.&lt;Number>} extent geometry Extent
+    * @param {string} [geometryName="the_geom"] geometry name
+    * @returns {ol.Feature} feature
+    */
+    getPolygonFeature(extent, geometryName = "the_geom") {
+        let feature = new Feature({})
+        feature.setGeometryName(geometryName)
+        feature.setGeometry(this._getPolygonGeomtry(extent))
+        return feature
+    }
+    /**
+    * this function create print layer
+    * @returns {ol.layer}
+    */
+    createPrintLayer() {
+        let lyr = new Vector({
+            source: new VectorSource({
+                features: this.featureCollection
+            }),
+            style: new StyleHelper().styleFunction,
+        })
+        lyr.set('name', PRINT_LAYER_NAME)
+        return lyr
+    }
+    /**
+    * this function search for print layer and return it back
+    * @returns {ol.layer|null}
+    */
+    findPrintLayer() {
+        let targetLayer = null
+        const layers = LayersHelper.getLocalLayers(this.map)
+        for (let i = 0; i &lt; layers.length; i++) {
+            const lyr = layers[i]
+            if (lyr.get('name') === PRINT_LAYER_NAME) {
+                targetLayer = lyr
+                break
+            }
+        }
+        return targetLayer
+    }
+    /**
+    * this function check if print layer exists or not
+    * @returns {boolean}
+    */
+    _checkPrintLayer() {
+        return this.findPrintLayer() !== null ? true : false
+    }
+    /**
+    * this function add print layer and interaction to map
+    * @returns {void}
+    */
+    addPrintLayer(feature) {
+        if (!this._checkPrintLayer()) {
+            this.featureCollection.extend([feature])
+            let layer = this.createPrintLayer(feature)
+            this.map.addLayer(layer)
+            this.map.addInteraction(this.translate)
+        } else {
+            this.featureCollection.clear()
+            this.featureCollection.extend([feature])
+        }
+    }
+    /**
+    * this function remove print layer and print interaction from map
+    * @returns {void}
+    */
+    removePrintLayer() {
+        const lyr = this.findPrintLayer()
+        if (lyr) {
+            this.map.removeLayer(lyr)
+            this.map.removeInteraction(this.translate)
+        }
+    }
     /**
     * this function return geoserver print scales values
     * @returns {Promise}
@@ -118,17 +288,24 @@ class Print {
     * @param {Number} scale print Scale
     * @returns {Promise}
     */
-    createPDF(title, comment, layout, dpi, scale) {
+    createPDF(title, comment, layout, dpi, scale, filename = "print.pdf") {
         let targetURL = this.geoserverPdfURL + "create.json"
         targetURL = this.urls.getParamterizedURL(targetURL, { "access_token": this.accessToken })
         const proxiedURL = this.urls.getProxiedURL(targetURL)
-        doPost(proxiedURL, this.printPayload(title, comment, layout, scale, dpi), { 'content-type': 'application/json' }).then(result => {
-            let pdfURL = result.getURL
-            const pfdFileID = pdfURL.split('/').pop()
-            let downloadURL = this.urls.getParamterizedURL(this.geoserverPdfURL + pfdFileID, { "access_token": this.accessToken })
-            downloadURL = this.urls.getProxiedURL(this.geoserverPdfURL + pfdFileID)
-            downloadFile(downloadURL, "print.pdf")
+        let printPromise = new Promise((resolve, reject) => {
+            doPost(proxiedURL, this.printPayload(title, comment, layout, scale, dpi), { 'content-type': 'application/json' }).then(result => {
+                let pdfURL = result.getURL
+                const pfdFileID = pdfURL.split('/').pop()
+                let downloadURL = this.urls.getParamterizedURL(this.geoserverPdfURL + pfdFileID, { "access_token": this.accessToken })
+                downloadURL = this.urls.getProxiedURL(this.geoserverPdfURL + pfdFileID)
+                downloadFile(downloadURL, filename).then(downloaded => {
+                    resolve(downloaded)
+                }).catch(err => {
+                    reject(err)
+                })
+            })
         })
+        return printPromise
     }
     /**
     * this function return geoserver print scale index by it's value
@@ -233,7 +410,7 @@ class Print {
     * @returns {Array.&lt;PrintLegend>}
     */
     getPrintLegends() {
-        const layers = LayersHelper.getLocalLayers(this.map)
+        const layers = this.getPrintLocalLayers()
         let printLegends = LayersHelper.getLegends(layers, this.accessToken).map(legend => this.getLegendItem(legend))
         return printLegends
     }
@@ -270,7 +447,7 @@ class Print {
     * this function return map base layers ex: OSM,GoogleMaps
     * @returns {Array.&lt;ol.layer>}
     */
-    getBaseLayers() {
+    encodeBaseLayers() {
         let baseLayers = LayersHelper.getBaseLayers(this.map).filter(baselyr => baselyr.getVisible())
         baseLayers = baseLayers.map(baseLayer => {
             const tileGrid = baseLayer.getSource().getTileGrid()
@@ -296,29 +473,120 @@ class Print {
         return baseLayers
     }
     /**
+    * this function map layers without print layer
+    * @returns {Array.&lt;ol.layer>}
+    */
+    getPrintLocalLayers() {
+        let printLayers = []
+        const layers = LayersHelper.getLocalLayers(this.map)
+        for (let i = 0; i &lt; layers.length; i++) {
+            const lyr = layers[i]
+            if (lyr.get('name') !== PRINT_LAYER_NAME) {
+                printLayers.push(lyr)
+            }
+        }
+        return printLayers
+    }
+    /**
+    * this function return encoded wms layer 
+    * @param {ol.layer} lyr openlayers layer to be encoded
+    * @param {boolean} [singleTile=false] 
+    * @returns {object}
+    */
+    _encodeWMS(lyr, singleTile = false) {
+        const params = lyr.getSource().getParams()
+        const layerObj = {
+            baseURL: LayersHelper.getLayerURL(lyr, this.accessToken),
+            opacity: lyr.getOpacity(),
+            singleTile,
+            type: "WMS",//TODO: get layer type from openlayers
+            layers: params['LAYERS'].split(','),
+            format: this.getSourceFormat(lyr), // TODO get format from source
+            styles: [],
+            version: params['VERSION'],
+            customParams: {
+                ...this.getCustomParams(lyr)
+            }
+        }
+        return layerObj
+    }
+    /**
+    * this function return encoded wmts layer 
+    * @param {ol.layer} lyr openlayers layer to be encoded
+    * @returns {object}
+    */
+    _encodeWMTS(lyr) {
+        const source = lyr.getSource()
+        const projection = source.getProjection()
+        const tileGrid = source.getTileGrid()
+        const matrixIds = tileGrid.getMatrixIds()
+        const matrices = []
+        for (let i = 0, ii = matrixIds.length; i &lt; ii; ++i) {
+            const tileRange = tileGrid.getFullTileRange(i)
+            matrices.push(({
+                identifier: matrixIds[i],
+                scaleDenominator: tileGrid.getResolution(i) *
+                    projection.getMetersPerUnit() / 0.28E-3,
+                tileSize: olSize.toSize(tileGrid.getTileSize(i)),
+                topLeftCorner: tileGrid.getOrigin(i),
+                matrixSize: [
+                    tileRange.maxX - tileRange.minX,
+                    tileRange.maxY - tileRange.minY
+                ]
+            }))
+        }
+        const dimensions = source.getDimensions()
+        const dimensionKeys = Object.keys(dimensions)
+        const layerObj = ({
+            baseURL: LayersHelper.getLayerURL(lyr, this.accessToken),
+            dimensions: dimensionKeys,
+            dimensionParams: dimensions,
+            imageFormat: source.getFormat(),
+            layer: source.getLayer(),
+            matrices: matrices,
+            matrixSet: source.getMatrixSet(),
+            opacity: lyr.getOpacity(),
+            requestEncoding: source.getRequestEncoding(),
+            style: source.getStyle(),
+            type: 'WMTS',
+            version: source.getVersion()
+        })
+        return layerObj
+    }
+    /**
+    * this function return encoded layer 
+    * @param {ol.layer} lyr openlayers layer to be encoded
+    * @returns {object}
+    */
+    _layersEncoder(lyr) {
+        let encodedLayer = null
+        const source = lyr.getSource()
+        if (source instanceof TileWMS) {
+            encodedLayer = this._encodeWMS(lyr)
+        }
+        else if (source instanceof ImageWMS) {
+            encodedLayer = this._encodeWMS(lyr, true)
+        }
+        else if (source instanceof WMTS) {
+            encodedLayer = this._encodeWMTS(lyr)
+        }
+        return encodedLayer
+    }
+    /**
     * this function return layer objects for print
     * @returns {Array}
     */
-    getPrintLocalLayers() {
-        let layers = LayersHelper.getLocalLayers(this.map)
-        layers = layers.map(lyr => {
+    encodeLocalLayers() {
+        let layers = this.getPrintLocalLayers()
+        let encodedLayers = []
+        for (let i = 0; i &lt; layers.length; i++) {
+            const lyr = layers[i]
             if (lyr.getVisible()) {
-                const layerObj = {
-                    baseURL: LayersHelper.getLayerURL(lyr, this.accessToken),
-                    opacity: lyr.getOpacity(),
-                    singleTile: false,
-                    type: "WMS",//TODO: get layer type from openlayers
-                    layers: [lyr.getProperties().name],
-                    format: this.getSourceFormat(lyr), // TODO get format from source
-                    styles: [],
-                    customParams: {
-                        ...this.getCustomParams(lyr)
-                    }
-                }
-                return layerObj
+                const layerObj = this._layersEncoder(lyr)
+                encodedLayers.push(layerObj)
             }
-        })
-        return layers.reverse()
+        }
+        return encodedLayers.reverse()
     }
     /**
     * this function return full print Object to send to geoserver
@@ -326,20 +594,23 @@ class Print {
     */
     getPrintObj(options = { dpi: DOTS_PER_INCH, layout: null, title: "", comment: "", scale: null }) {
         let { dpi, title, comment, layout, scale } = options
+        const mapProjection = this.map.getView().getProjection()
         const srs = this.map.getView().getProjection().getCode()
         const rotationRadian = this.map.getView().getRotation()
-        const center = this.map.getView().getCenter()
+        const currentFeature = this.featureCollection.getArray().pop()
+        const featureExtent = currentFeature.getGeometry().getExtent()
+        // const center = BasicViewerHelper.getCenterOfExtent(featureExtent)
         let legends = this.getPrintLegends()
         const printObj = {
-            units: 'm',
+            units: mapProjection.getUnits(),
             srs,
             mapTitle: title,
             comment,
             layout,
             outputFormat: 'pdf',
             layers: [
-                ...this.getBaseLayers(),
-                ...this.getPrintLocalLayers()
+                ...this.encodeBaseLayers(),
+                ...this.encodeLocalLayers()
             ],
             legends,
             pages: [
@@ -347,9 +618,9 @@ class Print {
                     dpi,
                     geodetic: false,
                     strictEpsg4326: false,
-                    // bbox: this.map.getView().calculateExtent(this.map.getSize()),
-                    scale,
-                    center,
+                    bbox: featureExtent,
+                    // scale,
+                    // center,
                     rotation: convToDegree(rotationRadian)
                 }
             ]
@@ -403,13 +674,13 @@ export default Print</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationHelper.html">AnimationHelper</a></li><li><a href="BasicViewerHelper.html">BasicViewerHelper</a></li><li><a href="FeatureHelper.html">FeatureHelper</a></li><li><a href="FeatureListHelper.html">FeatureListHelper</a></li><li><a href="LayersHelper.html">LayersHelper</a></li><li><a href="MapConfigTransformService.html">MapConfigTransformService</a></li><li><a href="OSMGeoCoding.html">OSMGeoCoding</a></li><li><a href="Print.html">Print</a></li><li><a href="StyleHelper.html">StyleHelper</a></li><li><a href="URLS.html">URLS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#capitalizeFirstLetter">capitalizeFirstLetter</a></li><li><a href="global.html#convToDegree">convToDegree</a></li><li><a href="global.html#convToRadian">convToRadian</a></li><li><a href="global.html#copyToClipboard">copyToClipboard</a></li><li><a href="global.html#doExternalGet">doExternalGet</a></li><li><a href="global.html#doGet">doGet</a></li><li><a href="global.html#doPost">doPost</a></li><li><a href="global.html#DOTS_PER_INCH">DOTS_PER_INCH</a></li><li><a href="global.html#downloadFile">downloadFile</a></li><li><a href="global.html#getCRSFToken">getCRSFToken</a></li><li><a href="global.html#getImageStyle">getImageStyle</a></li><li><a href="global.html#hasTrailingSlash">hasTrailingSlash</a></li><li><a href="global.html#INCHES_PER_METER">INCHES_PER_METER</a></li><li><a href="global.html#moveBottomLeft">moveBottomLeft</a></li><li><a href="global.html#moveBottomRight">moveBottomRight</a></li><li><a href="global.html#moveTopLeft">moveTopLeft</a></li><li><a href="global.html#moveTopRight">moveTopRight</a></li><li><a href="global.html#randomBright">randomBright</a></li><li><a href="global.html#randomBrightTrans">randomBrightTrans</a></li><li><a href="global.html#randomDark">randomDark</a></li><li><a href="global.html#randomDarkTrans">randomDarkTrans</a></li><li><a href="global.html#removeTrailingSlash">removeTrailingSlash</a></li><li><a href="global.html#styles">styles</a></li><li><a href="global.html#wmsGetFeatureInfoFormats">wmsGetFeatureInfoFormats</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationHelper.html">AnimationHelper</a></li><li><a href="BasicViewerHelper.html">BasicViewerHelper</a></li><li><a href="FeatureHelper.html">FeatureHelper</a></li><li><a href="FeatureListHelper.html">FeatureListHelper</a></li><li><a href="LayersHelper.html">LayersHelper</a></li><li><a href="MapConfigTransformService.html">MapConfigTransformService</a></li><li><a href="OSMGeoCoding.html">OSMGeoCoding</a></li><li><a href="Print.html">Print</a></li><li><a href="StyleHelper.html">StyleHelper</a></li><li><a href="URLS.html">URLS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#capitalizeFirstLetter">capitalizeFirstLetter</a></li><li><a href="global.html#convToDegree">convToDegree</a></li><li><a href="global.html#convToRadian">convToRadian</a></li><li><a href="global.html#copyToClipboard">copyToClipboard</a></li><li><a href="global.html#doExternalGet">doExternalGet</a></li><li><a href="global.html#doGet">doGet</a></li><li><a href="global.html#doPost">doPost</a></li><li><a href="global.html#DOTS_PER_INCH">DOTS_PER_INCH</a></li><li><a href="global.html#downloadFile">downloadFile</a></li><li><a href="global.html#getCRSFToken">getCRSFToken</a></li><li><a href="global.html#getImageStyle">getImageStyle</a></li><li><a href="global.html#hasTrailingSlash">hasTrailingSlash</a></li><li><a href="global.html#INCHES_PER_METER">INCHES_PER_METER</a></li><li><a href="global.html#moveBottomLeft">moveBottomLeft</a></li><li><a href="global.html#moveBottomRight">moveBottomRight</a></li><li><a href="global.html#moveTopLeft">moveTopLeft</a></li><li><a href="global.html#moveTopRight">moveTopRight</a></li><li><a href="global.html#PRINT_LAYER_NAME">PRINT_LAYER_NAME</a></li><li><a href="global.html#randomBright">randomBright</a></li><li><a href="global.html#randomBrightTrans">randomBrightTrans</a></li><li><a href="global.html#randomDark">randomDark</a></li><li><a href="global.html#randomDarkTrans">randomDarkTrans</a></li><li><a href="global.html#removeTrailingSlash">removeTrailingSlash</a></li><li><a href="global.html#styles">styles</a></li><li><a href="global.html#wmsGetFeatureInfoFormats">wmsGetFeatureInfoFormats</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri May 25 2018 06:46:40 GMT+0200 (EET)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon May 28 2018 02:41:45 GMT+0200 (EET)
 </footer>
 
 <script> prettyPrint(); </script>

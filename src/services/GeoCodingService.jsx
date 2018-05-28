@@ -32,7 +32,7 @@ export class OSMGeoCoding {
     getPatamters(query) {
         if (this.settings) {
             this.settings.q = query
-            return this.OSMSettings
+            return this.settings
         }
         return {}
     }

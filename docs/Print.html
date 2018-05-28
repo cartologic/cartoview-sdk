@@ -271,7 +271,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line21">line 21</a>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line40">line 40</a>
     </li></ul></dd>
     
 
@@ -318,6 +318,728 @@
 
     
         <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="_checkPrintLayer"><span class="type-signature"></span>_checkPrintLayer<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function check if print layer exists or not
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line216">line 216</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="_encodeWMS"><span class="type-signature"></span>_encodeWMS<span class="signature">(lyr, singleTile<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function return encoded wms layer
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>lyr</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ol.layer</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">openlayers layer to be encoded</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>singleTile</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line468">line 468</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="_encodeWMTS"><span class="type-signature"></span>_encodeWMTS<span class="signature">(lyr)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function return encoded wmts layer
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>lyr</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ol.layer</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">openlayers layer to be encoded</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line490">line 490</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="_layersEncoder"><span class="type-signature"></span>_layersEncoder<span class="signature">(lyr)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function return encoded layer
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>lyr</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ol.layer</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">openlayers layer to be encoded</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line533">line 533</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="addPrintLayer"><span class="type-signature"></span>addPrintLayer<span class="signature">()</span><span class="type-signature"> &rarr; {void}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function add print layer and interaction to map
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line223">line 223</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">void</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
 
         
             
@@ -518,7 +1240,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line93">line 93</a>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line263">line 263</a>
     </li></ul></dd>
     
 
@@ -553,6 +1275,425 @@
     <dd>
         
 <span class="param-type">Promise</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="createPrintLayer"><span class="type-signature"></span>createPrintLayer<span class="signature">()</span><span class="type-signature"> &rarr; {ol.layer}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function create print layer
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line186">line 186</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ol.layer</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="encodeBaseLayers"><span class="type-signature"></span>encodeBaseLayers<span class="signature">()</span><span class="type-signature"> &rarr; {Array.&lt;ol.layer>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function return map base layers ex: OSM,GoogleMaps
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line422">line 422</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;ol.layer></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="encodeLocalLayers"><span class="type-signature"></span>encodeLocalLayers<span class="signature">()</span><span class="type-signature"> &rarr; {Array}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function return layer objects for print
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line551">line 551</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="findPrintLayer"><span class="type-signature"></span>findPrintLayer<span class="signature">()</span><span class="type-signature"> &rarr; {ol.layer|null}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function search for print layer and return it back
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line200">line 200</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ol.layer</span>
+|
+
+<span class="param-type">null</span>
 
 
     </dd>
@@ -671,7 +1812,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line236">line 236</a>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line413">line 413</a>
     </li></ul></dd>
     
 
@@ -706,110 +1847,6 @@
     <dd>
         
 <span class="param-type">Array.&lt;Number></span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="getBaseLayers"><span class="type-signature"></span>getBaseLayers<span class="signature">()</span><span class="type-signature"> &rarr; {Array.&lt;ol.layer>}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    this function return map base layers ex: OSM,GoogleMaps
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line245">line 245</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Array.&lt;ol.layer></span>
 
 
     </dd>
@@ -928,7 +1965,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line125">line 125</a>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line302">line 302</a>
     </li></ul></dd>
     
 
@@ -1081,7 +2118,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line346">line 346</a>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line617">line 617</a>
     </li></ul></dd>
     
 
@@ -1189,7 +2226,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line47">line 47</a>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line70">line 70</a>
     </li></ul></dd>
     
 
@@ -1293,7 +2330,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line79">line 79</a>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line249">line 249</a>
     </li></ul></dd>
     
 
@@ -1446,7 +2483,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line174">line 174</a>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line351">line 351</a>
     </li></ul></dd>
     
 
@@ -1622,7 +2659,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line161">line 161</a>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line338">line 338</a>
     </li></ul></dd>
     
 
@@ -1657,6 +2694,472 @@
     <dd>
         
 <span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getPolygonCoords"><span class="type-signature"></span>getPolygonCoords<span class="signature">(printScale, dpi<span class="signature-attributes">opt</span>, layout<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Array.&lt;Number>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function print polygon coords
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>printScale</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>dpi</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    DOTS_PER_INCH
+                
+                </td>
+            
+
+            <td class="description last">DPI</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>layout</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    null
+                
+                </td>
+            
+
+            <td class="description last">print layout name</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line125">line 125</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    extent
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;Number></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getPolygonFeature"><span class="type-signature"></span>getPolygonFeature<span class="signature">(extent, geometryName<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {ol.Feature}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function return feature with polygon geometry
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>extent</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ol.Extent</span>
+|
+
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">geometry Extent</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>geometryName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    "the_geom"
+                
+                </td>
+            
+
+            <td class="description last">geometry name</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line176">line 176</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    feature
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ol.Feature</span>
 
 
     </dd>
@@ -1726,7 +3229,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line61">line 61</a>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line84">line 84</a>
     </li></ul></dd>
     
 
@@ -1830,7 +3333,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line207">line 207</a>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line384">line 384</a>
     </li></ul></dd>
     
 
@@ -1882,7 +3385,7 @@
     
 
     
-    <h4 class="name" id="getPrintLocalLayers"><span class="type-signature"></span>getPrintLocalLayers<span class="signature">()</span><span class="type-signature"> &rarr; {Array}</span></h4>
+    <h4 class="name" id="getPrintLocalLayers"><span class="type-signature"></span>getPrintLocalLayers<span class="signature">()</span><span class="type-signature"> &rarr; {Array.&lt;ol.layer>}</span></h4>
     
 
     
@@ -1890,7 +3393,7 @@
 
 
 <div class="description">
-    this function return layer objects for print
+    this function map layers without print layer
 </div>
 
 
@@ -1934,7 +3437,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line274">line 274</a>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line451">line 451</a>
     </li></ul></dd>
     
 
@@ -1968,7 +3471,7 @@
     </dt>
     <dd>
         
-<span class="param-type">Array</span>
+<span class="param-type">Array.&lt;ol.layer></span>
 
 
     </dd>
@@ -2038,7 +3541,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line299">line 299</a>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line567">line 567</a>
     </li></ul></dd>
     
 
@@ -2214,7 +3717,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line150">line 150</a>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line327">line 327</a>
     </li></ul></dd>
     
 
@@ -2430,7 +3933,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line138">line 138</a>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line315">line 315</a>
     </li></ul></dd>
     
 
@@ -2538,7 +4041,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line109">line 109</a>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line286">line 286</a>
     </li></ul></dd>
     
 
@@ -2691,7 +4194,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line337">line 337</a>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line608">line 608</a>
     </li></ul></dd>
     
 
@@ -2844,7 +4347,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line217">line 217</a>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line394">line 394</a>
     </li></ul></dd>
     
 
@@ -3164,7 +4667,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line363">line 363</a>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line634">line 634</a>
     </li></ul></dd>
     
 
@@ -3211,6 +4714,110 @@
 
 
         
+            
+
+    
+
+    
+    <h4 class="name" id="removePrintLayer"><span class="type-signature"></span>removePrintLayer<span class="signature">()</span><span class="type-signature"> &rarr; {void}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    this function remove print layer and print interaction from map
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line238">line 238</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">void</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
     
 
     
@@ -3226,13 +4833,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationHelper.html">AnimationHelper</a></li><li><a href="BasicViewerHelper.html">BasicViewerHelper</a></li><li><a href="FeatureHelper.html">FeatureHelper</a></li><li><a href="FeatureListHelper.html">FeatureListHelper</a></li><li><a href="LayersHelper.html">LayersHelper</a></li><li><a href="MapConfigTransformService.html">MapConfigTransformService</a></li><li><a href="OSMGeoCoding.html">OSMGeoCoding</a></li><li><a href="Print.html">Print</a></li><li><a href="StyleHelper.html">StyleHelper</a></li><li><a href="URLS.html">URLS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#capitalizeFirstLetter">capitalizeFirstLetter</a></li><li><a href="global.html#convToDegree">convToDegree</a></li><li><a href="global.html#convToRadian">convToRadian</a></li><li><a href="global.html#copyToClipboard">copyToClipboard</a></li><li><a href="global.html#doExternalGet">doExternalGet</a></li><li><a href="global.html#doGet">doGet</a></li><li><a href="global.html#doPost">doPost</a></li><li><a href="global.html#DOTS_PER_INCH">DOTS_PER_INCH</a></li><li><a href="global.html#downloadFile">downloadFile</a></li><li><a href="global.html#getCRSFToken">getCRSFToken</a></li><li><a href="global.html#getImageStyle">getImageStyle</a></li><li><a href="global.html#hasTrailingSlash">hasTrailingSlash</a></li><li><a href="global.html#INCHES_PER_METER">INCHES_PER_METER</a></li><li><a href="global.html#moveBottomLeft">moveBottomLeft</a></li><li><a href="global.html#moveBottomRight">moveBottomRight</a></li><li><a href="global.html#moveTopLeft">moveTopLeft</a></li><li><a href="global.html#moveTopRight">moveTopRight</a></li><li><a href="global.html#randomBright">randomBright</a></li><li><a href="global.html#randomBrightTrans">randomBrightTrans</a></li><li><a href="global.html#randomDark">randomDark</a></li><li><a href="global.html#randomDarkTrans">randomDarkTrans</a></li><li><a href="global.html#removeTrailingSlash">removeTrailingSlash</a></li><li><a href="global.html#styles">styles</a></li><li><a href="global.html#wmsGetFeatureInfoFormats">wmsGetFeatureInfoFormats</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationHelper.html">AnimationHelper</a></li><li><a href="BasicViewerHelper.html">BasicViewerHelper</a></li><li><a href="FeatureHelper.html">FeatureHelper</a></li><li><a href="FeatureListHelper.html">FeatureListHelper</a></li><li><a href="LayersHelper.html">LayersHelper</a></li><li><a href="MapConfigTransformService.html">MapConfigTransformService</a></li><li><a href="OSMGeoCoding.html">OSMGeoCoding</a></li><li><a href="Print.html">Print</a></li><li><a href="StyleHelper.html">StyleHelper</a></li><li><a href="URLS.html">URLS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#capitalizeFirstLetter">capitalizeFirstLetter</a></li><li><a href="global.html#convToDegree">convToDegree</a></li><li><a href="global.html#convToRadian">convToRadian</a></li><li><a href="global.html#copyToClipboard">copyToClipboard</a></li><li><a href="global.html#doExternalGet">doExternalGet</a></li><li><a href="global.html#doGet">doGet</a></li><li><a href="global.html#doPost">doPost</a></li><li><a href="global.html#DOTS_PER_INCH">DOTS_PER_INCH</a></li><li><a href="global.html#downloadFile">downloadFile</a></li><li><a href="global.html#getCRSFToken">getCRSFToken</a></li><li><a href="global.html#getImageStyle">getImageStyle</a></li><li><a href="global.html#hasTrailingSlash">hasTrailingSlash</a></li><li><a href="global.html#INCHES_PER_METER">INCHES_PER_METER</a></li><li><a href="global.html#moveBottomLeft">moveBottomLeft</a></li><li><a href="global.html#moveBottomRight">moveBottomRight</a></li><li><a href="global.html#moveTopLeft">moveTopLeft</a></li><li><a href="global.html#moveTopRight">moveTopRight</a></li><li><a href="global.html#PRINT_LAYER_NAME">PRINT_LAYER_NAME</a></li><li><a href="global.html#randomBright">randomBright</a></li><li><a href="global.html#randomBrightTrans">randomBrightTrans</a></li><li><a href="global.html#randomDark">randomDark</a></li><li><a href="global.html#randomDarkTrans">randomDarkTrans</a></li><li><a href="global.html#removeTrailingSlash">removeTrailingSlash</a></li><li><a href="global.html#styles">styles</a></li><li><a href="global.html#wmsGetFeatureInfoFormats">wmsGetFeatureInfoFormats</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri May 25 2018 06:46:40 GMT+0200 (EET)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon May 28 2018 02:41:45 GMT+0200 (EET)
 </footer>
 
 <script> prettyPrint(); </script>
