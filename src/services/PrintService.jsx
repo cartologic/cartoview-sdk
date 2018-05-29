@@ -1,16 +1,16 @@
 /** @constant DOTS_PER_INCH
     @type {Number}
-    @default
+    @default 96
 */
 const DOTS_PER_INCH = 96
 /** @constant INCHES_PER_METER
     @type {Number}
-    @default
+    @default 39.37
 */
 const INCHES_PER_METER = 39.37
 /** @constant PRINT_LAYER_NAME
     @type {string}
-    @default
+    @default "sdk_print_lyr"
 */
 export const PRINT_LAYER_NAME = "sdk_print_lyr"
 
@@ -34,17 +34,17 @@ import { convToDegree } from '../utils/math'
 import proj from 'ol/proj'
 import { sources } from '../services/MapConfigService'
 
-export const toSize = function (size, opt_size) {
+export function toSize(size, opt_size) {
     if (Array.isArray(size)) {
-        return size;
-    } else {
-        if (opt_size === undefined) {
-            opt_size = [size, size];
-        } else {
-            opt_size[0] = opt_size[1] = /** @type {number} */ (size);
-        }
-        return opt_size;
+        return size
     }
+    if (opt_size === undefined) {
+        opt_size = [size, size]
+    } else {
+        opt_size[0] = opt_size[1] = /** @type {number} */ (size)
+    }
+    return opt_size
+
 }
 /** Class for Geoserver Print manipulation */
 class Print {
@@ -129,6 +129,7 @@ class Print {
     * this function print polygon coords
     * @param {Number} printScale 
     * @param {Number} [dpi=DOTS_PER_INCH] DPI
+    * value of {@link DOTS_PER_INCH}
     * @param {string} [layout=null]  print layout name
     * @returns {Array.<Number>} extent
     */

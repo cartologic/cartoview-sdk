@@ -1,12 +1,11 @@
 import FileSaver from 'file-saver'
 import copy from 'clipboard-copy'
 import { getCRSFToken } from '../helpers/helpers'
-import { resolve } from 'path';
 /**
  * send get Request to an URL 
  * @param {string} url to send request to
- * @param {object} extraHeaders custom headers to add to the request
- * @param {string} type expected response type to parse
+ * @param {object} [extraHeaders={}] custom headers to add to the request
+ * @param {string} [type='json'] expected response type to parse
  * @returns {Promise} result
  */
 export function doGet(url, extraHeaders = {}, type = 'json') {
@@ -28,8 +27,8 @@ export function doGet(url, extraHeaders = {}, type = 'json') {
 /**
  * send get Request to an External URL (i.e not on the same domain)
  * @param {string} url to send request to
- * @param {object} extraHeaders custom headers to add to the request
- * @param {string} type expected response type to parse
+ * @param {object} [extraHeaders={}] custom headers to add to the request
+ * @param {string} [type='json'] expected response type to parse
  * @returns {Promise} result
  */
 export function doExternalGet(url, extraHeaders = {}, type = 'json') {
@@ -58,8 +57,8 @@ export function capitalizeFirstLetter(string) {
 /**
  * send post Request to an URL 
  * @param {string} url to send request to
- * @param {object} extraHeaders custom headers to add to the request
- * @param {string} type expected response type to parse
+ * @param {object} [extraHeaders={}] custom headers to add to the request
+ * @param {string} [type='json'] expected response type to parse
  * @returns {Promise} result
  */
 export function doPost(url, data, extraHeaders = {}, type = 'json') {
@@ -119,7 +118,7 @@ export function downloadFile(url, fileName, data = null) {
 }
 /**
  * Copy data to system Clipboard
- * @param {string} text text you want to copy
+ * @param {string} [text=''] text you want to copy
  * @returns {Promise}
  */
 export function copyToClipboard(text = '') {

@@ -49,7 +49,6 @@ import WMTS from 'ol/source/wmts'
 import XYZ from 'ol/source/xyz'
 import Zoomify from 'ol/source/zoomify'
 import { default as olProj } from 'ol/proj'
-import util from './sdkUtils'
 
 export let sources = {
     'BingMaps': BingMaps,
