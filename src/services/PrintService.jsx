@@ -1,20 +1,18 @@
 /** @constant DOTS_PER_INCH
     @type {Number}
-    @default
+    @default 96
 */
 const DOTS_PER_INCH = 96
 /** @constant INCHES_PER_METER
     @type {Number}
-    @default
+    @default 39.37
 */
 const INCHES_PER_METER = 39.37
 /** @constant PRINT_LAYER_NAME
     @type {string}
-    @default
+    @default "sdk_print_lyr"
 */
 export const PRINT_LAYER_NAME = "sdk_print_lyr"
-
-import * as olSize from 'ol/size'
 
 //WARNING: FIX LAYERS ENCODING ACCORDING TO GEOSERVER PRINT PROTOCOL
 import { doGet, doPost, downloadFile } from '../utils/utils'
@@ -36,6 +34,18 @@ import { convToDegree } from '../utils/math'
 import proj from 'ol/proj'
 import { sources } from '../services/MapConfigService'
 
+export function toSize(size, opt_size) {
+    if (Array.isArray(size)) {
+        return size
+    }
+    if (opt_size === undefined) {
+        opt_size = [size, size]
+    } else {
+        opt_size[0] = opt_size[1] = /** @type {number} */ (size)
+    }
+    return opt_size
+
+}
 /** Class for Geoserver Print manipulation */
 class Print {
     /**
@@ -119,6 +129,7 @@ class Print {
     * this function print polygon coords
     * @param {Number} printScale 
     * @param {Number} [dpi=DOTS_PER_INCH] DPI
+    * value of {@link DOTS_PER_INCH}
     * @param {string} [layout=null]  print layout name
     * @returns {Array.<Number>} extent
     */
@@ -221,14 +232,12 @@ class Print {
     * @returns {void}
     */
     addPrintLayer(feature) {
+        this.featureCollection.clear()
+        this.featureCollection.extend([feature])
         if (!this._checkPrintLayer()) {
-            this.featureCollection.extend([feature])
-            let layer = this.createPrintLayer(feature)
+            const layer = this.createPrintLayer()
             this.map.addLayer(layer)
             this.map.addInteraction(this.translate)
-        } else {
-            this.featureCollection.clear()
-            this.featureCollection.extend([feature])
         }
     }
     /**
@@ -423,7 +432,7 @@ class Print {
         let baseLayers = LayersHelper.getBaseLayers(this.map).filter(baselyr => baselyr.getVisible())
         baseLayers = baseLayers.map(baseLayer => {
             const tileGrid = baseLayer.getSource().getTileGrid()
-            const tileSize = olSize.toSize(tileGrid.getTileSize())
+            const tileSize = toSize(tileGrid.getTileSize())
             const layerURL = new URL(LayersHelper.getLayerURL(baseLayer))
             let maxExtent = this.getBaseLayerMaxExtent(baseLayer)
             maxExtent = BasicViewerHelper.reprojectExtent(maxExtent, this.map)
@@ -496,7 +505,7 @@ class Print {
                 identifier: matrixIds[i],
                 scaleDenominator: tileGrid.getResolution(i) *
                     projection.getMetersPerUnit() / 0.28E-3,
-                tileSize: olSize.toSize(tileGrid.getTileSize(i)),
+                tileSize: toSize(tileGrid.getTileSize(i)),
                 topLeftCorner: tileGrid.getOrigin(i),
                 matrixSize: [
                     tileRange.maxX - tileRange.minX,
@@ -563,10 +572,11 @@ class Print {
     */
     getPrintObj(options = { dpi: DOTS_PER_INCH, layout: null, title: "", comment: "", scale: null }) {
         let { dpi, title, comment, layout, scale } = options
-        const mapProjection = this.map.getView().getProjection()
-        const srs = this.map.getView().getProjection().getCode()
-        const rotationRadian = this.map.getView().getRotation()
-        const currentFeature = this.featureCollection.getArray().pop()
+        const mapView = this.map.getView()
+        const mapProjection = mapView.getProjection()
+        const srs = mapProjection.getCode()
+        const rotationRadian = mapView.getRotation()
+        const currentFeature = this.featureCollection.getArray()[0]
         const featureExtent = currentFeature.getGeometry().getExtent()
         // const center = BasicViewerHelper.getCenterOfExtent(featureExtent)
         let legends = this.getPrintLegends()

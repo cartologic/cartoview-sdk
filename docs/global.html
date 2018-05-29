@@ -144,6 +144,11 @@
     
 
     
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>96</li>
+        </ul></dd>
+    
 
     
     <dt class="tag-source">Source:</dt>
@@ -212,6 +217,11 @@
     
 
     
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>39.37</li>
+        </ul></dd>
+    
 
     
     <dt class="tag-source">Source:</dt>
@@ -279,6 +289,11 @@
 
     
 
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>"sdk_print_lyr"</li>
+        </ul></dd>
     
 
     
@@ -549,7 +564,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_utils.jsx.html">utils/utils.jsx</a>, <a href="utils_utils.jsx.html#line55">line 55</a>
+        <a href="utils_utils.jsx.html">utils/utils.jsx</a>, <a href="utils_utils.jsx.html#line54">line 54</a>
     </li></ul></dd>
     
 
@@ -919,7 +934,7 @@
     
 
     
-    <h4 class="name" id="copyToClipboard"><span class="type-signature"></span>copyToClipboard<span class="signature">(text)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    <h4 class="name" id="copyToClipboard"><span class="type-signature"></span>copyToClipboard<span class="signature">(text<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
     
 
     
@@ -951,7 +966,11 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -976,7 +995,23 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    ''
+                
+                </td>
             
 
             <td class="description last">text you want to copy</td>
@@ -1020,7 +1055,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_utils.jsx.html">utils/utils.jsx</a>, <a href="utils_utils.jsx.html#line125">line 125</a>
+        <a href="utils_utils.jsx.html">utils/utils.jsx</a>, <a href="utils_utils.jsx.html#line124">line 124</a>
     </li></ul></dd>
     
 
@@ -1072,7 +1107,7 @@
     
 
     
-    <h4 class="name" id="doExternalGet"><span class="type-signature"></span>doExternalGet<span class="signature">(url, extraHeaders, type)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    <h4 class="name" id="doExternalGet"><span class="type-signature"></span>doExternalGet<span class="signature">(url, extraHeaders<span class="signature-attributes">opt</span>, type<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
     
 
     
@@ -1104,7 +1139,11 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -1129,7 +1168,19 @@
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">to send request to</td>
@@ -1152,7 +1203,23 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
             
 
             <td class="description last">custom headers to add to the request</td>
@@ -1175,7 +1242,23 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'json'
+                
+                </td>
             
 
             <td class="description last">expected response type to parse</td>
@@ -1219,7 +1302,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_utils.jsx.html">utils/utils.jsx</a>, <a href="utils_utils.jsx.html#line35">line 35</a>
+        <a href="utils_utils.jsx.html">utils/utils.jsx</a>, <a href="utils_utils.jsx.html#line34">line 34</a>
     </li></ul></dd>
     
 
@@ -1275,7 +1358,7 @@
     
 
     
-    <h4 class="name" id="doGet"><span class="type-signature"></span>doGet<span class="signature">(url, extraHeaders, type)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    <h4 class="name" id="doGet"><span class="type-signature"></span>doGet<span class="signature">(url, extraHeaders<span class="signature-attributes">opt</span>, type<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
     
 
     
@@ -1307,7 +1390,11 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -1332,7 +1419,19 @@
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">to send request to</td>
@@ -1355,7 +1454,23 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
             
 
             <td class="description last">custom headers to add to the request</td>
@@ -1378,7 +1493,23 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'json'
+                
+                </td>
             
 
             <td class="description last">expected response type to parse</td>
@@ -1422,7 +1553,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_utils.jsx.html">utils/utils.jsx</a>, <a href="utils_utils.jsx.html#line12">line 12</a>
+        <a href="utils_utils.jsx.html">utils/utils.jsx</a>, <a href="utils_utils.jsx.html#line11">line 11</a>
     </li></ul></dd>
     
 
@@ -1478,7 +1609,7 @@
     
 
     
-    <h4 class="name" id="doPost"><span class="type-signature"></span>doPost<span class="signature">(url, extraHeaders, type)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    <h4 class="name" id="doPost"><span class="type-signature"></span>doPost<span class="signature">(url, extraHeaders<span class="signature-attributes">opt</span>, type<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
     
 
     
@@ -1510,7 +1641,11 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -1535,7 +1670,19 @@
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">to send request to</td>
@@ -1558,7 +1705,23 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
             
 
             <td class="description last">custom headers to add to the request</td>
@@ -1581,7 +1744,23 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'json'
+                
+                </td>
             
 
             <td class="description last">expected response type to parse</td>
@@ -1625,7 +1804,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_utils.jsx.html">utils/utils.jsx</a>, <a href="utils_utils.jsx.html#line65">line 65</a>
+        <a href="utils_utils.jsx.html">utils/utils.jsx</a>, <a href="utils_utils.jsx.html#line64">line 64</a>
     </li></ul></dd>
     
 
@@ -1872,7 +2051,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_utils.jsx.html">utils/utils.jsx</a>, <a href="utils_utils.jsx.html#line90">line 90</a>
+        <a href="utils_utils.jsx.html">utils/utils.jsx</a>, <a href="utils_utils.jsx.html#line89">line 89</a>
     </li></ul></dd>
     
 
@@ -4807,7 +4986,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line354">line 354</a>
+        <a href="services_PrintService.jsx.html">services/PrintService.jsx</a>, <a href="services_PrintService.jsx.html#line363">line 363</a>
     </li></ul></dd>
     
 
@@ -5189,7 +5368,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon May 28 2018 02:41:45 GMT+0200 (EET)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue May 29 2018 02:54:31 GMT+0200 (EET)
 </footer>
 
 <script> prettyPrint(); </script>
