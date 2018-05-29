@@ -253,7 +253,7 @@ class Print {
     }
     /**
     * this function return geoserver print scales values
-    * @returns {Promise}
+    * @returns {Array.<number>}
     */
     getGeoserverScales() {
         let scales = this.pdfInfo.scales.map(scale => Number(scale.value))
@@ -290,7 +290,7 @@ class Print {
     }
     /**
     * this function return geoserver print scale index by it's value
-    * @returns {Promise}
+    * @returns {number}
     */
     getScaleIndex(target) {
         let index = -1
@@ -309,8 +309,9 @@ class Print {
     * @returns {Number}
     */
     getClosestScale(scale) {
-        if (this.geoserverScales) {
-            return this.geoserverScales.reduce((prevScale, currentScale) => Math.abs(currentScale - scale) < Math.abs(prevScale - scale) ? currentScale : prevScale)
+        const scales = this.getGeoserverScales()
+        if (scales) {
+            return scales.reduce((prevScale, currentScale) => Math.abs(currentScale - scale) < Math.abs(prevScale - scale) ? currentScale : prevScale)
         }
         return 0.35
 
@@ -324,8 +325,10 @@ class Print {
     getScaleFromResolution(resolution = null, dpi = DOTS_PER_INCH) {
         const mapResolution = !resolution ? this.map.getView().getResolution() : resolution
         const mapProjection = this.map.getView().getProjection()
-        const pointResolution = mapProjection.getMetersPerUnit() * mapResolution
-        return Math.round(pointResolution * dpi * INCHES_PER_METER)
+        const units = this._getMetersPerUnit(mapProjection.getUnits())
+        const unitsRatio = units * INCHES_PER_METER
+        const pointResolution = unitsRatio * mapResolution
+        return Math.round(pointResolution * dpi)
     }
     /**
     * this function return resolution based on scale and dpi
