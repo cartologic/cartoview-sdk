@@ -14,6 +14,7 @@ const INCHES_PER_METER = 39.37
 */
 export const PRINT_LAYER_NAME = "sdk_print_lyr"
 
+import { convToDegree, convToRadian } from '../utils/math'
 //WARNING: FIX LAYERS ENCODING ACCORDING TO GEOSERVER PRINT PROTOCOL
 import { doGet, doPost, downloadFile } from '../utils/utils'
 
@@ -32,7 +33,6 @@ import Vector from 'ol/layer/vector'
 import { default as VectorSource } from 'ol/source/vector'
 import WMTS from 'ol/source/wmts'
 import XYZ from 'ol/source/xyz'
-import { convToDegree } from '../utils/math'
 import proj from 'ol/proj'
 import { sources } from '../services/MapConfigService'
 
@@ -74,6 +74,8 @@ class Print {
         this.translate = new Translate({
             features: this.featureCollection
         })
+        this._cachedFeature = []
+        this._cachedAngle = 0
     }
     /**
     * this function return geoserver print allowed DPIS
@@ -188,8 +190,11 @@ class Print {
     */
     getPolygonFeature(extent, geometryName = "the_geom") {
         let feature = new Feature({})
+        let geom = this._getPolygonGeomtry(extent)
+        const anchor = BasicViewerHelper.getCenterOfExtent(geom.getExtent())
+        geom.rotate(convToRadian(this._cachedAngle), anchor)
         feature.setGeometryName(geometryName)
-        feature.setGeometry(this._getPolygonGeomtry(extent))
+        feature.setGeometry(geom)
         return feature
     }
     /**
@@ -251,6 +256,7 @@ class Print {
         if (lyr) {
             this.map.removeLayer(lyr)
             this.map.removeInteraction(this.translate)
+            this._cachedFeature = []
         }
     }
     /**
@@ -490,6 +496,30 @@ class Print {
 
         return obj
     }
+    /**
+    * this function rotate print box
+    * @param {angle} Rotation angle in degree.
+    * @returns {object}
+    */
+    rotatePrintBox(angle) {
+        if (this.featureCollection.getArray().length > 0) {
+            if (this._cachedFeature.length === 0) {
+                this._cachedFeature.push(this.featureCollection.getArray()[0])
+            }
+            const currentFeature = this._cachedFeature[0]
+            const geom = currentFeature.getGeometry()
+            const center = BasicViewerHelper.getCenterOfExtent(geom.getExtent())
+            geom.rotate(convToRadian(angle) - convToRadian(this._cachedAngle), center)
+            currentFeature.setGeometry(geom)
+            this.featureCollection.clear()
+            this.featureCollection.extend([currentFeature])
+            this._cachedAngle = angle
+        }
+    }
+    /**
+    * this function return map base layer ex: OSM,GoogleMaps
+    * @returns {object}
+    */
     baseLayerEncoder(lyr) {
         let encodedBaseLayer = null
         const source = lyr.getSource()
@@ -703,6 +733,8 @@ class Print {
                     bbox: featureExtent,
                     // scale,
                     // center,
+                    //TODO:FIX Rotation
+                    // I think we need to get geometry coordinates and rotate the and get extent
                     rotation: convToDegree(rotationRadian)
                 }
             ]
