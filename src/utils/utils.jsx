@@ -124,3 +124,18 @@ export function downloadFile(url, fileName, data = null) {
 export function copyToClipboard(text = '') {
     return copy(text)
 }
+/**
+ * ensure default paramters
+ * @param {object} optsParam 
+ * @param {object} defaultOpts
+ * @returns {object}
+ */
+export function ensureOptsDefaults(optsParam, defaultOpts) {
+    let newOpts = { ...optsParam }
+    Object.keys(defaultOpts).forEach(key => {
+        if (!newOpts[key]) {
+            newOpts[key] = defaultOpts[key]
+        }
+    }, this)
+    return newOpts
+}

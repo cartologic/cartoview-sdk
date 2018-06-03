@@ -1,11 +1,13 @@
+import { doGet, ensureOptsDefaults } from '../utils/utils'
+
 import GML3 from 'ol/format/gml3'
 import LayerHelper from '../helpers/LayersHelper'
 import LayersHelper from '../helpers/LayersHelper'
 import Map from 'ol/map'
 import URLS from '../urls/urls'
 import WFS from 'ol/format/wfs'
-import { doGet } from '../utils/utils'
 import filter from 'ol/format/filter'
+
 const INITIAL_TYPE_MAPPING = {
     string: "text",
     double: "number",
@@ -15,6 +17,14 @@ const INITIAL_TYPE_MAPPING = {
     boolean: "checkbox",
     "date-time": "datetime",
     date: "date",
+}
+const WFS_OPTIONS = {
+    filters: [],
+    outputFormat: 'application/json',
+    maxFeatures: 25,
+    startIndex: 0,
+    combinationType: 'any',
+    pagination: true
 }
 export const getFilterObj = (attribute = null, operator = "=", value = "") => {
     return { attribute: "", operator: "=", value: value }
@@ -81,22 +91,23 @@ export default class WFSService {
         let finalFilter = null
         if (filters.length > 1) {
             switch (combinationType.toLowerCase()) {
-            case 'any':
-                finalFilter = filter.or(...filters)
-                break
-            case 'all':
-                finalFilter = filter.and(...filters)
-                break
-            default:
-                throw Error("Invalid Combination Type")
+                case 'any':
+                    finalFilter = filter.or(...filters)
+                    break
+                case 'all':
+                    finalFilter = filter.and(...filters)
+                    break
+                default:
+                    throw Error("Invalid Combination Type")
             }
         } else if (filters.length === 1) {
             finalFilter = filters[0]
         }
         return finalFilter
     }
-    writeWFSGetFeature(map, typename, wfsOptions = { filters: [], outputFormat: 'application/json', maxFeatures: 25, startIndex: 0, combinationType: 'any', pagination: true }) {
-        const { filters, maxFeatures, startIndex, combinationType, pagination, outputFormat } = wfsOptions
+    writeWFSGetFeature(map, typename, wfsOptions = WFS_OPTIONS) {
+        const mWfsOptions = ensureOptsDefaults(wfsOptions, WFS_OPTIONS)
+        const { filters, maxFeatures, startIndex, combinationType, pagination, outputFormat } = mWfsOptions
         let wfsPromise = new Promise((resolve, reject) => {
             this.describeFeatureType(typename).then(featureType => {
                 const nameSpaceURL = featureType.targetNamespace
@@ -142,57 +153,57 @@ export default class WFSService {
         let olFilter = null
         if (localType === "number") {
             switch (operator) {
-            case '=':
-                olFilter = filter.equalTo(attribute, value)
-                break
-            case '<':
-                olFilter = filter.lessThan(attribute, value)
-                break
-            case '<=':
-                olFilter = filter.lessThanOrEqualTo(attribute, value)
-                break
-            case '>':
-                olFilter = filter.greaterThan(attribute, value)
-                break
-            case '>=':
-                olFilter = filter.greaterThanOrEqualTo(attribute, value)
-                break
-            case '<>':
-                olFilter = filter.notEqualTo(attribute, value)
-                break
-            default:
-                throw Error("Invalid Filter")
+                case '=':
+                    olFilter = filter.equalTo(attribute, value)
+                    break
+                case '<':
+                    olFilter = filter.lessThan(attribute, value)
+                    break
+                case '<=':
+                    olFilter = filter.lessThanOrEqualTo(attribute, value)
+                    break
+                case '>':
+                    olFilter = filter.greaterThan(attribute, value)
+                    break
+                case '>=':
+                    olFilter = filter.greaterThanOrEqualTo(attribute, value)
+                    break
+                case '<>':
+                    olFilter = filter.notEqualTo(attribute, value)
+                    break
+                default:
+                    throw Error("Invalid Filter")
 
             }
         } else if (localType === "text") {
             switch (operator) {
-            case 'LIKE':
-                olFilter = filter.like(attribute, '%' + value + '%',
+                case 'LIKE':
+                    olFilter = filter.like(attribute, '%' + value + '%',
                         undefined, undefined, undefined, false)
-                break
-            case '=':
-                olFilter = filter.equalTo(attribute, value)
-                break
-            case '<>':
-                olFilter = filter.notEqualTo(attribute, value)
-                break
-            default:
-                throw Error("Invalid Filter")
+                    break
+                case '=':
+                    olFilter = filter.equalTo(attribute, value)
+                    break
+                case '<>':
+                    olFilter = filter.notEqualTo(attribute, value)
+                    break
+                default:
+                    throw Error("Invalid Filter")
 
             }
         } else if (localType === "date" || localType === "datetime") {
             switch (operator) {
-            case 'DURING':
-                olFilter = filter.between(attribute, start, end)
-                break
-            case '=':
-                olFilter = filter.equalTo(attribute, value)
-                break
-            case '<>':
-                olFilter = filter.notEqualTo(attribute, value)
-                break
-            default:
-                throw Error("Invalid Filter")
+                case 'DURING':
+                    olFilter = filter.between(attribute, start, end)
+                    break
+                case '=':
+                    olFilter = filter.equalTo(attribute, value)
+                    break
+                case '<>':
+                    olFilter = filter.notEqualTo(attribute, value)
+                    break
+                default:
+                    throw Error("Invalid Filter")
 
             }
         }
