@@ -1,4 +1,32 @@
-import { doGet, ensureOptsDefaults } from '../utils/utils'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: services/WFSService.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: services/WFSService.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { doGet, ensureOptsDefaults } from '../utils/utils'
 
 import GML3 from 'ol/format/gml3'
 import LayerHelper from '../helpers/LayersHelper'
@@ -56,7 +84,7 @@ export default class WFSService {
     }
     getAttributeType(attributes = [], attributeName) {
         let attributeType = null
-        for (let i = 0; i < attributes.length; i++) {
+        for (let i = 0; i &lt; attributes.length; i++) {
             const attr = attributes[i]
             if (attr.name === attributeName) {
                 attributeType = attr.type.split(":").pop()
@@ -81,7 +109,7 @@ export default class WFSService {
     buildOlFilters(attributes, filters) {
         let olFilters = []
         if (filters) {
-            for (let i = 0; i < filters.length; i++) {
+            for (let i = 0; i &lt; filters.length; i++) {
                 const filterObj = filters[i]
                 if (filterObj) {
                     const attrType = this.getAttributeType(attributes, filterObj.attribute)
@@ -93,7 +121,7 @@ export default class WFSService {
         return olFilters
     }
     combineFilters(filters, combinationType = 'any') {
-        if (filters && !(filters instanceof Array)) {
+        if (filters &amp;&amp; !(filters instanceof Array)) {
             throw Error("filters must be array")
         }
         let finalFilter = null
@@ -118,7 +146,7 @@ export default class WFSService {
     * @param {ol.Map} map openlayers map instance
     * @param {string} typename layer typename
     * @typedef {Object} WFSOptions
-    * @property {Array.<object>} filters
+    * @property {Array.&lt;object>} filters
     * @property {string} outputFormat
     * @property {number} maxFeatures
     * @property {number} startIndex
@@ -168,7 +196,7 @@ export default class WFSService {
         /* 
         this function should return the proper filter based on 
         filter type
-        working with strings & numbers
+        working with strings &amp; numbers
         test Needed 😈
         */
         const localType = INITIAL_TYPE_MAPPING[filterType]
@@ -178,10 +206,10 @@ export default class WFSService {
                 case '=':
                     olFilter = filter.equalTo(attribute, value)
                     break
-                case '<':
+                case '&lt;':
                     olFilter = filter.lessThan(attribute, value)
                     break
-                case '<=':
+                case '&lt;=':
                     olFilter = filter.lessThanOrEqualTo(attribute, value)
                     break
                 case '>':
@@ -190,7 +218,7 @@ export default class WFSService {
                 case '>=':
                     olFilter = filter.greaterThanOrEqualTo(attribute, value)
                     break
-                case '<>':
+                case '&lt;>':
                     olFilter = filter.notEqualTo(attribute, value)
                     break
                 default:
@@ -206,7 +234,7 @@ export default class WFSService {
                 case '=':
                     olFilter = filter.equalTo(attribute, value)
                     break
-                case '<>':
+                case '&lt;>':
                     olFilter = filter.notEqualTo(attribute, value)
                     break
                 default:
@@ -221,7 +249,7 @@ export default class WFSService {
                 case '=':
                     olFilter = filter.equalTo(attribute, value)
                     break
-                case '<>':
+                case '&lt;>':
                     olFilter = filter.notEqualTo(attribute, value)
                     break
                 default:
@@ -301,4 +329,26 @@ export default class WFSService {
         let formatWFS = new WFS
         return formatWFS.readTransactionResponse(response)
     }
-}
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationHelper.html">AnimationHelper</a></li><li><a href="BasicViewerHelper.html">BasicViewerHelper</a></li><li><a href="FeatureHelper.html">FeatureHelper</a></li><li><a href="FeatureListHelper.html">FeatureListHelper</a></li><li><a href="Geocoding.html">Geocoding</a></li><li><a href="LayersHelper.html">LayersHelper</a></li><li><a href="MapConfigTransformService.html">MapConfigTransformService</a></li><li><a href="Print.html">Print</a></li><li><a href="StyleHelper.html">StyleHelper</a></li><li><a href="URLS.html">URLS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#capitalizeFirstLetter">capitalizeFirstLetter</a></li><li><a href="global.html#convToDegree">convToDegree</a></li><li><a href="global.html#convToRadian">convToRadian</a></li><li><a href="global.html#copyToClipboard">copyToClipboard</a></li><li><a href="global.html#doExternalGet">doExternalGet</a></li><li><a href="global.html#doGet">doGet</a></li><li><a href="global.html#doPost">doPost</a></li><li><a href="global.html#DOTS_PER_INCH">DOTS_PER_INCH</a></li><li><a href="global.html#downloadFile">downloadFile</a></li><li><a href="global.html#ensureOptsDefaults">ensureOptsDefaults</a></li><li><a href="global.html#getCRSFToken">getCRSFToken</a></li><li><a href="global.html#getImageStyle">getImageStyle</a></li><li><a href="global.html#hasTrailingSlash">hasTrailingSlash</a></li><li><a href="global.html#INCHES_PER_METER">INCHES_PER_METER</a></li><li><a href="global.html#INITIAL_TYPE_MAPPING">INITIAL_TYPE_MAPPING</a></li><li><a href="global.html#moveBottomLeft">moveBottomLeft</a></li><li><a href="global.html#moveBottomRight">moveBottomRight</a></li><li><a href="global.html#moveTopLeft">moveTopLeft</a></li><li><a href="global.html#moveTopRight">moveTopRight</a></li><li><a href="global.html#OPENCADGE_GEOCODING_URL">OPENCADGE_GEOCODING_URL</a></li><li><a href="global.html#OPENCAGE_SETTINGS">OPENCAGE_SETTINGS</a></li><li><a href="global.html#OSM_GEOCODING_URL">OSM_GEOCODING_URL</a></li><li><a href="global.html#OSM_SETTINGS">OSM_SETTINGS</a></li><li><a href="global.html#PRINT_LAYER_NAME">PRINT_LAYER_NAME</a></li><li><a href="global.html#randomBright">randomBright</a></li><li><a href="global.html#randomBrightTrans">randomBrightTrans</a></li><li><a href="global.html#randomDark">randomDark</a></li><li><a href="global.html#randomDarkTrans">randomDarkTrans</a></li><li><a href="global.html#removeTrailingSlash">removeTrailingSlash</a></li><li><a href="global.html#styles">styles</a></li><li><a href="global.html#WFS_OPTIONS">WFS_OPTIONS</a></li><li><a href="global.html#wmsGetFeatureInfoFormats">wmsGetFeatureInfoFormats</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Jun 03 2018 11:52:45 GMT+0200 (EET)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
