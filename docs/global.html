@@ -244,6 +244,79 @@
 
         
             
+<h4 class="name" id="INITIAL_TYPE_MAPPING"><span class="type-signature">(constant) </span>INITIAL_TYPE_MAPPING<span class="type-signature"> :object</span></h4>
+
+
+
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>{string: "text",double: "number",int: "number",number: "number",long: "number",boolean: "checkbox","date-time": "datetime",date: "date",}</li>
+        </ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_WFSService.jsx.html">services/WFSService.jsx</a>, <a href="services_WFSService.jsx.html#line11">line 11</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
 <h4 class="name" id="OPENCADGE_GEOCODING_URL"><span class="type-signature">(constant) </span>OPENCADGE_GEOCODING_URL<span class="type-signature"> :string</span></h4>
 
 
@@ -660,6 +733,79 @@
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="helpers_StyleHelper.jsx.html">helpers/StyleHelper.jsx</a>, <a href="helpers_StyleHelper.jsx.html#line62">line 62</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="WFS_OPTIONS"><span class="type-signature">(constant) </span>WFS_OPTIONS<span class="type-signature"> :object</span></h4>
+
+
+
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>{filters: [],outputFormat: 'application/json',maxFeatures: 25,startIndex: 0,combinationType: 'any',pagination: true}</li>
+        </ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_WFSService.jsx.html">services/WFSService.jsx</a>, <a href="services_WFSService.jsx.html#line25">line 25</a>
     </li></ul></dd>
     
 
@@ -2378,6 +2524,182 @@
     <dd>
         
 <span class="param-type">Promise</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="ensureOptsDefaults"><span class="type-signature"></span>ensureOptsDefaults<span class="signature">(optsParam, defaultOpts)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    ensure default paramters
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>optsParam</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>defaultOpts</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utils_utils.jsx.html">utils/utils.jsx</a>, <a href="utils_utils.jsx.html#line133">line 133</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">object</span>
 
 
     </dd>
@@ -5126,13 +5448,13 @@
 
             
                 
-<h4 class="name" id="Legend">Legend</h4>
+<h4 class="name" id="GeocodingItem">GeocodingItem</h4>
 
 
 
 
 <div class="description">
-    this function return legends of layers
+    this function choose handler to transform response
 </div>
 
 
@@ -5177,13 +5499,13 @@
 
         <tr>
             
-                <td class="name"><code>layer</code></td>
+                <td class="name"><code>bbox</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">Array.&lt;Number></span>
 
 
             
@@ -5193,14 +5515,14 @@
 
             
 
-            <td class="description last">The title of the layer</td>
+            <td class="description last">bbox of item</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>url</code></td>
+                <td class="name"><code>formatted</code></td>
             
 
             <td class="type">
@@ -5216,7 +5538,30 @@
 
             
 
-            <td class="description last">The url of the legend</td>
+            <td class="description last">item formatted address</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>location</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">item coordinate</td>
         </tr>
 
     
@@ -5255,7 +5600,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="helpers_LayersHelper.jsx.html">helpers/LayersHelper.jsx</a>, <a href="helpers_LayersHelper.jsx.html#line79">line 79</a>
+        <a href="services_GeoCodingService.jsx.html">services/GeoCodingService.jsx</a>, <a href="services_GeoCodingService.jsx.html#line120">line 120</a>
     </li></ul></dd>
     
 
@@ -5402,7 +5747,154 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="helpers_LayersHelper.jsx.html">helpers/LayersHelper.jsx</a>, <a href="helpers_LayersHelper.jsx.html#line102">line 102</a>
+        <a href="helpers_LayersHelper.jsx.html">helpers/LayersHelper.jsx</a>, <a href="helpers_LayersHelper.jsx.html#line104">line 104</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="Legend">Legend</h4>
+
+
+
+
+<div class="description">
+    this function return legends of layers
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>layer</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The title of the layer</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>url</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The url of the legend</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="helpers_LayersHelper.jsx.html">helpers/LayersHelper.jsx</a>, <a href="helpers_LayersHelper.jsx.html#line81">line 81</a>
     </li></ul></dd>
     
 
@@ -6004,6 +6496,245 @@
 
 
             
+                
+<h4 class="name" id="WFSOptions">WFSOptions</h4>
+
+
+
+
+<div class="description">
+    This function write geoserver get feature body
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>filters</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;object></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>outputFormat</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>maxFeatures</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>startIndex</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>combinationType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>pagination</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_WFSService.jsx.html">services/WFSService.jsx</a>, <a href="services_WFSService.jsx.html#line116">line 116</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
     
 
     
@@ -6017,13 +6748,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationHelper.html">AnimationHelper</a></li><li><a href="BasicViewerHelper.html">BasicViewerHelper</a></li><li><a href="FeatureHelper.html">FeatureHelper</a></li><li><a href="FeatureListHelper.html">FeatureListHelper</a></li><li><a href="Geocoding.html">Geocoding</a></li><li><a href="LayersHelper.html">LayersHelper</a></li><li><a href="MapConfigTransformService.html">MapConfigTransformService</a></li><li><a href="Print.html">Print</a></li><li><a href="StyleHelper.html">StyleHelper</a></li><li><a href="URLS.html">URLS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#capitalizeFirstLetter">capitalizeFirstLetter</a></li><li><a href="global.html#convToDegree">convToDegree</a></li><li><a href="global.html#convToRadian">convToRadian</a></li><li><a href="global.html#copyToClipboard">copyToClipboard</a></li><li><a href="global.html#doExternalGet">doExternalGet</a></li><li><a href="global.html#doGet">doGet</a></li><li><a href="global.html#doPost">doPost</a></li><li><a href="global.html#DOTS_PER_INCH">DOTS_PER_INCH</a></li><li><a href="global.html#downloadFile">downloadFile</a></li><li><a href="global.html#getCRSFToken">getCRSFToken</a></li><li><a href="global.html#getImageStyle">getImageStyle</a></li><li><a href="global.html#hasTrailingSlash">hasTrailingSlash</a></li><li><a href="global.html#INCHES_PER_METER">INCHES_PER_METER</a></li><li><a href="global.html#moveBottomLeft">moveBottomLeft</a></li><li><a href="global.html#moveBottomRight">moveBottomRight</a></li><li><a href="global.html#moveTopLeft">moveTopLeft</a></li><li><a href="global.html#moveTopRight">moveTopRight</a></li><li><a href="global.html#OPENCADGE_GEOCODING_URL">OPENCADGE_GEOCODING_URL</a></li><li><a href="global.html#OPENCAGE_SETTINGS">OPENCAGE_SETTINGS</a></li><li><a href="global.html#OSM_GEOCODING_URL">OSM_GEOCODING_URL</a></li><li><a href="global.html#OSM_SETTINGS">OSM_SETTINGS</a></li><li><a href="global.html#PRINT_LAYER_NAME">PRINT_LAYER_NAME</a></li><li><a href="global.html#randomBright">randomBright</a></li><li><a href="global.html#randomBrightTrans">randomBrightTrans</a></li><li><a href="global.html#randomDark">randomDark</a></li><li><a href="global.html#randomDarkTrans">randomDarkTrans</a></li><li><a href="global.html#removeTrailingSlash">removeTrailingSlash</a></li><li><a href="global.html#styles">styles</a></li><li><a href="global.html#wmsGetFeatureInfoFormats">wmsGetFeatureInfoFormats</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationHelper.html">AnimationHelper</a></li><li><a href="BasicViewerHelper.html">BasicViewerHelper</a></li><li><a href="FeatureHelper.html">FeatureHelper</a></li><li><a href="FeatureListHelper.html">FeatureListHelper</a></li><li><a href="Geocoding.html">Geocoding</a></li><li><a href="LayersHelper.html">LayersHelper</a></li><li><a href="MapConfigTransformService.html">MapConfigTransformService</a></li><li><a href="Print.html">Print</a></li><li><a href="StyleHelper.html">StyleHelper</a></li><li><a href="URLS.html">URLS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#capitalizeFirstLetter">capitalizeFirstLetter</a></li><li><a href="global.html#convToDegree">convToDegree</a></li><li><a href="global.html#convToRadian">convToRadian</a></li><li><a href="global.html#copyToClipboard">copyToClipboard</a></li><li><a href="global.html#doExternalGet">doExternalGet</a></li><li><a href="global.html#doGet">doGet</a></li><li><a href="global.html#doPost">doPost</a></li><li><a href="global.html#DOTS_PER_INCH">DOTS_PER_INCH</a></li><li><a href="global.html#downloadFile">downloadFile</a></li><li><a href="global.html#ensureOptsDefaults">ensureOptsDefaults</a></li><li><a href="global.html#getCRSFToken">getCRSFToken</a></li><li><a href="global.html#getImageStyle">getImageStyle</a></li><li><a href="global.html#hasTrailingSlash">hasTrailingSlash</a></li><li><a href="global.html#INCHES_PER_METER">INCHES_PER_METER</a></li><li><a href="global.html#INITIAL_TYPE_MAPPING">INITIAL_TYPE_MAPPING</a></li><li><a href="global.html#moveBottomLeft">moveBottomLeft</a></li><li><a href="global.html#moveBottomRight">moveBottomRight</a></li><li><a href="global.html#moveTopLeft">moveTopLeft</a></li><li><a href="global.html#moveTopRight">moveTopRight</a></li><li><a href="global.html#OPENCADGE_GEOCODING_URL">OPENCADGE_GEOCODING_URL</a></li><li><a href="global.html#OPENCAGE_SETTINGS">OPENCAGE_SETTINGS</a></li><li><a href="global.html#OSM_GEOCODING_URL">OSM_GEOCODING_URL</a></li><li><a href="global.html#OSM_SETTINGS">OSM_SETTINGS</a></li><li><a href="global.html#PRINT_LAYER_NAME">PRINT_LAYER_NAME</a></li><li><a href="global.html#randomBright">randomBright</a></li><li><a href="global.html#randomBrightTrans">randomBrightTrans</a></li><li><a href="global.html#randomDark">randomDark</a></li><li><a href="global.html#randomDarkTrans">randomDarkTrans</a></li><li><a href="global.html#removeTrailingSlash">removeTrailingSlash</a></li><li><a href="global.html#styles">styles</a></li><li><a href="global.html#WFS_OPTIONS">WFS_OPTIONS</a></li><li><a href="global.html#wmsGetFeatureInfoFormats">wmsGetFeatureInfoFormats</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu May 31 2018 23:26:53 GMT+0200 (EET)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Jun 03 2018 11:52:45 GMT+0200 (EET)
 </footer>
 
 <script> prettyPrint(); </script>
