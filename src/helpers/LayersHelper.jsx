@@ -56,8 +56,10 @@ export class LayersHelper {
     getLocalLayers(map) {
         let layers = []
         map.getLayers().getArray().map(layer => {
-            if (!(layer instanceof Group)) {
+            if (!(layer instanceof Group) && layer.get('type') !== 'base-group') {
                 layers.push(layer)
+            } else if (layer instanceof Group && layer.get('type') !== 'base-group') {
+                layers.push(...this.getLocalLayers(layer))
             }
         })
         return layers.slice(0).reverse()

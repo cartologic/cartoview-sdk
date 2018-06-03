@@ -14,6 +14,7 @@ const INCHES_PER_METER = 39.37
 */
 export const PRINT_LAYER_NAME = "sdk_print_lyr"
 
+import { convToDegree, convToRadian } from '../utils/math'
 //WARNING: FIX LAYERS ENCODING ACCORDING TO GEOSERVER PRINT PROTOCOL
 import { doGet, doPost, downloadFile } from '../utils/utils'
 
@@ -22,6 +23,7 @@ import Collection from 'ol/collection'
 import Feature from 'ol/feature'
 import ImageWMS from 'ol/source/imagewms'
 import LayersHelper from '../helpers/LayersHelper'
+import OSM from 'ol/source/osm'
 import Polygon from 'ol/geom/polygon'
 import StyleHelper from '../helpers/StyleHelper'
 import TileWMS from 'ol/source/tilewms'
@@ -30,7 +32,7 @@ import URLS from '../urls/urls'
 import Vector from 'ol/layer/vector'
 import { default as VectorSource } from 'ol/source/vector'
 import WMTS from 'ol/source/wmts'
-import { convToDegree } from '../utils/math'
+import XYZ from 'ol/source/xyz'
 import proj from 'ol/proj'
 import { sources } from '../services/MapConfigService'
 
@@ -72,6 +74,8 @@ class Print {
         this.translate = new Translate({
             features: this.featureCollection
         })
+        this._cachedFeature = []
+        this._cachedAngle = 0
     }
     /**
     * this function return geoserver print allowed DPIS
@@ -186,8 +190,11 @@ class Print {
     */
     getPolygonFeature(extent, geometryName = "the_geom") {
         let feature = new Feature({})
+        let geom = this._getPolygonGeomtry(extent)
+        const anchor = BasicViewerHelper.getCenterOfExtent(geom.getExtent())
+        geom.rotate(convToRadian(this._cachedAngle), anchor)
         feature.setGeometryName(geometryName)
-        feature.setGeometry(this._getPolygonGeomtry(extent))
+        feature.setGeometry(geom)
         return feature
     }
     /**
@@ -249,6 +256,7 @@ class Print {
         if (lyr) {
             this.map.removeLayer(lyr)
             this.map.removeInteraction(this.translate)
+            this._cachedFeature = []
         }
     }
     /**
@@ -427,31 +435,153 @@ class Print {
         return sourceProjection.getWorldExtent()
 
     }
+    getAllUrlParams(url) {
+
+        // get query string from url (optional) or window
+        var queryString = url ? url.split('?')[1] : window.location.search.slice(1)
+
+        // we'll store the parameters here
+        var obj = {}
+
+        // if query string exists
+        if (queryString) {
+
+            // stuff after # is not part of query string, so get rid of it
+            queryString = queryString.split('#')[0]
+
+            // split our query string into its component parts
+            var arr = queryString.split('&')
+
+            for (var i = 0; i < arr.length; i++) {
+                // separate the keys and the values
+                var a = arr[i].split('=')
+
+                // in case params look like: list[]=thing1&list[]=thing2
+                var paramNum = undefined
+                var paramName = a[0].replace(/\[\d*\]/, function (v) {
+                    paramNum = v.slice(1, -1)
+                    return ''
+                })
+
+                // set parameter value (use 'true' if empty)
+                var paramValue = typeof (a[1]) === 'undefined' ? true : a[1]
+
+                // (optional) keep case consistent
+                paramName = paramName.toLowerCase()
+                paramValue = paramValue.toLowerCase()
+
+                // if parameter name already exists
+                if (obj[paramName]) {
+                    // convert value to array (if still string)
+                    if (typeof obj[paramName] === 'string') {
+                        obj[paramName] = [obj[paramName]]
+                    }
+                    // if no array index number specified...
+                    if (typeof paramNum === 'undefined') {
+                        // put the value on the end of the array
+                        obj[paramName].push(paramValue)
+                    }
+                    // if array index number specified...
+                    else {
+                        // put the value at that index number
+                        obj[paramName][paramNum] = paramValue
+                    }
+                }
+                // if param name doesn't exist yet, set it
+                else {
+                    obj[paramName] = paramValue
+                }
+            }
+        }
+
+        return obj
+    }
+    /**
+    * this function rotate print box
+    * @param {angle} Rotation angle in degree.
+    * @returns {object}
+    */
+    rotatePrintBox(angle) {
+        if (this.featureCollection.getArray().length > 0) {
+            if (this._cachedFeature.length === 0) {
+                this._cachedFeature.push(this.featureCollection.getArray()[0])
+            }
+            const currentFeature = this._cachedFeature[0]
+            const geom = currentFeature.getGeometry()
+            const center = BasicViewerHelper.getCenterOfExtent(geom.getExtent())
+            geom.rotate(convToRadian(angle) - convToRadian(this._cachedAngle), center)
+            currentFeature.setGeometry(geom)
+            this.featureCollection.clear()
+            this.featureCollection.extend([currentFeature])
+            this._cachedAngle = angle
+        }
+    }
+    /**
+    * this function return map base layer ex: OSM,GoogleMaps
+    * @returns {object}
+    */
+    baseLayerEncoder(lyr) {
+        let encodedBaseLayer = null
+        const source = lyr.getSource()
+        if (source instanceof OSM) {
+            const tileGrid = lyr.getSource().getTileGrid()
+            const tileSize = toSize(tileGrid.getTileSize())
+            const layerURL = new URL(LayersHelper.getLayerURL(lyr))
+            let maxExtent = this.getBaseLayerMaxExtent(lyr)
+            maxExtent = BasicViewerHelper.reprojectExtent(maxExtent, this.map)
+            let layerObj = {
+                baseURL: layerURL.origin,//TODO: get the correct URL
+                opacity: lyr.getOpacity(),
+                maxExtent,
+                type: "OSM",//TODO:Check types supported by openlayers in geoserver
+                tileSize,
+                extension: "png",
+                resolutions: lyr.getSource().getTileGrid().getResolutions()
+            }
+            encodedBaseLayer = layerObj
+        } else if (source instanceof XYZ) {
+            const tileGrid = lyr.getSource().getTileGrid()
+            const tileSize = toSize(tileGrid.getTileSize())
+            const layerURL = new URL(LayersHelper.getLayerURL(lyr))
+            const hostname = layerURL.hostname
+            const Ismapbox = hostname.includes('mapbox')
+            const baseURL = layerURL.origin + decodeURIComponent(layerURL.pathname).split('/{')[0]
+            const customParams = this.getAllUrlParams(layerURL.toString())
+            let maxExtent = this.getBaseLayerMaxExtent(lyr)
+            maxExtent = BasicViewerHelper.reprojectExtent(maxExtent, this.map)
+            let layerObj = {
+                baseURL,//TODO: get the correct URL
+                opacity: lyr.getOpacity(),
+                maxExtent,
+                customParams,
+                tileOrigin: tileGrid.getOrigin(),
+                tileOriginCorner: 'bl',
+                type: "XYZ",//TODO:Check types supported by openlayers in geoserver
+                tileSize,
+                extension: Ismapbox ? "" : "png",
+                resolutions: lyr.getSource().getTileGrid().getResolutions()
+            }
+            if (Ismapbox) {
+                layerObj.path_format = '/${z}/${x}/${y}'
+            }
+            encodedBaseLayer = layerObj
+        }
+        return encodedBaseLayer
+    }
     /**
     * this function return map base layers ex: OSM,GoogleMaps
     * @returns {Array.<ol.layer>}
     */
     encodeBaseLayers() {
-        let baseLayers = LayersHelper.getBaseLayers(this.map).filter(baselyr => baselyr.getVisible())
-        baseLayers = baseLayers.map(baseLayer => {
-            const tileGrid = baseLayer.getSource().getTileGrid()
-            const tileSize = toSize(tileGrid.getTileSize())
-            const layerURL = new URL(LayersHelper.getLayerURL(baseLayer))
-            let maxExtent = this.getBaseLayerMaxExtent(baseLayer)
-            maxExtent = BasicViewerHelper.reprojectExtent(maxExtent, this.map)
-            let lyr = {
-                baseURL: layerURL.origin,//TODO: get the correct URL
-                opacity: baseLayer.getOpacity(),
-                maxExtent,
-                // type: this.getSourceType(baseLayer),
-                type: "OSM",//TODO:Check types supported by openlayers in geoserver
-                tileSize,
-                extension: "png",
-                resolutions: baseLayer.getSource().getTileGrid().getResolutions()
+        const baseLayers = LayersHelper.getBaseLayers(this.map).filter(baselyr => baselyr.getVisible())
+        let layers = []
+        baseLayers.forEach(lyr => {
+            const encodedBaseLayer = this.baseLayerEncoder(lyr)
+            if (encodedBaseLayer) {
+                layers.push(encodedBaseLayer)
             }
-            return lyr
-        })
-        return baseLayers
+        }, this)
+        return layers
     }
     /**
     * this function map layers without print layer
@@ -603,6 +733,8 @@ class Print {
                     bbox: featureExtent,
                     // scale,
                     // center,
+                    //TODO:FIX Rotation
+                    // I think we need to get geometry coordinates and rotate the and get extent
                     rotation: convToDegree(rotationRadian)
                 }
             ]

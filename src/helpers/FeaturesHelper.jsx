@@ -103,21 +103,21 @@ export class FeatureHelper {
         const type = geometry.getType()
         let center = null
         switch (type) {
-            case 'LineString': {
-                const coords = geometry.getCoordinates()
-                center = this.getCoordsCenter(coords)
-                break
-            }
-            case 'MultiLineString': {
-                const coords = geometry.getCoordinates()
-                center = this.getCoordsCenter(coords)
-                break
-            }
-            default: {
-                const extent = geometry.getExtent()
-                center = BasicViewerHelper.getCenterOfExtent(extent)
-                break
-            }
+        case 'LineString': {
+            const coords = geometry.getCoordinates()
+            center = this.getCoordsCenter(coords)
+            break
+        }
+        case 'MultiLineString': {
+            const coords = geometry.getCoordinates()
+            center = this.getCoordsCenter(coords)
+            break
+        }
+        default: {
+            const extent = geometry.getExtent()
+            center = BasicViewerHelper.getCenterOfExtent(extent)
+            break
+        }
         }
         return center
     }

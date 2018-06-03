@@ -28,26 +28,52 @@
         <article>
             <pre class="prettyprint source linenums"><code>import URLS from '../urls/urls'
 import { doExternalGet } from '../utils/utils'
+/** @constant OSM_GEOCODING_URL
+    @type {string}
+    @default "https://nominatim.openstreetmap.org/search"
+*/
+export const OSM_GEOCODING_URL = "https://nominatim.openstreetmap.org/search"
+/** @constant OSM_SETTINGS
+    @type {object}
+    @default {q: '',format: 'json',addressdetails: 1,limit: 10,countrycodes: '','accept-language': 'en-US'}
+*/
+export const OSM_SETTINGS = {
+    q: '',
+    format: 'json',
+    addressdetails: 1,
+    limit: 10,
+    countrycodes: '',
+    'accept-language': 'en-US'
+}
+/** @constant OPENCADGE_GEOCODING_URL
+    @type {string}
+    @default 'https://api.opencagedata.com/geocode/v1/json'
+*/
+export const OPENCADGE_GEOCODING_URL = 'https://api.opencagedata.com/geocode/v1/json'
+
+/** @constant OPENCAGE_SETTINGS
+    @type {object}
+    @default {q: '',language: 'en',pretty: 1,key:'YOUR-API-KEY'}
+*/
+export const OPENCAGE_SETTINGS = {
+    q: '',
+    language: 'en',
+    pretty: 1,
+    key: 'YOUR-API-KEY'
+}
 /** Class for Geocoding Search */
-export class OSMGeoCoding {
+export class Geocoding {
     /**
-    * Create a OSMGeoCoding instance.
+    * Create a Geocoding instance.
     * @typedef {Object} Settings
     * @property {string} q - search keyword
     * @property {string} format - result format
     * @property {Number} addressdetails - osm address details
     * @property {Number} limit - result limit
     * @param {string} [url="https://nominatim.openstreetmap.org/search?"] geocoding service url
-    * @param {Settings} [settings={q: '',format: 'json',addressdetails: 1,limit: 10,countrycodes: '','accept-language': 'en-US'}] geocoding service url
+    * @param {Settings|object} [settings={q: '',format: 'json',addressdetails: 1,limit: 10,countrycodes: '','accept-language': 'en-US'}] geocoding service url
     */
-    constructor(url = "https://nominatim.openstreetmap.org/search?", settings = {
-        q: '',
-        format: 'json',
-        addressdetails: 1,
-        limit: 10,
-        countrycodes: '',
-        'accept-language': 'en-US'
-    }) {
+    constructor(url = "https://nominatim.openstreetmap.org/search", settings = OSM_SETTINGS) {
         this.geocodingURL = url
         this.settings = settings
         this.urls = new URLS(null)
@@ -73,16 +99,77 @@ export class OSMGeoCoding {
         return this.urls.getParamterizedURL(this.geocodingURL, paramters)
     }
     /**
+    * this function return geocoding result
+    * @param {any} response response of geocoding api
+    * @typedef {Object} GeocodingItem
+    * @property {Array.&lt;Number>} bbox - bbox of item
+    * @property {string} formatted - item formatted address
+    * @property {Array.&lt;Number>} location - item coordinate
+    * @property {string} srs - projection code
+    * @returns {Array.&lt;GeocodingItem>} array of geocoding items
+    */
+    opencageResultHandler(response) {
+        let result = response.results
+        result = result.map((obj) => {
+            const NE = obj.bounds.northeast
+            const SW = obj.bounds.southwest
+            return {
+                bbox: [SW.lng, SW.lat, NE.lng, NE.lat],
+                formatted: obj.annotations.flag + " " + obj.formatted,
+                location: [obj.geometry.lng, obj.geometry.lat],
+                srs: 'EPSG:4326'
+
+            }
+        })
+        return result
+    }
+    /**
+    * this function return geocoding result
+    * @param {any} response response of geocoding api
+    * @typedef {Object} GeocodingItem
+    * @property {Array.&lt;Number>} bbox - bbox of item
+    * @property {string} formatted - item formatted address
+    * @property {Array.&lt;Number>} location - item coordinate
+    * @returns {Array.&lt;GeocodingItem>} array of geocoding items
+    */
+    osmResultHandler(response) {
+        let result = response
+        result = result.map((obj) => {
+            return {
+                bbox: obj.boundingbox.map(coord => parseFloat(coord)),
+                formatted: obj.display_name,
+                location: [obj.lon, obj.lat],
+                srs: 'EPSG:4326'
+
+            }
+        })
+        return result
+    }
+    transformResult(response) {
+        let transformedResult = null
+        switch (this.geocodingURL) {
+            case OSM_GEOCODING_URL:
+                transformedResult = this.osmResultHandler(response)
+                break
+            case OPENCADGE_GEOCODING_URL:
+                transformedResult = this.opencageResultHandler(response)
+                break
+            default:
+                this.transformResult = response
+        }
+        return transformedResult
+    }
+    /**
     * this function performe search and return result
     * @param {string} query keyword to search by
     * @param {Function} callBack Function to be executed after result return , takes result of search as paramter
     */
     search(query, callBack) {
         this.url = this.getURL(query)
-        doExternalGet(this.url).then(result => callBack(result))
+        doExternalGet(this.url).then(response => callBack(this.transformResult(response)))
     }
 }
-export default new OSMGeoCoding()</code></pre>
+export default new Geocoding()</code></pre>
         </article>
     </section>
 
@@ -92,13 +179,13 @@ export default new OSMGeoCoding()</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationHelper.html">AnimationHelper</a></li><li><a href="BasicViewerHelper.html">BasicViewerHelper</a></li><li><a href="FeatureHelper.html">FeatureHelper</a></li><li><a href="FeatureListHelper.html">FeatureListHelper</a></li><li><a href="LayersHelper.html">LayersHelper</a></li><li><a href="MapConfigTransformService.html">MapConfigTransformService</a></li><li><a href="OSMGeoCoding.html">OSMGeoCoding</a></li><li><a href="Print.html">Print</a></li><li><a href="StyleHelper.html">StyleHelper</a></li><li><a href="URLS.html">URLS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#capitalizeFirstLetter">capitalizeFirstLetter</a></li><li><a href="global.html#convToDegree">convToDegree</a></li><li><a href="global.html#convToRadian">convToRadian</a></li><li><a href="global.html#copyToClipboard">copyToClipboard</a></li><li><a href="global.html#doExternalGet">doExternalGet</a></li><li><a href="global.html#doGet">doGet</a></li><li><a href="global.html#doPost">doPost</a></li><li><a href="global.html#DOTS_PER_INCH">DOTS_PER_INCH</a></li><li><a href="global.html#downloadFile">downloadFile</a></li><li><a href="global.html#getCRSFToken">getCRSFToken</a></li><li><a href="global.html#getImageStyle">getImageStyle</a></li><li><a href="global.html#hasTrailingSlash">hasTrailingSlash</a></li><li><a href="global.html#INCHES_PER_METER">INCHES_PER_METER</a></li><li><a href="global.html#moveBottomLeft">moveBottomLeft</a></li><li><a href="global.html#moveBottomRight">moveBottomRight</a></li><li><a href="global.html#moveTopLeft">moveTopLeft</a></li><li><a href="global.html#moveTopRight">moveTopRight</a></li><li><a href="global.html#PRINT_LAYER_NAME">PRINT_LAYER_NAME</a></li><li><a href="global.html#randomBright">randomBright</a></li><li><a href="global.html#randomBrightTrans">randomBrightTrans</a></li><li><a href="global.html#randomDark">randomDark</a></li><li><a href="global.html#randomDarkTrans">randomDarkTrans</a></li><li><a href="global.html#removeTrailingSlash">removeTrailingSlash</a></li><li><a href="global.html#styles">styles</a></li><li><a href="global.html#wmsGetFeatureInfoFormats">wmsGetFeatureInfoFormats</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationHelper.html">AnimationHelper</a></li><li><a href="BasicViewerHelper.html">BasicViewerHelper</a></li><li><a href="FeatureHelper.html">FeatureHelper</a></li><li><a href="FeatureListHelper.html">FeatureListHelper</a></li><li><a href="Geocoding.html">Geocoding</a></li><li><a href="LayersHelper.html">LayersHelper</a></li><li><a href="MapConfigTransformService.html">MapConfigTransformService</a></li><li><a href="Print.html">Print</a></li><li><a href="StyleHelper.html">StyleHelper</a></li><li><a href="URLS.html">URLS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#capitalizeFirstLetter">capitalizeFirstLetter</a></li><li><a href="global.html#convToDegree">convToDegree</a></li><li><a href="global.html#convToRadian">convToRadian</a></li><li><a href="global.html#copyToClipboard">copyToClipboard</a></li><li><a href="global.html#doExternalGet">doExternalGet</a></li><li><a href="global.html#doGet">doGet</a></li><li><a href="global.html#doPost">doPost</a></li><li><a href="global.html#DOTS_PER_INCH">DOTS_PER_INCH</a></li><li><a href="global.html#downloadFile">downloadFile</a></li><li><a href="global.html#getCRSFToken">getCRSFToken</a></li><li><a href="global.html#getImageStyle">getImageStyle</a></li><li><a href="global.html#hasTrailingSlash">hasTrailingSlash</a></li><li><a href="global.html#INCHES_PER_METER">INCHES_PER_METER</a></li><li><a href="global.html#moveBottomLeft">moveBottomLeft</a></li><li><a href="global.html#moveBottomRight">moveBottomRight</a></li><li><a href="global.html#moveTopLeft">moveTopLeft</a></li><li><a href="global.html#moveTopRight">moveTopRight</a></li><li><a href="global.html#OPENCADGE_GEOCODING_URL">OPENCADGE_GEOCODING_URL</a></li><li><a href="global.html#OPENCAGE_SETTINGS">OPENCAGE_SETTINGS</a></li><li><a href="global.html#OSM_GEOCODING_URL">OSM_GEOCODING_URL</a></li><li><a href="global.html#OSM_SETTINGS">OSM_SETTINGS</a></li><li><a href="global.html#PRINT_LAYER_NAME">PRINT_LAYER_NAME</a></li><li><a href="global.html#randomBright">randomBright</a></li><li><a href="global.html#randomBrightTrans">randomBrightTrans</a></li><li><a href="global.html#randomDark">randomDark</a></li><li><a href="global.html#randomDarkTrans">randomDarkTrans</a></li><li><a href="global.html#removeTrailingSlash">removeTrailingSlash</a></li><li><a href="global.html#styles">styles</a></li><li><a href="global.html#wmsGetFeatureInfoFormats">wmsGetFeatureInfoFormats</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue May 29 2018 14:01:59 GMT+0200 (EET)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu May 31 2018 23:26:53 GMT+0200 (EET)
 </footer>
 
 <script> prettyPrint(); </script>
