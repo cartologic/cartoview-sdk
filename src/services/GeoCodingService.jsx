@@ -83,11 +83,11 @@ export class Geocoding {
     opencageResultHandler(response) {
         let result = response.results
         result = result.map((obj) => {
-            const NE = obj.bounds.northeast
-            const SW = obj.bounds.southwest
+            const NE = obj.bounds ? obj.bounds.northeast : { lng: obj.geometry.lng, lat: obj.geometry.lat }
+            const SW = obj.bounds ? obj.bounds.southwest : { lng: obj.geometry.lng, lat: obj.geometry.lat }
             return {
                 bbox: [SW.lng, SW.lat, NE.lng, NE.lat],
-                formatted: obj.annotations.flag + " " + obj.formatted,
+                formatted: `${obj.annotations.flag || ""} ${obj.formatted}`,
                 location: [obj.geometry.lng, obj.geometry.lat],
                 srs: 'EPSG:4326'
 
@@ -108,7 +108,7 @@ export class Geocoding {
         let result = response
         result = result.map((obj) => {
             return {
-                bbox: obj.boundingbox.map(coord => parseFloat(coord)),
+                bbox: obj.boundingbox ? obj.boundingbox.map(coord => parseFloat(coord)) : [obj.lon, obj.lat, obj.lon, obj.lat],
                 formatted: obj.display_name,
                 location: [obj.lon, obj.lat],
                 srs: 'EPSG:4326'
@@ -129,14 +129,14 @@ export class Geocoding {
     transformResult(response) {
         let transformedResult = null
         switch (this.geocodingURL) {
-        case OSM_GEOCODING_URL:
-            transformedResult = this.osmResultHandler(response)
-            break
-        case OPENCADGE_GEOCODING_URL:
-            transformedResult = this.opencageResultHandler(response)
-            break
-        default:
-            this.transformResult = response
+            case OSM_GEOCODING_URL:
+                transformedResult = this.osmResultHandler(response)
+                break
+            case OPENCADGE_GEOCODING_URL:
+                transformedResult = this.opencageResultHandler(response)
+                break
+            default:
+                this.transformResult = response
         }
         return transformedResult
     }
