@@ -4469,13 +4469,13 @@
 
         
                 
-<h4 class="name" id="Configuration">Configuration</h4>
+<h4 class="name" id="Attribute">Attribute</h4>
 
 
 
 
 <div class="description">
-    This function return Attachments tags
+    This function return feature after removing hidden attributes
 </div>
 
 
@@ -4520,13 +4520,13 @@
 
         <tr>
             
-                <td class="name"><code>minZoom</code></td>
+                <td class="name"><code>attribute</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">string</span>
 
 
             
@@ -4536,20 +4536,23 @@
 
             
 
-            <td class="description last">minimum zoom of map</td>
+            <td class="description last">attribute name</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>maxZoom</code></td>
+                <td class="name"><code>attribute_label</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">string</span>
+|
+
+<span class="param-type">null</span>
 
 
             
@@ -4559,20 +4562,23 @@
 
             
 
-            <td class="description last">maximum zoom of map</td>
+            <td class="description last">attribute label</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>zoom</code></td>
+                <td class="name"><code>attribute_type</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">string</span>
+|
+
+<span class="param-type">null</span>
 
 
             
@@ -4582,20 +4588,20 @@
 
             
 
-            <td class="description last">initial zoom of map</td>
+            <td class="description last">attribute type geoserver attribute type</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>scaleLine</code></td>
+                <td class="name"><code>visible</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Boolean</span>
+<span class="param-type">bool</span>
 
 
             
@@ -4605,122 +4611,7 @@
 
             
 
-            <td class="description last">scaleline control</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>zoomSlider</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">zoom slider control</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>fullScreen</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">fullScreen control</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>dragRotateAndZoom</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">dragRotateAndZoom interaction</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>zoom</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Zoom</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">zoom configuration</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>attachmentTags</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;string></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">attachment tags</td>
+            <td class="description last">attribute type geoserver attribute type</td>
         </tr>
 
     
@@ -4759,7 +4650,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="helpers_FeatureListHelper.jsx.html">helpers/FeatureListHelper.jsx</a>, <a href="helpers_FeatureListHelper.jsx.html#line6">line 6</a>
+        <a href="helpers_FeaturesHelper.jsx.html">helpers/FeaturesHelper.jsx</a>, <a href="helpers_FeaturesHelper.jsx.html#line58">line 58</a>
     </li></ul></dd>
     
 
@@ -5085,13 +4976,13 @@
 
             
                 
-<h4 class="name" id="GeocodingItem">GeocodingItem</h4>
+<h4 class="name" id="Configuration">Configuration</h4>
 
 
 
 
 <div class="description">
-    this function return geocoding result
+    This function return Attachments tags
 </div>
 
 
@@ -5136,13 +5027,13 @@
 
         <tr>
             
-                <td class="name"><code>bbox</code></td>
+                <td class="name"><code>minZoom</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;Number></span>
+<span class="param-type">Number</span>
 
 
             
@@ -5152,20 +5043,20 @@
 
             
 
-            <td class="description last">bbox of item</td>
+            <td class="description last">minimum zoom of map</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>formatted</code></td>
+                <td class="name"><code>maxZoom</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">Number</span>
 
 
             
@@ -5175,20 +5066,20 @@
 
             
 
-            <td class="description last">item formatted address</td>
+            <td class="description last">maximum zoom of map</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>location</code></td>
+                <td class="name"><code>zoom</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;Number></span>
+<span class="param-type">Number</span>
 
 
             
@@ -5198,7 +5089,145 @@
 
             
 
-            <td class="description last">item coordinate</td>
+            <td class="description last">initial zoom of map</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>scaleLine</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">scaleline control</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>zoomSlider</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">zoom slider control</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fullScreen</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">fullScreen control</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>dragRotateAndZoom</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">dragRotateAndZoom interaction</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>zoom</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Zoom</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">zoom configuration</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>attachmentTags</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">attachment tags</td>
         </tr>
 
     
@@ -5237,7 +5266,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_GeoCodingService.jsx.html">services/GeoCodingService.jsx</a>, <a href="services_GeoCodingService.jsx.html#line98">line 98</a>
+        <a href="helpers_FeatureListHelper.jsx.html">helpers/FeatureListHelper.jsx</a>, <a href="helpers_FeatureListHelper.jsx.html#line6">line 6</a>
     </li></ul></dd>
     
 
@@ -5431,6 +5460,176 @@
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="services_GeoCodingService.jsx.html">services/GeoCodingService.jsx</a>, <a href="services_GeoCodingService.jsx.html#line73">line 73</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="GeocodingItem">GeocodingItem</h4>
+
+
+
+
+<div class="description">
+    this function return geocoding result
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>bbox</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">bbox of item</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>formatted</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">item formatted address</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>location</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">item coordinate</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_GeoCodingService.jsx.html">services/GeoCodingService.jsx</a>, <a href="services_GeoCodingService.jsx.html#line98">line 98</a>
     </li></ul></dd>
     
 
@@ -6754,7 +6953,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Jun 03 2018 11:52:45 GMT+0200 (EET)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Jun 14 2018 00:02:34 GMT+0200 (EET)
 </footer>
 
 <script> prettyPrint(); </script>

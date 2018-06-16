@@ -56,6 +56,26 @@ export class FeatureHelper {
         return doGet(proxiedURL)
     }
     /**
+    * This function return feature after removing hidden attributes
+    * @param {ol.Feature} feature
+    * @typedef {Object} Attribute
+    * @property {string} attribute - attribute name
+    * @property {string|null} attribute_label - attribute label
+    * @property {string|null} attribute_type - attribute type geoserver attribute type
+    * @property {bool} visible - attribute type geoserver attribute type
+    * @param {Array.<Attribute>} features to be transformed 
+    * @returns {ol.Feature}
+    */
+    _flagHidden(feature, attributes = []) {
+        let hidden = []
+        attributes.filter(attr => attr.visible === false && !attr.attribute_type.includes('gml')).forEach(attr => {
+            hidden.push(attr.attribute)
+        }, this)
+        feature.set('_hiddenAttrs', hidden)
+        return feature
+
+    }
+    /**
     * This function return feature info url
     * @param {ol.layer} layer openlayers layer to get url from
     * @param {Array.<ol.Feature>} features to be transformed 
@@ -66,12 +86,13 @@ export class FeatureHelper {
     */
     transformFeatures(layer, features, map, crs, attributes = []) {
         let transformedFeatures = []
-        features.forEach((feature) => {
+        features.forEach((f) => {
+            let feature = this._flagHidden(f, attributes)
             feature.getGeometry().transform('EPSG:' + crs, map.getView()
                 .getProjection())
             if (attributes && attributes.length > 0) {
                 let attributesAlias = {}
-                attributes.map(metaAttr => attributesAlias[metaAttr.attribute] = metaAttr.attribute_label)
+                attributes.filter(attr => attr.visible).map(metaAttr => attributesAlias[metaAttr.attribute] = metaAttr.attribute_label)
                 feature.set("_attributesAlias", attributesAlias)
             }
             feature.set("_layerTitle", layer.get('title'))
@@ -103,21 +124,21 @@ export class FeatureHelper {
         const type = geometry.getType()
         let center = null
         switch (type) {
-        case 'LineString': {
-            const coords = geometry.getCoordinates()
-            center = this.getCoordsCenter(coords)
-            break
-        }
-        case 'MultiLineString': {
-            const coords = geometry.getCoordinates()
-            center = this.getCoordsCenter(coords)
-            break
-        }
-        default: {
-            const extent = geometry.getExtent()
-            center = BasicViewerHelper.getCenterOfExtent(extent)
-            break
-        }
+            case 'LineString': {
+                const coords = geometry.getCoordinates()
+                center = this.getCoordsCenter(coords)
+                break
+            }
+            case 'MultiLineString': {
+                const coords = geometry.getCoordinates()
+                center = this.getCoordsCenter(coords)
+                break
+            }
+            default: {
+                const extent = geometry.getExtent()
+                center = BasicViewerHelper.getCenterOfExtent(extent)
+                break
+            }
         }
         return center
     }
