@@ -40,7 +40,28 @@ export function doExternalGet(url, extraHeaders = {}, type = 'json') {
         }
     }).then((response) => {
         if (type === 'json') {
-            return response.json()
+            let promise = new Promise((resolve, reject) => {
+                response.text().then(text => {
+                    let data = JSON.parse(text, (key, value) => {
+                        if (value === 'NaN') {
+                            return NaN
+                        }
+
+                        if (value === 'Infinity') {
+                            return Infinity
+                        }
+
+                        if (value === '-Infinity') {
+                            return -Infinity
+                        }
+
+                        return value
+                    })
+                    resolve(data)
+                })
+
+            })
+            return promise
         } else if (type === 'xml') {
             return response.text()
         }
