@@ -1,5 +1,10 @@
 import URLS from '../urls/urls'
 import { doExternalGet } from '../utils/utils'
+/** @constant ESRI_GEOCODING_URL
+    @type {string}
+    @default "http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates"
+*/
+export const ESRI_GEOCODING_URL = "http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates"
 /** @constant OSM_GEOCODING_URL
     @type {string}
     @default "https://nominatim.openstreetmap.org/search"
@@ -33,6 +38,17 @@ export const OPENCAGE_SETTINGS = {
     pretty: 1,
     key: 'YOUR-API-KEY'
 }
+/** @constant ESRI_SETTINGS
+    @type {object}
+    @default {q: '',language: 'en',pretty: 1,key:'YOUR-API-KEY'}
+*/
+export const ESRI_SETTINGS = {
+    SingleLine: '',
+    category: '',
+    outFields: '*',
+    forStorage: false,
+    f: 'json'
+}
 /** Class for Geocoding Search */
 export class Geocoding {
     /**
@@ -57,7 +73,11 @@ export class Geocoding {
     */
     getPatamters(query) {
         if (this.settings) {
-            this.settings.q = query
+            if (typeof (this.settings.q) !== 'undefined') {
+                this.settings.q = query
+            } else if (typeof (this.settings.SingleLine) !== 'undefined') {
+                this.settings.SingleLine = query
+            }
             return this.settings
         }
         return {}
@@ -89,6 +109,19 @@ export class Geocoding {
                 bbox: [SW.lng, SW.lat, NE.lng, NE.lat],
                 formatted: `${obj.annotations.flag || ""} ${obj.formatted}`,
                 location: [obj.geometry.lng, obj.geometry.lat],
+                srs: 'EPSG:4326'
+
+            }
+        })
+        return result
+    }
+    esriResultHandler(response) {
+        let result = response.candidates
+        result = result.map((obj) => {
+            return {
+                bbox: [obj.extent.xmin, obj.extent.ymin, obj.extent.xmax, obj.extent.ymax],
+                formatted: `${obj.address}`,
+                location: [obj.location.x, obj.location.y],
                 srs: 'EPSG:4326'
 
             }
@@ -134,6 +167,9 @@ export class Geocoding {
                 break
             case OPENCADGE_GEOCODING_URL:
                 transformedResult = this.opencageResultHandler(response)
+                break
+            case ESRI_GEOCODING_URL:
+                transformedResult = this.esriResultHandler(response)
                 break
             default:
                 this.transformResult = response
