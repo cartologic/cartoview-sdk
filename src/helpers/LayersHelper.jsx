@@ -14,7 +14,8 @@ export class LayersHelper {
     * @returns {bool}
     */
     isWMSLayer(layer) {
-        return layer.getSource() instanceof TileWMS || layer.getSource() instanceof ImageWMS
+        const source = layer.getSource()
+        return source instanceof TileWMS || source instanceof ImageWMS
     }
     /**
     * this function return layer name from geoserver typename

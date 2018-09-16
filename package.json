@@ -1,6 +1,6 @@
 {
     "name": "cartoview-sdk",
-    "version": "2.0.0-beta117",
+    "version": "2.0.0-beta120",
     "description": "cartoview sdk is a NPM package which contains serives and hepers for cartoview apps development",
     "main": "lib/index.js",
     "scripts": {
@@ -47,14 +47,17 @@
         "jsdoc": "^3.5.5"
     },
     "dependencies": {
+        "@boundlessgeo/jsonix": "^2.4.3",
         "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
         "babel-preset-stage-2": "^6.24.1",
         "clipboard-copy": "^2.0.0",
+        "ogc-schemas": "^2.6.1",
         "ol": "^4.6.4",
         "pica": "^4.0.2",
         "proj4": "^2.4.4",
         "randomcolor": "^0.5.3",
         "tcomb-form": "^0.9.19",
-        "validator": "^9.4.1"
+        "validator": "^9.4.1",
+        "w3c-schemas": "^1.4.0"
     }
 }
