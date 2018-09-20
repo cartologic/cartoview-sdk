@@ -303,7 +303,11 @@ class MapConfigTransformService {
                     params.TILED = 'TRUE';
                 }
                 if (layer.styles) {
-                    params.STYLES = layer.styles;
+                    if (Array.isArray(layer.styles)) {
+                        params.STYLES = layer.styles.join(",");
+                    } else {
+                        params.STYLES = layer.styles;
+                    }
                 }
                 if (layer.format) {
                     params.FORMAT = layer.format;
@@ -327,7 +331,7 @@ class MapConfigTransformService {
                     layerConfig.source.properties.hidpi = false
                     layerConfig.properties.extent = layer.capability.bbox[data.map.projection].bbox
                     // if (layer.srs === data.map.projection) {
-                        
+
                     // } else {
                     //     layerConfig.properties.extent = proj.transformExtent(layer.bbox, layer.srs, data.map.projection)
                     // }
