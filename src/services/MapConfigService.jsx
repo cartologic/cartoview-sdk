@@ -148,6 +148,20 @@ class MapConfigService {
                 })());
             });
         }
+        if ((opt_proxy || access_token) && config.type === 'ImageWMS') {
+            sourceObj.once('imageloaderror', function () {
+                sourceObj.setImageLoadFunction((function () {
+                    var imageLoadFn = sourceObj.getImageLoadFunction();
+                    return function (image, src) {
+                        let query = access_token ? { "access_token": access_token } : {}
+                        let urlHelper = new URLS(opt_proxy)
+                        let targetURL = urlHelper.getParamterizedURL(src, query)
+                        targetURL = urlHelper.getProxiedURL(targetURL)
+                        imageLoadFn(image, targetURL);
+                    };
+                })());
+            });
+        }
         return sourceObj;
     }
     generateLayerFromConfig(config, map, opt_proxy, access_token) {

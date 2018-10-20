@@ -1,5 +1,10 @@
 import URLS from '../urls/urls'
 import { doExternalGet } from '../utils/utils'
+/** @constant ESRI_GEOCODING_URL
+    @type {string}
+    @default "http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates"
+*/
+export const ESRI_GEOCODING_URL = "http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates"
 /** @constant OSM_GEOCODING_URL
     @type {string}
     @default "https://nominatim.openstreetmap.org/search"
@@ -33,6 +38,17 @@ export const OPENCAGE_SETTINGS = {
     pretty: 1,
     key: 'YOUR-API-KEY'
 }
+/** @constant ESRI_SETTINGS
+    @type {object}
+    @default {q: '',language: 'en',pretty: 1,key:'YOUR-API-KEY'}
+*/
+export const ESRI_SETTINGS = {
+    SingleLine: '',
+    category: '',
+    outFields: '*',
+    forStorage: false,
+    f: 'json'
+}
 /** Class for Geocoding Search */
 export class Geocoding {
     /**
@@ -57,7 +73,11 @@ export class Geocoding {
     */
     getPatamters(query) {
         if (this.settings) {
-            this.settings.q = query
+            if (typeof (this.settings.q) !== 'undefined') {
+                this.settings.q = query
+            } else if (typeof (this.settings.SingleLine) !== 'undefined') {
+                this.settings.SingleLine = query
+            }
             return this.settings
         }
         return {}
@@ -83,12 +103,25 @@ export class Geocoding {
     opencageResultHandler(response) {
         let result = response.results
         result = result.map((obj) => {
-            const NE = obj.bounds.northeast
-            const SW = obj.bounds.southwest
+            const NE = obj.bounds ? obj.bounds.northeast : { lng: obj.geometry.lng, lat: obj.geometry.lat }
+            const SW = obj.bounds ? obj.bounds.southwest : { lng: obj.geometry.lng, lat: obj.geometry.lat }
             return {
                 bbox: [SW.lng, SW.lat, NE.lng, NE.lat],
-                formatted: obj.annotations.flag + " " + obj.formatted,
+                formatted: `${obj.annotations.flag || ""} ${obj.formatted}`,
                 location: [obj.geometry.lng, obj.geometry.lat],
+                srs: 'EPSG:4326'
+
+            }
+        })
+        return result
+    }
+    esriResultHandler(response) {
+        let result = response.candidates
+        result = result.map((obj) => {
+            return {
+                bbox: [obj.extent.xmin, obj.extent.ymin, obj.extent.xmax, obj.extent.ymax],
+                formatted: `${obj.address}`,
+                location: [obj.location.x, obj.location.y],
                 srs: 'EPSG:4326'
 
             }
@@ -108,7 +141,7 @@ export class Geocoding {
         let result = response
         result = result.map((obj) => {
             return {
-                bbox: obj.boundingbox.map(coord => parseFloat(coord)),
+                bbox: obj.boundingbox ? obj.boundingbox.map(coord => parseFloat(coord)) : [obj.lon, obj.lat, obj.lon, obj.lat],
                 formatted: obj.display_name,
                 location: [obj.lon, obj.lat],
                 srs: 'EPSG:4326'
@@ -129,14 +162,17 @@ export class Geocoding {
     transformResult(response) {
         let transformedResult = null
         switch (this.geocodingURL) {
-        case OSM_GEOCODING_URL:
-            transformedResult = this.osmResultHandler(response)
-            break
-        case OPENCADGE_GEOCODING_URL:
-            transformedResult = this.opencageResultHandler(response)
-            break
-        default:
-            this.transformResult = response
+            case OSM_GEOCODING_URL:
+                transformedResult = this.osmResultHandler(response)
+                break
+            case OPENCADGE_GEOCODING_URL:
+                transformedResult = this.opencageResultHandler(response)
+                break
+            case ESRI_GEOCODING_URL:
+                transformedResult = this.esriResultHandler(response)
+                break
+            default:
+                this.transformResult = response
         }
         return transformedResult
     }
