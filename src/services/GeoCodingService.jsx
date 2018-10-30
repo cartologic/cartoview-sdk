@@ -1,10 +1,8 @@
+import { moveBottomLeft, moveTopRight } from '../utils/math'
+
 import URLS from '../urls/urls'
 import { doExternalGet } from '../utils/utils'
-/** @constant ESRI_GEOCODING_URL
-    @type {string}
-    @default "http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates"
-*/
-export const ESRI_GEOCODING_URL = "http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates"
+
 /** @constant OSM_GEOCODING_URL
     @type {string}
     @default "https://nominatim.openstreetmap.org/search"
@@ -38,6 +36,11 @@ export const OPENCAGE_SETTINGS = {
     pretty: 1,
     key: 'YOUR-API-KEY'
 }
+/** @constant ESRI_GEOCODING_URL
+    @type {string}
+    @default "http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates"
+*/
+export const ESRI_GEOCODING_URL = "http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates"
 /** @constant ESRI_SETTINGS
     @type {object}
     @default {q: '',language: 'en',pretty: 1,key:'YOUR-API-KEY'}
@@ -48,6 +51,20 @@ export const ESRI_SETTINGS = {
     outFields: '*',
     forStorage: false,
     f: 'json'
+}
+/** @constant BOUNDLESS_GEOCODING_URL
+    @type {string}
+    @default "https://bcs.boundlessgeo.io/geocode/mapbox/address/"
+*/
+export const BOUNDLESS_GEOCODING_URL = "https://bcs.boundlessgeo.io/geocode/mapbox/address/"
+/** @constant ESRI_SETTINGS
+    @type {object}
+    @default {version: '0.1',apikey: '',q: ''}
+*/
+export const BOUNDLESS_SETTINGS = {
+    version: '0.1',
+    apikey: '',
+    q: ''
 }
 /** Class for Geocoding Search */
 export class Geocoding {
@@ -88,7 +105,15 @@ export class Geocoding {
     */
     getURL(query) {
         const paramters = this.getPatamters(query)
+        if (this.geocodingURL === BOUNDLESS_GEOCODING_URL) {
+            const _params = { ...paramters }
+            const address = _params.q
+            delete _params.q
+            return this.urls.getParamterizedURL(`${this.geocodingURL}${address}`, paramters)
+        }
         return this.urls.getParamterizedURL(this.geocodingURL, paramters)
+
+
     }
     /**
     * this function return geocoding result
@@ -109,6 +134,20 @@ export class Geocoding {
                 bbox: [SW.lng, SW.lat, NE.lng, NE.lat],
                 formatted: `${obj.annotations.flag || ""} ${obj.formatted}`,
                 location: [obj.geometry.lng, obj.geometry.lat],
+                srs: 'EPSG:4326'
+
+            }
+        })
+        return result
+    }
+    boundlessResultHandler(response) {
+        let result = response.geocodePoints
+        result = result.map((obj) => {
+            const location = [obj.x, obj.y]
+            return {
+                bbox: [...moveBottomLeft(location, 45, .1), ...moveTopRight(location, 45, .1)],
+                formatted: `${obj.candidatePlace}`,
+                location: [obj.x, obj.y],
                 srs: 'EPSG:4326'
 
             }
@@ -162,17 +201,20 @@ export class Geocoding {
     transformResult(response) {
         let transformedResult = null
         switch (this.geocodingURL) {
-            case OSM_GEOCODING_URL:
-                transformedResult = this.osmResultHandler(response)
-                break
-            case OPENCADGE_GEOCODING_URL:
-                transformedResult = this.opencageResultHandler(response)
-                break
-            case ESRI_GEOCODING_URL:
-                transformedResult = this.esriResultHandler(response)
-                break
-            default:
-                this.transformResult = response
+        case OSM_GEOCODING_URL:
+            transformedResult = this.osmResultHandler(response)
+            break
+        case OPENCADGE_GEOCODING_URL:
+            transformedResult = this.opencageResultHandler(response)
+            break
+        case ESRI_GEOCODING_URL:
+            transformedResult = this.esriResultHandler(response)
+            break
+        case BOUNDLESS_GEOCODING_URL:
+            transformedResult = this.boundlessResultHandler(response)
+            break
+        default:
+            this.transformResult = response
         }
         return transformedResult
     }
