@@ -11,6 +11,7 @@ import { getCRSFToken } from '../helpers/helpers'
 export function doGet(url, extraHeaders = {}, type = 'json') {
     return fetch(url, {
         method: 'GET',
+        redirect: 'follow',
         credentials: 'include',
         headers: {
             "X-CSRFToken": getCRSFToken(),
@@ -35,6 +36,7 @@ export function doExternalGet(url, extraHeaders = {}, type = 'json') {
     return fetch(url, {
         method: 'GET',
         mode: 'cors',
+        redirect: 'follow',
         headers: {
             ...extraHeaders
         }
@@ -86,6 +88,7 @@ export function doPost(url, data, extraHeaders = {}, type = 'json') {
     return fetch(url, {
         method: 'POST',
         mode: 'cors',
+        redirect: 'follow',
         credentials: 'include',
         headers: new Headers({
             "X-CSRFToken": getCRSFToken(),
