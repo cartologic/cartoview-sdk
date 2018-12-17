@@ -282,10 +282,12 @@ class MapConfigTransformService {
                             .queryable;
                         layerConfig.properties.isWFST = layer.capability.queryable;
                     }
-                    layerConfig.properties.styleName = layer.capability.styles[
-                        0].name;
-                    layerConfig.properties.legendUrl = layer.capability.styles[
-                        0].legend.href;
+                    if (layer.capability.styles.length > 0) {
+                        layerConfig.properties.styleName = layer.capability.styles[
+                            0].name;
+                        layerConfig.properties.legendUrl = layer.capability.styles[
+                            0].legend.href;
+                    }
                     layerConfig.properties.EX_GeographicBoundingBox =
                         layer.capability.llbbox;
                 }

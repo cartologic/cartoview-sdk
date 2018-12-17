@@ -65,6 +65,15 @@ export class LayersHelper {
         })
         return layers.slice(0).reverse()
     }
+    addLayertoBaseGroupByName(map, targetLayer) {
+        map.getLayers().getArray().map(layer => {
+            if (layer instanceof Group && layer.get('type') === 'base-group') {
+                let groupLayers = layer.getLayers()
+                groupLayers.push(targetLayer)
+                layer.setLayers(groupLayers)
+            }
+        })
+    }
     /**
     * this function return layer namespace/workspace from geoserver typename
     * @param {ol.Map} layer layer object
@@ -94,9 +103,18 @@ export class LayersHelper {
         layers.map(layer => {
             if (layer.getVisible()) {
                 const layerTitle = layer.getProperties().title
+                let url = this.getLegendURL(layer, accessToken, proxy)
+                try {
+                    url = url.toLocaleLowerCase()
+                } catch (err) {
+                    console.error(err)
+                }
+                if (url && url.includes('ows')) {
+                    url = url.replace('ows', 'wms')
+                }
                 legends.push({
                     layer: layerTitle,
-                    url: this.getLegendURL(layer, accessToken, proxy)
+                    url,
                 })
             }
         })

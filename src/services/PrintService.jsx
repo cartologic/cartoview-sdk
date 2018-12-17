@@ -599,6 +599,9 @@ class Print {
             }
             encodedBaseLayer = layerObj
         }
+        if (!encodedBaseLayer) {
+            encodedBaseLayer = this._layersEncoder(lyr)
+        }
         return encodedBaseLayer
     }
     /**

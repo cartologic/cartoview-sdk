@@ -216,8 +216,7 @@ export class FeatureHelper {
             } else {
                 doExternalGet(`https://epsg.io/?format=json&q=${crs}`).then(
                     projres => {
-                        proj4.defs('EPSG:' + crs, projres.results[
-                            0].proj4)
+                        proj4.defs('EPSG:' + crs, projres.results[0].proj4)
                         resolve(crs)
                     }).catch(err => { reject(err) })
             }
