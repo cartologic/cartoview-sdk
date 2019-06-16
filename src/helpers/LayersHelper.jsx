@@ -6,6 +6,7 @@ import TileWMS from 'ol/source/tilewms'
 import URLS from '../urls/urls'
 import Vector from 'ol/source/vector'
 import { default as VectorLayer } from 'ol/layer/vector'
+import { resolveURL } from '../utils/utils'
 /** Class for Layers manipulation */
 export class LayersHelper {
     /**
@@ -47,6 +48,7 @@ export class LayersHelper {
         } catch (err) {
             wmsURL = layer.getSource().getUrl()
         }
+        wmsURL = resolveURL(wmsURL)
         return !accessToken ? wmsURL : new URLS(proxy).getParamterizedURL(wmsURL, { 'access_token': accessToken })
     }
     /**
@@ -105,7 +107,7 @@ export class LayersHelper {
                 const layerTitle = layer.getProperties().title
                 let url = this.getLegendURL(layer, accessToken, proxy)
                 try {
-                    url = url.toLocaleLowerCase()
+                    url = url.toLowerCase()
                 } catch (err) {
                     console.error(err)
                 }
@@ -114,7 +116,7 @@ export class LayersHelper {
                 }
                 legends.push({
                     layer: layerTitle,
-                    url,
+                    url: resolveURL(url),
                 })
             }
         })
@@ -139,7 +141,7 @@ export class LayersHelper {
             "LAYER": layer.getProperties().name
         }
         let url = new URLS(proxy).getParamterizedURL(wmsURL, query)
-
+        url = resolveURL(url)
         return url
     }
     addSelectionLayer(map, featureCollection, styleFunction) {

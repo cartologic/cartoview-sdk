@@ -40,7 +40,7 @@ export const OPENCAGE_SETTINGS = {
     @type {string}
     @default "http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates"
 */
-export const ESRI_GEOCODING_URL = "http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates"
+export const ESRI_GEOCODING_URL = "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates"
 /** @constant ESRI_SETTINGS
     @type {object}
     @default {q: '',language: 'en',pretty: 1,key:'YOUR-API-KEY'}
