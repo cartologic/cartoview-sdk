@@ -739,8 +739,8 @@ class Print {
     * this function return full print Object to send to geoserver
     * @returns {object}
     */
-    getPrintObj(options = { dpi: DOTS_PER_INCH, layout: null, title: "", comment: "", scale: null }) {
-        let { dpi, title, comment, layout, scale } = options
+    getPrintObj(options = { dpi: DOTS_PER_INCH, layout: null, title: "", comment: "", scale: null, units: undefined }) {
+        let { dpi, title, comment, layout, scale, units } = options
         const mapView = this.map.getView()
         const mapProjection = mapView.getProjection()
         const srs = mapProjection.getCode()
@@ -750,7 +750,7 @@ class Print {
         // const center = BasicViewerHelper.getCenterOfExtent(featureExtent)
         let legends = this.getPrintLegends()
         const printObj = {
-            units: mapProjection.getUnits(),
+            units: units || mapProjection.getUnits(),
             srs,
             mapTitle: title,
             comment,
@@ -799,6 +799,7 @@ class Print {
         delete sourceParams['FORMAT']
         delete sourceParams['SERVERTYPE']
         delete sourceParams['VERSION']
+        delete sourceParams['STYLES']
         return sourceParams
     }
     /**
