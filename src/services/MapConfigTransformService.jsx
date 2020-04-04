@@ -318,7 +318,7 @@ class MapConfigTransformService {
                                 'EPSG:4326')
                     }
                 }
-                layerConfig.type = layer.tiled ? 'Tile' : 'Image';
+                layerConfig.type = layer.singleTile ? 'Image' : 'Tile';
                 var params = layer.params || {};
                 params.LAYERS = layer.name;
                 if (params.TILED === undefined) {
@@ -338,14 +338,14 @@ class MapConfigTransformService {
                     params.TRANSPARENT = layer.transparent;
                 }
                 layerConfig.source = {
-                    type: layer.tiled ? 'TileWMS' : 'ImageWMS',
+                    type: layer.singleTile ? 'ImageWMS' : 'TileWMS',
                     properties: {
                         crossOrigin: crossOrigin,
                         params: params,
                         urls: [url]
                     }
                 };
-                if (!layer.tiled) {
+                if (layer.singleTile) {
                     delete layerConfig.properties.maxResolution
                     delete layerConfig.properties.minResolution
                     delete layerConfig.source.urls
