@@ -57,7 +57,7 @@
         "proj4": "^2.4.4",
         "randomcolor": "^0.5.3",
         "tcomb-form": "^0.9.19",
-        "validator": "^9.4.1",
+        "validator": "^13.7.0",
         "w3c-schemas": "^1.4.0"
     }
 }
